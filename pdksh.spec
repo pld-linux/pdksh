@@ -7,11 +7,25 @@ Summary(pt_BR):	Shell Korn de domМnio pЗblico
 Summary(tr):	Serbest Korn kabuПu
 Name:		pdksh
 Version:	5.2.14
-Release:	24
+Release:	25
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
+Group(cs):	Aplikace/Shelly
+Group(da):	Programmer/Skaller
 Group(de):	Applikationen/Shells
+Group(es):	Aplicaciones/Shells
+Group(fr):	Applications/Shells
+Group(is):	Forrit/Skeljar
+Group(it):	Applicazioni/Shell
+Group(ja):	╔╒╔в╔Й╔╠║╪╔╥╔Г╔С/╔╥╔╖╔К
+Group(no):	Applikasjoner/Skall
 Group(pl):	Aplikacje/PowЁoki
+Group(pt):	AplicaГУes/Shells
+Group(pt_BR):	AplicaГУes/Shells
+Group(ru):	Приложения/Командные процессоры
+Group(sl):	Programi/Ukazne lupine
+Group(sv):	TillДmpningar/Skal
+Group(uk):	Прикладн╕ Програми/Командн╕ процесори
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 Source1:	ksh.1.pl
 Patch0:		%{name}-static.patch
@@ -24,6 +38,7 @@ Patch6:		%{name}-EDITMODE.patch
 Patch7:		%{name}-rlimit_locks.patch
 Patch8:		%{name}-eval-segv.patch
 Patch9:		%{name}-awful-free-bug.patch
+Patch10:	%{name}-no_std_aliases.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -68,8 +83,22 @@ kabuk dilinin bir kЭmesidir.
 Summary:	Statically linked Public Domain Korn Shell
 Summary(pl):	Statycznie zlinkowany shell Korna
 Group:		Applications/Shells
+Group(cs):	Aplikace/Shelly
+Group(da):	Programmer/Skaller
 Group(de):	Applikationen/Shells
+Group(es):	Aplicaciones/Shells
+Group(fr):	Applications/Shells
+Group(is):	Forrit/Skeljar
+Group(it):	Applicazioni/Shell
+Group(ja):	╔╒╔в╔Й╔╠║╪╔╥╔Г╔С/╔╥╔╖╔К
+Group(no):	Applikasjoner/Skall
 Group(pl):	Aplikacje/PowЁoki
+Group(pt):	AplicaГУes/Shells
+Group(pt_BR):	AplicaГУes/Shells
+Group(ru):	Приложения/Командные процессоры
+Group(sl):	Programi/Ukazne lupine
+Group(sv):	TillДmpningar/Skal
+Group(uk):	Прикладн╕ Програми/Командн╕ процесори
 Requires:	%{name}
 
 %description static
@@ -97,6 +126,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
 #autoconf
