@@ -1,0 +1,32 @@
+diff -ur pdksh-5.2.14/eval.c pdksh-5.2.14-/eval.c
+--- pdksh-5.2.14/eval.c	Tue Jul 13 18:48:39 1999
++++ pdksh-5.2.14-/eval.c	Sun Dec  8 23:34:50 2002
+@@ -593,6 +593,7 @@
+ 				switch (c) {
+ 				  case '[':
+ 				  case NOT:
++				  case '^':
+ 				  case '-':
+ 				  case ']':
+ 					/* For character classes - doesn't hurt
+diff -ur pdksh-5.2.14/misc.c pdksh-5.2.14-/misc.c
+--- pdksh-5.2.14/misc.c	Fri Apr 16 16:50:31 1999
++++ pdksh-5.2.14-/misc.c	Sun Dec  8 23:40:03 2002
+@@ -572,7 +572,7 @@
+ 			if (!in_bracket) {
+ 				saw_glob = 1;
+ 				in_bracket = 1;
+-				if (ISMAGIC(p[1]) && p[2] == NOT)
++				if (ISMAGIC(p[1]) && (p[2] == NOT || p[2] == '^'))
+ 					p += 2;
+ 				if (ISMAGIC(p[1]) && p[2] == ']')
+ 					p += 2;
+@@ -750,7 +750,7 @@
+ 	register int c, d, not, found = 0;
+ 	const unsigned char *orig_p = p;
+ 
+-	if ((not = (ISMAGIC(*p) && *++p == NOT)))
++	if ((not = (ISMAGIC(*p) && (*++p == NOT || *p == '^'))))
+ 		p++;
+ 	do {
+ 		c = *p++;
