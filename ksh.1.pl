@@ -1,4 +1,3 @@
-'\" t
 .\"{{{}}}
 .\"{{{  Notes about man page
 .\"     - use the pseudo-macros .sh( and .sh) to begin and end sh-specific
@@ -21,251 +20,249 @@
 .\"}}}
 .\"{{{  Name
 .SH NAZWA
-ksh \- Publiczna implementacja otoczki Korn-a
+ksh \- Publiczna implementacja pow³oki Korn-a
 .\"}}}
 .\"{{{  Synopsis
 .SH WYWO£ANIE
 .ad l
 \fBksh\fP
-[\fB+-abCefhikmnprsuvxX\fP] [\fB+-o\fP \fIopcja\fP] [ [ \fB\-c\fP \fIci±g-komenda\fP [\fInazwa-komendy\fP] | \fB\-s\fP | \fIplik\fP ] [\fIargument\fP ...] ]
+[\fB+-abCefhikmnprsuvxX\fP] [\fB+-o\fP \fIopcja\fP]
+[ [ \fB\-c\fP \fI³añcuch_komend\fP [\fInazwa_komendy\fP]|\fB\-s\fP|\fIplik\fP ]
+[\fIargument\fP ...] ]
 .ad b
 .\"}}}
 .\"{{{  Description
 .SH OPIS
-\fBksh\fP, to interpretator komend nadaj±cy siê, zarówno jako otoczka
+\fBksh\fP to interpreter komend zaprojektowany zarówno
 do interakcyjnej pracy z systemem, jak i do wykonywania skryptów.
-Jêzyk komend przezeñ rozumiany to nadzbiór jêzyka otoczki \fIsh\fP(1).
+Jego jêzyk komend jest nadzbiorem (superset) jêzyka pow³oki \fIsh\fP(1).
 .\"{{{  Shell Startup
-.SS "Odpalanie Otoczki"
-Nastêpuj±ce opcje mog± zostaæ zastosowane w wierszu komendy:
-.IP "\fB\-c\fP \fIci±g-komenda\fP"
-otoczka wykonuje rozkaz(y) zawarte w \fIci±g-komenda\fP
+.SS "Uruchamianie Pow³oki"
+Nastêpuj±ce opcje mog± byæ u¿yte wy³±cznie w linii komend:
+.IP "\fB\-c\fP \fI³añcuch_komend\fP"
+pow³oka wykonuje komendê(y) zawarte w \fI³añcuchu_komend\fP
 .IP \fB\-i\fP
 tryb interakcyjny \(em patrz poni¿ej
 .IP \fB\-l\fP
-otoczka zameldowania \(em patrz poni¿ej
+pow³oka zameldowania \(em patrz poni¿ej
 interakcyjny tryb \(em patrz poni¿ej
 .IP \fB\-s\fP
-otoczka wczytuje komendy ze standardowego wej¶cia; wszelkie argumenty
+pow³oka wczytuje komendy ze standardowego wej¶cia; wszelkie argumenty
 nie bêd±ce opcjami, s± argumentami pozycyjnymi
 .IP \fB\-r\fP
 tryb ograniczony \(em patrz poni¿ej
 .PP
-Ponad to wszelkie opcje, opisane w zwi±zku z wmontowan±
-komend± \fBset\fP, mog± równie¿ zostaæ u¿yte w wierszu komendy.
+Ponadto wszelkie opcje, opisane w zwi±zku z wbudowanym
+komend± \fBset\fP, mog± równie¿ zostaæ u¿yte w linii komend.
 .PP
-Je¶li ani opcja \fB\-c\fP, ani opcja \fB\-s\fP, nie zosta³y
-podane, wówczas pierwszy argument nie bêd±cy opcj±, okre¶la
-plik z którego zostan± wczytywane komendy. Je¶li brak jest argumentów
-nie bêd±cych opcjami, to otoczka wczytuje komendy ze standardowego
+Je¶li nie zosta³a podana ani opcja \fB\-c\fP, ani opcja \fB\-s\fP,
+wówczas pierwszy argument nie bêd±cy opcj±, okre¶la
+plik, z którego zostan± wczytane komendy. Je¶li brak jest argumentów
+nie bêd±cych opcjami, to pow³oka wczytuje komendy ze standardowego
 wej¶cia.
-Nazwa otoczki (\fItzn.\fP, zawarto¶æ parametru \fB$0\fP)
+Nazwa pow³oki (tj. zawarto¶æ parametru \fB$0\fP)
 jest ustalana jak nastêpuje: je¶li u¿yto opcji \fB\-c\fP i zosta³
 podany nieopcyjny argument, to jest on nazw±; 
 je¶li komendy s± wczytywane z pliku, wówczas nazwa danego pliku zostaje
-u¿yta jako nasza nazwa; w kazdym innym przypadku zostaje u¿yta
-nazwa, pod jak± dana otoczka zosta³a wywo³ana 
-(\fItzn.\fP, warto¶æ argv[0]).
+u¿yta jako nazwa pow³oki; w ka¿dym innym przypadku zostaje u¿yta
+nazwa, pod jak± dana pow³oka zosta³a wywo³ana 
+(tzn. warto¶æ argv[0]).
 .PP
-Otoczka jest \fBinterakcyjna\fP, je¶li u¿yto opcji \fB\-i\fP 
-lub je¶li zarówno standardowe wej¶cie, jak i standardowe wyj¶cie,
+Pow³oka jest \fBinterakcyjna\fP, je¶li u¿yto opcji \fB\-i\fP 
+lub je¶li zarówno standardowe wej¶cie, jak i standardowe wyj¶cie b³êdów,
 s± skojarzone z jakim¶ terminalem.
-W interakcyjnej otoczce kontrola zadañ (je¶li takowa jest dostêpna
+W interakcyjnej pow³oce kontrola zadañ (je¶li takowa jest dostêpna
 w danym systemie) jest w³±czona i ignoruje nastêpuj±ce sygna³y:
-INT, QUIT oraz TERM. Ponadto wy¶wietla ona zachêcacze przed
-wczytywaniem wprowadzeñ (patrz parametry \fBPS1\fP i \fBPS2\fP).
-Dla nieinterakcyjnych otoczek, uaktywnia siê domy¶lnie opcja \fBtrackall\fP
+INT, QUIT oraz TERM. Ponadto wy¶wietla ona zachêtê przed
+odczytywaniem komend (patrz parametry \fBPS1\fP i \fBPS2\fP).
+Dla nieinterakcyjnych pow³ok, uaktywnia siê domy¶lnie opcja \fBtrackall\fP
 (patrz poni¿ej: komenda \fBset\fP).
 .PP
-Otoczka jest \fBograniczona\fP je¶li zastosowano opcjê \fB\-r\fP lub
-gdy, albo podstawa nazwy pod jak± wywo³ano otoczkê, albo parametr
-\fBSHELL\fP, pasuj± pod wzorzec *r*sh (\fIw szczególno¶ci\fP, 
-rsh, rksh, rpdksh, \fIitp.\fP).
-Nastêpuj±ce ograniczenia zachodz± wówczas po przetworzeniu przez
-otoczkê wrzelkich plików profilowych i plików z \fB$ENV\fP:
+Pow³oka jest \fBograniczona\fP je¶li zastosowano opcjê \fB\-r\fP lub
+gdy albo g³ówna czê¶æ nazwy (basename), pod jak± wywo³ano pow³okê, albo parametr
+\fBSHELL\fP, pasuj± do wzorca *r*sh (na przyk³ad, 
+rsh, rksh, rpdksh, itp.).
+Po przetworzeniu przez pow³okê wszystkich plików profili i \fB$ENV\fR
+w³±czane s± nastêpuj±ce ograniczenia:
 .nr P2 \n(PD
 .nr PD 0
 .IP \ \ \(bu
-komenda \fBcd\fP jest wy³±czona
+niedostêpna jest komenda \fBcd\fP
 .IP \ \ \(bu
-parametry: \fBSHELL\fP, \fBENV\fP i \fBPATH\fP, nie mog± byæ modyfikowane
+nie mog± byæ zmieniane parametry: \fBSHELL\fP, \fBENV\fP i \fBPATH\fP.
 .IP \ \ \(bu
-nazwy komend nie mog± byæ podane przy pomocy absolutnych lub
-wzglêdnych tropów
+nazwy komend nie mog± byæ podawane z u¿yciem ¶cie¿ek bezwzglêdnych lub
+wzglêdnych [t³um.: tj.dostêpne s± tylko przez nazwê bez ¶cie¿ki]
 .IP \ \ \(bu
-opcja \fB\-p\fP wbudowanej komendy \fBcommand\fP jest niedostêpna
+niedostêpna jest opcja \fB\-p\fP wbudowanej komendy \fBcommand\fP
 .IP \ \ \(bu
-przekierowania, które stwarzaj± pliki, nie mog± zostaæ zastosowane
-(\fIw szczególno¶ci\fP, \fB>\fP, \fB>|\fP, \fB>>\fP, \fB<>\fP)
+nie mog± byæ u¿ywane przekierowania tworz±ce pliki
+(np.: \fB>\fP, \fB>|\fP, \fB>>\fP, \fB<>\fP)
 .nr PD \n(P2
 .PP
-Otoczka jest \fBuprzywilejowana\fP, je¶li zastosowano opcjê \fB\-p\fP,
-lub, je¶li rzeczywisty id u¿ytkownika lub jego grupy
-nie jest zgodny z efektywnym id u¿ytkownika czy grupy
+Pow³oka jest \fBuprzywilejowana\fP, je¶li zastosowano opcjê \fB\-p\fP
+lub je¶li rzeczywisty identyfikator u¿ytkownika lub jego grupy
+nie jest zgodny z efektywnym identyfikatorem u¿ytkownika czy grupy
 (patrz \fIgetuid\fP(2), \fIgetgid\fP(2)).
-Uprzywilejowana otoczka nie przetwarza ani $HOME/.profile, ani parametru
-\fBENV\fP (patrz poni¿ej), przetwarza za to plik /etc/suid_profile.
-Wykasowanie opcji uprzywilejowania powoduje, ¿e otoczka ustawia swój
-efektywny id u¿ytkownika i grupy na warto¶ci faktycznego id u¿ytkownika
-(user-id) i jego grupy (group-id).
+Uprzywilejowana pow³oka nie przetwarza ani \fI$HOME/.profile\fR, ani parametru
+\fBENV\fP (patrz poni¿ej), przetwarza za to plik \fI/etc/suid_profile\fR.
+Wykasowanie opcji uprzywilejowania powoduje, ¿e pow³oka ustawia swój
+efektywny identyfikator u¿ytkownika i grupy na warto¶ci faktycznego
+identyfikatora u¿ytkownika (user-id) i jego grupy (group-id).
 .PP
-Je¶li podstawa nazwy pod jak± dana otoczka zosta³a wywo³ana 
+Je¶li g³ówna czê¶æ nazwy, pod jak± dana pow³oka zosta³a wywo³ana 
 (\fItzn.\fP, argv[0])
-zaczyna siê od \fB\-\fP, lub je¶li podano opcjê \fB\-l\fP,
-to zak³ada siê, ¿e otoczka ma byæ otoczk± zameldowania i wczytuje
-zawarto¶æ plików \fB/etc/profile\fP i \fB$HOME/.profile\fP,
-je¶li takowe istniej± i s± odczytywalne.
+zaczyna siê od \fB\-\fP lub u¿yto opcji \fB\-l\fP,
+to zak³ada siê, ¿e pow³oka ma byæ pow³ok± zameldowania i wczytuje
+zawarto¶æ plików \fI/etc/profile\fP i \fI$HOME/.profile\fP,
+je¶li takowe istniej± i mo¿na je odczytaæ.
 .PP
-Je¶li podczas odpalania otoczki zosta³ ustawiony parametr \fBENV\fP
-(albo, w wypadku otoczek zameldowania, po przetworzeniu
-wszelkich plików profilowych), to jego zawarto¶æ zostaje
-poddana podstawieniom komend, arytmetycznym oraz szlaczka, a nastêpnie
-wynikaj±ca z tej operacji nazwa (je¶li takowa istnieje), zostaje
-zinterpretowana jako nazwa pliku, podlegaj±cego nastêpnemu
-wczytaniu i wykonaniu.
-Je¶li parametr \fBENV\fP jest pusty (i niezerowy), oraz pdksh zosta³
-skompilowany ze zdefiniowanym makro \fBDEFAULT_ENV\fP, 
-to (po wykonaniu wszelkich ju¿ wy¿ej wymienionych podstawieñ)
-plik przezeñ okre¶lany zostaje wczytany.
+Je¶li parametr \fBENV\fR jest ustawiony podczas uruchamiania pow³oki
+(albo, w wypadku pow³ok zameldowania, po przetworzeniu
+dowolnych plików profilowych), to jego zawarto¶æ zostaje
+poddana zastêpowaniu.
+Zastêpowane s± parametry, komendy, wyra¿enia arytmetyczne oraz tylda.
+Nastêpnie wynikaj±ca z tej operacji nazwa zostaje
+zinterpretowana jako nazwa pliku, podlegaj±cego wczytaniu i wykonaniu.
+Je¶li parametr \fBENV\fP jest pusty (i niezerowy) a pdksh zosta³
+skompilowany ze zdefiniowanym makrem \fBDEFAULT_ENV\fP, 
+to, po wykonaniu wszelkich ju¿ wy¿ej wymienionych podstawieñ,
+zostaje wczytany plik okre¶lony tym makrem.
 .PP
-Status zakoñczenia otoczki wynosi 127, je¶li plik komend
-podany we wierszu wywo³ania nie móg³ zostaæ otwarty,
-albo jest niezerowy, je¶li wyst±pi³ fatalny b³±d w sk³adni
+Kod wyj¶ciowy pow³oki wynosi 127, je¶li plik komend
+podany we linii wywo³ania nie móg³ zostaæ otwarty,
+albo jest niezerowy, je¶li wyst±pi³ krytyczny b³±d sk³adni
 podczas wykonywania tego¿ skryptu.
-W wypadku braku wszelkich b³êdów, status jest równy statusowi ostaniej
-wykonanej komendy lub, je¶li nie wykonano ¿adnej komendy, zeru.
+W przypadku braku b³êdów krytycznych, kod wyj¶cia równy kodowi ostatnio
+wykonanej komendy lub zeru, je¶li nie wykonano ¿adnej komendy.
 .\"}}}
 .\"{{{  Command Syntax
-.SS "Sk³adnia Komend"
+.SS "Sk³adnia Poleceñ"
 .\"{{{  words and tokens
-Otoczka rozpoczyna analizê sk³adni swych wprowadzeñ od podzia³u
+Pow³oka rozpoczyna analizê sk³adniow± wej¶cia od podzia³u go
 na poszczególne s³owa \fIword\fPs.
-S³owa, stanowi±ce ci±gi znaków, rozgranicza siê niewycytowanymi
-znakami \fIbia³ymi\fP (spacja, tabulator i przerwanie wiersza) 
+S³owa, stanowi±ce ci±gi znaków, ograniczane s± niecytowanymi
+bia³ymi znakami \fIwhitespace\fP (spacja, tabulator i nowa linia) 
 lub \fImeta-znakami\fP
 (\fB<\fP, \fB>\fP, \fB|\fP, \fB;\fP, \fB&\fP, \fB(\fP i \fB)\fP).
-Poza rozgraniczeniami s³ów przerwy i tabulatory s± ignorowane.
-Natomiast przerwania wierszy zwykle rozgraniczaj± komendy.
-meta-znaki stosowane s± do tworzenia nastêpuj±cych kawa³ków:
+Poza ograniczaniem s³ów spacje i tabulatory s± ignorowane.
+Natomiast znaki zmiany linii zwykle rozgraniczaj± komendy.
+Meta-znaki stosowane s± do tworzenia nastêpuj±cych symboli:
 \fB<\fP, \fB<&\fP, \fB<<\fP, \fB>\fP, \fB>&\fP, \fB>>\fP, \fIetc.\fP,
-które s³u¿± do specyfikacji przekierowañ (patrz: przekierowywanie
+s³u¿±cyh do okre¶lania przekierowañ (patrz: przekierowywanie
 wej¶cia/wyj¶cia poni¿ej);
-\fB|\fP s³u¿y do tworzenia ruroci±gów;
+\fB|\fP s³u¿y do tworzenia potoków;
 \fB|&\fP s³u¿y do tworzenia koprocesów (patrz: Koprocesy poni¿ej);
 \fB;\fP s³u¿y do oddzielania komend;
-\fB&\fP s³u¿y do tworzenia asynchronicznych ruroci±gów;
-\fB&&\fP i \fB||\fP s³u¿± do specyfikacji warkunkowego wykonania;
+\fB&\fP s³u¿y do tworzenia potoków asynchronicznych;
+\fB&&\fP i \fB||\fP s³u¿± do okre¶lenia wykonania warunkowego;
 \fB;;\fP jest u¿ywany w poleceniach \fBcase\fP;
 \fB((\fP .. \fB))\fP s± u¿ywane w wyra¿eniach arytmetycznych;
 i na zakoñczenie,
-\fB(\fP .. \fB)\fP s³u¿± do tworzenia podotoczek.
+\fB(\fP .. \fB)\fP s³u¿± do tworzenia podpow³ok.
 .PP
-Bia³e przerwy lub meta-znaki mo¿na wycytowywaæ indywidualnie
-przy u¿yciu wstecznika (\fB\e\fP), lub grupami poprzez
-podwójne (\fB"\fP) lub pojedyñcze (\fB'\fP)
-cudzys³owy.
-Porszê zwróciæ uwagê, i¿ nastêpuj±ce znaki podlegaj± równie¿ 
-specjalnej interpretacji przez otoczkê i musz± zostaæ wycytowane
-je¶li maj± reprezentowaæ samych siebie:
+Bia³e znaki lub meta-znaki mo¿na zacytowywaæ pojedynczo
+przy u¿yciu znaku odwrotnego uko¶nika (\fB\e\fP) lub grupami w podwójnych
+(\fB"\fP) lub pojedynczych (\fB'\fP) cudzys³owach.
+Zauwa¿, i¿ nastêpuj±ce znaki podlegaj± równie¿ 
+specjalnej interpretacji przez pow³okê i musz± zostaæ wycytowane
+je¶li maj± byæ u¿yte dos³ownie:
 \fB\e\fP, \fB"\fP, \fB'\fP, \fB#\fP, \fB$\fP, \fB`\fP, \fB~\fP, \fB{\fP,
 \fB}\fP, \fB*\fP, \fB?\fP i \fB[\fP.
-Pierwsze trzy to powy¿ej wspomniane symbole wycytowywania
+Pierwsze trzy to wy¿ej wspomniane symbole cytowania
 (patrz wycytowywanie poni¿ej);
-\fB#\fP, na pocz±tu s³owa rozpoczyna komentarz \(em wszysko do
-\fB#\fP, po zakoñczenie bierz±cego wiersza, zostaje zignorowane;
-\fB$\fP s³u¿y do wprowadzenia podstawienia  parametru, komendy lub arytmetycznego
-wyra¿enia (patrz Podstawienia poni¿ej);
+\fB#\fP, na pocz±tku s³owa rozpoczyna komentarz \(em wszystko po znaku
+\fB#\fP, a¿ do koñca linii jest ignorowane;
+\fB$\fP s³u¿y do wprowadzenia podstawienia parametru, komendy
+lub wyra¿enia arytmetycznego (patrz Podstawienia poni¿ej);
 \fB`\fP rozpoczyna podstawienia komendy w starym stylu
 (patrz Podstawienia poni¿ej);
-\fB~\fP rozpoczyna rozwiniêcie katalogu (patrz Rozwijanie Szlaczka poni¿ej);
+\fB~\fP rozpoczyna rozwiniêcie katalogu (patrz Rozwijanie Tyldy poni¿ej);
 \fB{\fP i \fB}\fP obejmuj± alternacje w stylu \fIcsh\fP(1)
 (patrz Rozwijanie Nawiasów poni¿ej);
-i, na koniec, \fB*\fP, \fB?\fP oraz \fB[\fP s± stosowane
-w generacji nazw plików (patrz Wzorce Nazw Plików poni¿ej).
+i, na koniec, \fB*\fP, \fB?\fP oraz \fB[\fP s± stosowane przy tworzeniu
+nazw plików (patrz Wzorce Nazw Plików poni¿ej).
 .\"}}}
 .\"{{{  simple-command
 .PP
-W trakcie analizy s³ów i kawa³ków, otoczka tworzy komendy, z których
+W trakcie analizy s³ów i symboli, pow³oka tworzy komendy, których
 wyró¿nia siê dwa rodzaje: \fIkomendy proste\fP, zwykle programy
 do wykonania, oraz \fIkomendy z³o¿one\fP, takie jak dyrektywy \fBfor\fP i
-\fBif\fP, konstrukty grupujace i definicje funkcji.
+\fBif\fP, struktury grupujace i definicje funkcji.
 .PP
-Prosta komenda sk³ada siê z kombinacji przyporz±dkowañ warto¶ci 
-parametrom (patrz Parametry ponizej), przekierowañ wej¶cia/wyj¶cia
-(patrz Przekierowania Wej¶cia/Wyj¶cia poni¿ej), i s³ów komend;
+Polecenie proste sk³ada siê z kombinacji przyporz±dkowañ warto¶ci 
+parametrom (patrz Parametry), przekierowañ wej¶cia/wyj¶cia
+(patrz Przekierowania Wej¶cia/Wyj¶cia) i s³ów komend;
 Jedynym ograniczeniem jest to, ¿e wszelkie przyporz±dkowania warto¶ci
-parametrom musz± poprzedzaæ s³owa komendy.
-S³owa komendy, je¶li zosta³y takowe podane, okre¶laj± komendê, któr±
+parametrom musz± poprzedzaæ s³owa komend.
+S³owa komend, je¶li zosta³y takowe podane, okre¶laj± komendê, któr±
 nale¿y wykonaæ, wraz z jej argumentami.
-Komenda mo¿e byæ wbudowan± komend± otoczki, funkcj± lub
-\fIzewnêtrzn± komend±\fP, \fItzn.\fP, oddzielnym
-plikiem wykonywalnym, który zostaje zlokalizowany przy u¿yciu
-warto¶ci parametru \fBPATH\fP (patrz Wykonywanie Kommend poni¿ej).
-Proszê zwróciæ uwagê i¿ wszelkie konstrukty komendowe posiadaj± 
-\fIstatus zakoñczenia\fP: dla zewnêtrznych komend, jest on
-powi±zany ze statusem zwracanym przez \fIwait\fP(2) (je¶li
-komenda nie zosta³a odnaleziona, wówczas status wynosi 127, 
-natomiast je¶li nie mo¿na by³o jej wykonaæ, to status wynosi 126);
-statusy zwracane przez inne konstrukty komendowe (komendy wbudowane,
-funkcje, ruroci±gi, listy, \fIitp.\fP) s± precyzyjnie okre¶lone
-i opisano je w zwi±zku z opisem danego konstruktu.
-Status zakoñczenia komendy zawieraj±cej jedynie przyporz±dkowania
-warto¶ci parametrom, odopwiada statusowi ostaniego wykonanego podczas tego
+Komenda mo¿e byæ komend± wbudowan± pow³oki, funkcj± lub
+\fIkomend± zewnêtrzn±\fP, \fItzn.\fP, oddzielnym
+plikiem wykonywalnym, który jest odnajdowany przy u¿yciu
+warto¶ci parametru \fBPATH\fP (patrz Wykonywanie Komend poni¿ej).
+Zauwa¿, ¿e wszelkie konstrukty komend posiadaj± 
+\fIkod zakoñczenia\fP: dla zewnêtrznych komend jest on
+powi±zany z kodem zwracanym przez \fIwait\fP(2) (je¶li
+komenda nie zosta³a odnaleziona, wówczas kod wynosi 127, 
+natomiast je¶li nie mo¿na by³o jej wykonaæ, to kod wynosi 126).
+Kody zwracane przez inne konstrukty komend (komendy wbudowane,
+funkcje, potoki, listy, itp.) s± precyzyjnie okre¶lone
+a ich opis towarzyszy opisowi danego konstruktu.
+Kod wyj¶cia komendy zawieraj±cej jedynie przyporz±dkowania
+warto¶ci parametrom, odpowiada kodowi ostatniego wykonanego podczas tego
 przyporz±dkowywnia podstawienia lub zeru, je¶li ¿adne podstawienia nie mia³y
 miejsca.
 .\"}}}
 .\"{{{  pipeline
 .PP
-Komendy mog± zostaæ powi±zane przy pomocy oznacznika \fB|\fP w
-\fIruroci±gi\fP, w których standardowe wyj¶cie
-wszyskich komend poza ostatni±, zostaje pod³±czone
-(patrz \fIpipe\fP(2)) do standardowego wej¶cia nastêpnej z szeregu
-komend.
-Status zakoñczeniowy ruroci±gu, odpowiada statusowi ostatniej komendy
-w nim.
-Ruroci±g mo¿e zostaæ poprzedzony zarezerwowanym s³owem \fB!\fP,
-dziêki czemu status ruroci±gu zostanie zamieniony na jego
-logiczny komplement. Tzn. je¶li pierwotnie status wynosi³
-0, to bêdzie on mia³ warto¶æ 1, natomiast je¶li pierwotn± warto¶ci±
-nie by³o 0, to komplementarnym statusem jest 0.
+Przy pomocy symbolu \fB|\fP komendy mog± zostaæ powi±zane w \fIpotoki\fP.
+W potokach standardowe wyj¶cie wszystkich komend poza ostatnim, zostaje
+wyprowadzone (patrz \fIpipe\fP(2)) na standardowe wej¶cie nastêpnej komendy.
+Kod wyj¶cia potoku jest równy kodowi zwróconemu przez ostatni± komendê
+potoku.
+Potok mo¿e zostaæ poprzedzony zarezerwowanym s³owem \fB!\fP,
+powoduj±cym zmianê kodu wyj¶cia na jego logiczne przeciwieñstwo.
+Tzn. je¶li pierwotnie kod wyj¶cia wynosi³ 0, to bêdzie on mia³ warto¶æ 1,
+natomiast je¶li pierwotn± warto¶ci± nie by³o 0, to kodem przeciwstawnym
+jest 0.
 .\"}}}
 .\"{{{  lists
 .PP
-\fIListê\fP komend tworzymy rozdzielaj±c ruroci±gi
-poprzez jeden z nastêpuj±cych oznaczników:
+\fIListê\fP komend tworzymy rozdzielaj±c potoki jednym z nastêpuj±cych symboli:
 \fB&&\fP, \fB||\fP, \fB&\fP, \fB|&\fP i \fB;\fP.
 Pierwsze dwa oznaczaj± warunkowe wykonanie: \fIcmd1\fP \fB&&\fP \fIcmd2\fP
-wykonuje \fIcmd2\fP tylko, je¶li status zakoñczenia \fIcmd1\fP by³ zerowy.
-Natomiast \fB||\fP zachowuje siê dok³adnie przeciwstawnie. \(em \fIcmd2\fP 
-zostaje wykonane jedynie, je¶li status zakoñczeniowy \fIcmd1\fP by³
+wykonuje \fIcmd2\fP tylko, je¶li kod wyj¶cia \fIcmd1\fP by³ zerowy.
+Natomiast \fB||\fP zachowuje siê dok³adnie odwrotnie. \(em \fIcmd2\fP 
+zostaje wykonane jedynie, je¶li kod wyj¶cia \fIcmd1\fP by³
 ró¿ny od zera.
 \fB&&\fP i \fB||\fP wi±¿± równowa¿nie, a zarazem mocniej ni¿
-\fB&\fP, \fB|&\fP i \fB;\fP, które równie¿ posiadaj± t± sam± si³ê wi±zania.
-Oznacznik \fB&\fP powoduje, ¿e poprzedzaj±ca go komenda zostanie wykonana
-asynchronicznie, tzn., otoczka odpala dan± komendê, jednak nie czeka na jej
-zakoñczenie (otoczka ¶ledzi dok³adnie wszystkie asynchronicznye
-komendy \(em patrz Kontroloa Zadañ poni¿ej).
-Ja¶li asynchroniczna komenda zostaje zastartowana z wy³±czony±
-kontrol± zadañ (\fInp.\fP, w wiêkszo¶ci skryptów), 
-wówczas komenda zostaje odpalona z wy³±czonymi sygna³ami INT
+\fB&\fP, \fB|&\fP i \fB;\fP, które z kolei równie¿ posiadaj± tê sam± si³ê
+wi±zania.
+Symbol \fB&\fP powoduje, ¿e poprzedzaj±ca go komenda zostanie wykonana
+asynchronicznie, tzn. pow³oka uruchamia dan± komendê, jednak nie czeka na jej
+zakoñczenie (pow³oka ¶ledzi dok³adnie wszystkie asynchroniczne
+komendy \(em patrz Kontrola Zadañ poni¿ej).
+Je¶li komenda asynchroniczna jest uruchomiona przy wy³±czonej
+kontroli zadañ (tj. w wiêkszo¶ci skryptów), 
+wówczas jest ona uruchamiana z wy³±czonymi sygna³ami INT
 i QUIT, oraz przekierowanym wej¶ciem na /dev/null
-(aczkolwiek przekierowania, ustalone w samej asynchronicznej komendzie
+(aczkolwiek przekierowania, ustalone w samej komendzie asynchronicznej
 maj± tu pierwszeñstwo).
 Operator \fB|&\fP rozpoczyna \fIkoproces\fP, stanowi±cy specjalnego
-rodzaju asynchroniczn± komendê (patrz Koprocesy poni¿ej).
-Proszê zwróciæ uwagê, i¿ po operatorach \fB&&\fP i \fB||\fP 
+rodzaju komendê asynchroniczn± (patrz Koprocesy poni¿ej).
+Zauwa¿, ¿e po operatorach \fB&&\fP i \fB||\fP 
 musi wystêpowaæ komenda, podczas gdy niekoniecznie
 po \fB&\fP, \fB|&\fP i \fB;\fP.
-Statusem zakoñczenia listy komend jest status ostatniej wykonanej w niej
-komendy z wyj±tkiem asynchronicznych list, dla których status wynosi 0.
+Kodem wyj¶cia listy komend jest kod ostatniej wykonanej w niej
+komendy z wyj±tkiem lsit asynchronicznych, dla których kod wynosi 0.
 .\"}}}
 .\"{{{  compound-commands
 .PP
-Z³o¿none komendy tworzymy przy pomocy nastêpuj±cych zarezerwowanych s³ów
-\(em s³owa te zostaj± jedynie rozpoznane, gdy nie s± wycytowane i
-wystepuj± jako pierwsze wyrazy w komendzie (\fIdok³aniej\fP, nie s± poprzedzane
-¿adnymi przyporz±dkowywaniami warto¶ci parametrom
-lub przekierowaniami):
+Komendy z³o¿one tworzymy przy pomocy nastêpuj±cych s³ów zarezerwowanych
+\(em s³owa s± rozpoznane tylko wtedy, gdy nie s± wycytowane
+i wystepuj± jako pierwsze wyrazy w komendzie (tj. nie s± poprzedzone
+¿adnymi przyporz±dkowywaniami warto¶ci parametrom czy przekierowaniami):
 .TS
 center;
 lfB lfB lfB lfB lfB .
@@ -274,17 +271,15 @@ do	esac	if	time	[[
 done	fi	in	until	{
 elif	for	select	while	}
 .TE
-\fBUwaga:\fP Niektóre otoczki (lecz nie nasza) wykonuj± rozkazy kontrolne, 
-je¶li jeden lub wiêcej z ich deskryptorów plików zosta³y przekierowane, 
-w podotoczce tak wiêc wszekiego rodzaju zmiany otoczenia w nich mog±
-nie dzia³aæ.
-Aby zachowaæ portabilijno¶æ nale¿y stosowaæ rozkaz \fBexec\fP,
-zamiast przekierowañ deskryptorów plików przed rozkazem kontrolnym.
+\fBUwaga:\fP Niektóre pow³oki (lecz nie nasza) wykonuj± polecenia sterujace
+w podpow³oce gdy przekierowano jeden lub wiêcej z ich deskryptorów plików, 
+tak wiêc wszekiego rodzaju zmiany otoczenia w nich mog± nie dzia³aæ.
+Aby zachowaæ przeno¶no¶æ nale¿y stosowaæ polecenie \fBexec\fP do
+przekierowañ deskryptorów plików przed poleceniem steruj±cym.
 .PP
-W nastêpuj±cym opisie z³o¿onych komend, listy komend (zanaczone przez 
-\fIlista\fP) koñcz±ce siê zarezerwowanym s³owem
-musz± koñczyæ siê ¶rednikiem lub prze³amaniem wiersza lub (poprawnym
-gramatycznie) zarezerwowanym s³owem.
+W poni¿szym opisie komend z³o¿onych, listy komend (zaznaczone przez 
+\fIlista\fP) koñcz±ce siê s³owem zarezerwowanym musz± koñczyæ siê ¶rednikiem
+lub prze³amaniem wiersza lub (poprawnym gramatycznie) s³owem zarezerwowanym.
 Przyk³adowo,
 .RS
 \fB{ echo foo; echo bar; }\fP
@@ -300,60 +295,60 @@ s± poprawne, naotmiast
 nie.
 .\"{{{  ( list )
 .IP "\fB(\fP \fIlista\fP \fB)\fP"
-Wykonaj \fIlistê\fP w podotoczce.  Nie ma bezpo¶redniej mo¿liwo¶ci
-przekazania warto¶ci parametrów podotoczki zpowrotem do jej
-otoczki macierzystej.
+Wykonaj \fIlistê\fP w podpow³oce.  Nie ma bezpo¶redniej mo¿liwo¶ci
+przekazania warto¶ci parametrów podpow³oki z powrotem do jej
+pow³oki macierzystej.
 .\"}}}
 .\"{{{  { list }
 .IP "\fB{\fP \fIlista\fP \fB}\fP"
-Z³o¿ony konstrukt; \fIlista\fP zostaje wykonana, lecz nie w podotoczce.
-Prosze zauwa¿yæ, i¿ \fB{\fP i \fB}\fP, to zarezerwowane s³owa, a nie
+Z³o¿ony konstrukt; \fIlista\fP zostaje wykonana, lecz nie w podpow³oce.
+Zauwa¿, ¿e \fB{\fP i \fB}\fP, to zarezerwowane s³owa, a nie
 meta-znaki.
 .\"}}}
 .\"{{{  case word in [ [ ( ] pattern [ | pattern ] ... ) list ;; ] ... esac
 .IP "\fBcase\fP \fIs³owo\fP \fBin\fP [ [\fB(\fP] \fIwzorzec\fP [\fB|\fP \fIwzorzec\fP] ... \fB)\fP \fIlista\fP \fB;;\fP ] ... \fBesac\fP"
-Wyra¿enie \fBcase\fP stara siê podpasowaæ \fIs³owo\fP pod jeden
-z danych \fIwzorców\fP; \fIlista\fP, powi±zana z pierwszym
-poprawnie podpasowanym wzorcem, zostaje wykonana.  
+Wyra¿enie \fBcase\fP stara siê dopasowaæ \fIs³owo\fP do jednego
+z danych \fIwzorców\fP; wykonywana jest \fIlista\fP powi±zana z pierwszym
+poprawnie dopasowanym wzorcem.  
 Wzorce stosowane w wyra¿eniach \fBcase\fP odpowiadaj± wzorcom
-stosowanymi do specyfikacji wzorców nazw plików z wyj±tkeim tego, ¿e
-ograniczenia zwi±zane z \fB\&.\fP i \fB/\fP nie zachodz±.  
-Proszê zwróciæ uwagê na to, ¿e wszelkie niewycytowane bia³e
-przerwy przed i po wzorcu zostaj± usuniête; wszelkie przerwy we wzorcu
-musz± byæ wycytowane.  Zarówno s³owa jak i wzorce podlegaj± podstawieniom
-parametrów, rozwiniêciom arytmetycznym jak te¿ i podstawieniu szlaczka.
+stosowanym do specyfikacji nazw plików z wyj±tkiem tego, ¿e
+nie obowi±zuj± ograniczenia zwi±zane z \fB\&.\fP i \fB/\fP.  
+Proszê zwróciæ uwagê na to, ¿e wszelkie niecytowane bia³e
+znaki przed i po wzorcu zostaj± usuniête; wszelkie spacje we wzorcu
+musz± byæ cytowane.  Zarówno s³owa jak i wzorce podlegaj± podstawieniom
+parametrów, rozwiniêciom arytmetycznym jak i podstawieniu tyldy.
 Ze wzglêdów historycznych, mo¿emy zastosowaæ nawiasy otwieraj±cy i 
 zamykaj±cy zamiast \fBin\fP i \fBesac\fP 
-(\fIw szczegóno¶ci wiêc\fP, \fBcase $foo { *) echo bar; }\fP).
-Statusem wykonania wyra¿enia \fBcase\fP jest status wykonanej
-\fIlisty\fP; je¶li nie zosta³a wykanana ¿adna \fIlista\fP, 
-wówczas status wynosi zero.
+(w szczególno¶ci wiêc, \fBcase $foo { *) echo bar; }\fP).
+Kodem wyj¶cia wyra¿enia \fBcase\fP jest kod wykonanej
+\fIlisty\fP; je¶li nie zosta³a wykonana ¿adna \fIlista\fP, 
+wówczas kod wyj¶cia wynosi zero.
 .\"}}}
 .\"{{{  for name [ in word ... term ] do list done
 .IP "\fBfor\fP \fInazwa\fP [ \fBin\fP \fIs³owo\fP ... \fIzakoñczenie\fP ] \fBdo\fP \fIlista\fP \fBdone\fP"
-gdzie \fIzakoñczenie\fP jest, albo przerwaniem wiersza, albo \fB;\fP.
+gdzie \fIzakoñczenie\fP jest albo znakiem koñca linii albo \fB;\fP.
 Dla ka¿dego \fIs³owa\fP w podanej li¶cie s³ów, parameter \fInazwa\fP zostaje
 ustawiony na to s³owo i \fIlista\fP wykonana. Je¶li nie u¿yjemy \fBin\fP 
-do specyfikacji listy s³ów, wówczas zostaj± u¿yte parametry pozycyjne
-(\fB"$1"\fP, \fB"$2"\fP, \fIitp.\fP) wzamian.
+do specyfikacji listy s³ów, wówczas zamiast tego zostaj± u¿yte parametry
+pozycyjne (\fB"$1"\fP, \fB"$2"\fP, \fIitp.\fP).
 Ze wzglêdów historycznych, mo¿emy zastosowaæ nawiasy otwieraj±cy i 
 zamykajacy zamiast \fBdo\fP i \fBdone\fP 
 (\fIw szczególno¶ci\fP, \fBfor i; { echo $i; }\fP).
-Statusem wykonania wyra¿enia \fBfor\fP jest ostatni status
-wykonania danej \fIlisty\fP; je¶li \fIlista\fP nie zosta³a w ogóle
-wykonana, wówczas status wynosi zero.
+Kodem wyj¶cia wyra¿enia \fBfor\fP jest ostatni kod wyj¶cia
+danej \fIlisty\fP; je¶li \fIlista\fP nie zosta³a w ogóle
+wykonana, wówczas kod wynosi zero.
 .\"}}}
 .\"{{{  if list then list [ elif list then list ] ... [ else list ] fi
 .IP "\fBif\fP \fIlista\fP \fBthen\fP \fIlista\fP [\fBelif\fP \fIlista\fP \fBthen\fP \fIlista\fP] ... [\fBelse\fP \fIlista\fP] \fBfi\fP"
-Je¶li status wykonania pierwszej \fIlisty\fP jest zerowy,
+Je¶li kod wyj¶cia pierwszej \fIlisty\fP jest zerowy,
 to zostaje wykonana druga \fIlista\fP; w przeciwnym razie, je¶li mamy takow±,
 zostaje wykonana \fIlista\fP po \fBelif\fP, z podobnymi
 konsekwencjami.  Je¶li wszystkie listy po \fBif\fP
-i \fBelif\fPs wyka¿± b³±d (\fItzn.\fP, zwróc± niezerowy status), to
+i \fBelif\fPs wyka¿± b³±d (\fItzn.\fP, zwróc± niezerowy kod), to
 \fIlista\fP po \fBelse\fP zostanie wykonana.
-Statusem wyra¿enia \fBif\fP jest status wykonanej \fIlisty\fP,
+Kodem wyj¶cia wyra¿enia \fBif\fP jest kod wykonanej \fIlisty\fP,
 nieokre¶laj±cej warunek; Je¶li ¿adna nieokre¶laj±ca warunek
-\fIlista\fP niezostanie wykonana, wówczas status wynosi zero.
+\fIlista\fP nie zostanie wykonana, wówczas kod wyj¶cia wynosi zero.
 .\"}}}
 .\"{{{  select name [ in word ... ] do list done
 .IP "\fBselect\fP \fInazwa\fP [ \fBin\fP \fIs³owo\fP ... \fIzakoñczenie\fP ] \fBdo\fP \fIlista\fP \fBdone\fP"
@@ -361,48 +356,48 @@ gdzie \fIzakoñczenie\fP jest, albo prze³amaniem wiersza albo \fB;\fP.
 Wyra¿enie \fBselect\fP umo¿liwia automatyczn± prezentacjê u¿ytkownikowi
 menu, wraz z mo¿liwo¶ci± wyboru z niego.
 Przeliczona lista wykazanych \fIs³ów\fP zostaje wypisana na
-standardowym wyj¶ciu b³êdów, poczym zostaje
-wy¶wietlony zachêcacz (\fBPS3\fP, czyli domy¶lnie `\fB#? \fP').
+standardowym wyj¶ciu b³êdów, po czym zostaje
+wy¶wietlony symbol zachêty (\fBPS3\fP, czyli domy¶lnie `\fB#? \fP').
 Nastêpnie zostaje wczytana liczba odpowiadaj±ca danemu punktowi
-menu ze standardowego wej¶cia, poczym \fInazwie\fP 
+menu ze standardowego wej¶cia, po czym \fInazwie\fP 
 zostaje przyporz±dkowane w ten sposób wybrane s³owo (lub warto¶æ
 pusta, je¶li dane wybór by³ niew³a¶ciwy), \fBREPLY\fP
 zostaje przyporz±dkowane to co zosta³o wczytane
-(po usuniêciu pocz±tkowych i koñcowych bia³ych przerw),
-i \fIlista\fP zostaje wykonan.
-Je¶li wprowadzono pusty wiersz (\fIdok³adniej\fP, zero lub wiêcej
-znaczków \fBIFS\fP) wówczas menu zostaje podownie wy¶wietlone, bez
+(po usuniêciu pocz±tkowych i koñcowych bia³ych znaków),
+i \fIlista\fP zostaje wykonana.
+Je¶li wprowadzono pusta liniê (dok³adniej, zero lub wiêcej
+znaczków \fBIFS\fP) wówczas menu zostaje ponownie wy¶wietlone, bez
 wykonywania \fIlisty\fP.
 Gdy wykonanie \fIlisty\fP zostaje zakoñczone, 
 wówczas przeliczona lista wyborów zostaje wy¶wietlona ponownie, je¶li
-\fBREPLY\fP jest zerowe, zachêcacz zostaje ponownie podany i tak dalej.
-Proces ten powtarza siê, a¿ do wczytania znaku zakoñczenia pliku,
-otrzymania sygna³u przerwania, lub wykonania wyra¿enia przerwania
-w ¶rodku wstêgi.
+\fBREPLY\fP jest zerowe, ponownie wy¶wietlany jest symbol zachêty i tak dalej.
+Proces ten powtarza siê, a¿ do wczytania znaku koñca pliku,
+otrzymania sygna³u przerwania, lub wykonania polecenia przerwania (break)
+w ¶rodku pêtli.
 Je¶li opuszczono \fBin\fP \fIs³owo\fP \fB\&...\fP, wówczas
 u¿yte zostaj± parametry pozycyjne (\fItzn.\fP, \fB"$1"\fP, \fB"$2"\fP, 
 \fIitp.\fP).
 Ze wzglêdów historycznych, mo¿emy zastosowaæ nawiasy otwieraj±cy i 
 zamykajacy zamiast \fBdo\fP i \fBdone\fP (\fIw szczególno¶ci\fP, 
 \fBselect i; { echo $i; }\fP).
-Statusem zakoñczenia wyra¿enia \fBselect\fP jest zero, je¶li
-uzyta wyra¿enia przerwania do wyjscia ze wstêgi, albo
+Kodem wyj¶cia wyra¿enia \fBselect\fP jest zero, je¶li
+u¿yto polecenia przerwania do wyj¶cia z pêtli, albo
 nie-zero w wypadku przeciwnym.
 .\"}}}
 .\"{{{  until list do list done
 .IP "\fBuntil\fP \fIlista\fP \fBdo\fP \fIlista\fP \fBdone\fP"
 Dzia³a dok³adnie jak \fBwhile\fP, z wyj±tkiem tego, ¿e zawarto¶æ
-wstêgi zostaje wykonana jedynie gdy status pierwszej 
+pêtli zostaje wykonana jedynie gdy kod wyj¶cia pierwszej 
 \fIlisty\fP jest nie-zerowy.
 .\"}}}
 .\"{{{  while list do list done
 .IP "\fBwhile\fP \fIlista\fP \fBdo\fP \fIlista\fP \fBdone\fP"
-Wyra¿enie \fBwhile\fP okre¶la wstêgê o przedbiegowym warunku jej
-wykonania.  Zawarto¶æ wstêgi zostaje wykonywana dopóki,
-doputy status wykonania pierwszej \fIlisty\fP jest zerowy.
-Statusem zakoñczeniowym wyra¿enia \fBwhile\fP jest ostatni 
-status zakoñczenia \fIlisty\fP w zawarto¶ci tej wstêgi; 
-gdy zawarto¶æ nie zostanie wogóle wykonana wówczas status wynosi zero.
+Wyra¿enie \fBwhile\fP okre¶la pêtlê o warunku sprawdzanym przed
+wykonaniem. Zawarto¶æ pêtli zostaje wykonywana dopóki,
+dopóty kod wyj¶cia pierwszej \fIlisty\fP jest zerowy.
+Kodem wyj¶cia wyra¿enia \fBwhile\fP jest ostatni 
+kod wyj¶cia \fIlisty\fP w zawarto¶ci tej pêtli; 
+gdy zawarto¶æ nie zostanie w ogóle wykonana wówczas kod wynosi zero.
 .\"}}}
 .\"{{{  function name { list }
 .IP "\fBfunction\fP \fInazwa\fP \fB{\fP \fIlista\fP \fB}\fP"
@@ -431,7 +426,7 @@ pó¿niej), z nastêpuj±cymi ró¿nicami:
 .nr P2 \n(PD
 .nr PD 0
 .IP \ \ \(bu
-Rozdzielanie pól i generacja nazw plików nies± wykonywana na
+Rozdzielanie pól i generacja nazw plików nie s± wykonywane na
 argumentach.
 .IP \ \ \(bu
 Operatory \fB\-a\fP (i) oraz \fB\-o\fP (lub), zostaj± zast±pione
@@ -446,12 +441,12 @@ jest traktowany jako wzorzec (\fIw szczególno¶ci\fP, porównanie
 \fB[[ foobar = f*r ]]\fP
 jest sukcesem).
 .IP \ \ \(bu
-Mamy do dyspozycji dwa dodatkowe operatory binarne: \fB<\fP i \fB>\fP
-które zwracaj± prawdê, gdy pierwszy ci±gowy operand jest mniejszy lub 
-odpowiednio wiêkszy do drugiego operanda ci±gowego.
+Mamy do dyspozycji dwa dodatkowe operatory binarne: \fB<\fP i \fB>\fP,
+które zwracaj± prawdê, gdy pierwszy ci±gowy operand jest odpowiednio
+mniejszy lub wiêkszy od drugiego operandu ³añcuchowego.
 .IP \ \ \(bu
 Jednoargumentowa postaæ operacji \fBtest\fP,
-w której sprawdza siê czy jedyny operand jest d³ugo¶ci zeroweji, jest 
+w której sprawdza siê czy jedyny operand jest d³ugo¶ci zerowej, jest 
 niedozwolona
 - operatory zawsze muszê byæ wykazywane jawnie, \fIw szczególno¶ci\fP, 
 zamiast
@@ -463,7 +458,7 @@ nale¿y u¿yæ
 .IP \ \ \(bu
 Podstawienia parametrów, komend i arytmetyczne zostaj± wykonane
 w trakcie wyliczania wyra¿enia. Do operatorów
-\fB&&\fP i \fB||\fP zostaje zastosowana metoda ogródkowego wyliczania
+\fB&&\fP i \fB||\fP stosowana jest metoda uproszczonego okre¶lania
 ich warto¶ci.
 To znaczy, ¿e w wyra¿eniu
 .ce
@@ -477,30 +472,30 @@ plik o nazwie \fBfoo\fP istnieje i jest czytelny.
 .\"}}}
 .\"{{{  Quoting
 .SS Wycytowywanie
-Wycytowywanie stosuje siê to zapobiegania, aby otoczka trakotwa³a
-znaki lub s³owa w specjalny sosób.
+Wycytowywanie stosuje siê do zapobiegania traktowaniu przez pow³okê pewnych
+znaków czy s³owów w specjalny sosób.
 Istniej± trzy metody wycytowywania: Po pierwsze, \fB\e\fP wycytowywuje
-nastêpny znak, gdy tylko nie mie¶ci siê on na koñcu wiersza, gdzie
-zarówna \fB\e\fP jak i przeniesienie wiersza zostaj± usuniête.
-po drugie pojedyñczy cydzys³ow (\fB'\fP) wycytowywuje wszystko,
-a¿ po nastêpny pojedyñczy cudzys³ów (wraz z prze³amaniami wierszy w³±cznie).
+nastêpny znak, chyba ¿e mie¶ci siê on na koñcu wiersza, wówczas
+zarówno \fB\e\fP jak i znak nowej linii zostaj± usuniête.
+Po drugie pojedynczy cudzys³óww (\fB'\fP) wycytowywuje wszystko,
+a¿ po nastêpny pojedynczy cudzys³ów (wraz ze zmianami linii w³±cznie).
 Po trzecie, podwójny cudzys³ów (\fB"\fP) wycytowywuje wszystkie znaki,
 poza \fB$\fP, \fB`\fP i \fB\e\fP, a¿ po nastêpny niewycytowany podwójny 
 cudzys³ów.
 \fB$\fP i \fB`\fP wewnatrz podwójnych cudzys³owów zachowuj± zwyk³e 
-znacznie (\fItzn.\fP,
-znaczaj± podstawienie warto¶ci parametru, komendy lub wyra¿enia arytmetycznego),
-je¶li tylko niezostanie wykonany jakikolwiek podzia³ pól na
+znaczenie (tzn.,
+oznaczaj± podstawienie warto¶ci parametru, komendy lub wyra¿enia arytmetycznego),
+je¶li tylko nie zostanie wykonany jakikolwiek podzia³ pól na
 wyniku podwójnymi cudzys³owami wycytowanych podstawieñ.
 Je¶li po \fB\e\fP, wewnatrz podwójnymi cudzys³owami wycytowanego
 ci±gu znaków, nastêpuje \fB\e\fP, \fB$\fP,
-\fB`\fP lub \fB"\fP, to zostaje on zastêpiony drugim z tych znaków;
-je¶li nastêpne jest prze³amanie wierszu, wówczas zarówno \fB\e\fP 
-jak i prze³amanie wirszu zostaj± usuniête;
+\fB`\fP lub \fB"\fP, to zostaje on zast±piony drugim z tych znaków.
+Je¶li po nim nastêpuje znak nowej linii, wówczas zarówno \fB\e\fP 
+jak i znak zmiany linii zostaj± usuniête;
 w przeciwnym razie zarówno znak \fB\e\fP jak i nastêpuj±cy po nim znak
 nie podlegaj± ¿adnej zamianie.
 .PP
-Uwaga: patrz Tryb POSIX poni¿ej pod wzglêdem szczególnych regó³
+Uwaga: patrz Tryb POSIX poni¿ej pod wzglêdem szczególnych regu³
 obowi±zuj±cych sekwencje znaków postaci
 \fB"\fP...\fB`\fP...\fB\e"\fP...\fB`\fP..\fB"\fP.
 .\"}}}
@@ -509,18 +504,18 @@ obowi±zuj±cych sekwencje znaków postaci
 Istniej± dwa rodzaje aliasów: normalne aliasy komend i
 ¶ledzone aliasy.  Aliasy komend stosowane s± zwykle jako
 skróty dla d³ugich a czêsto stosowanych komend. 
-Otoczka rozwija aliasy komend (\fItzn.\fP,
-odstawia pod nazwê aliasu jest zawarto¶æ), gdy wczytuje
+Pow³oka rozwija aliasy komend (\fItzn.\fP,
+podstawia pod nazwê aliasu jego zawarto¶æ), gdy wczytuje
 pierwsze s³owo komendy. 
 Roziwniêty alias zostaje ponownie przetworzony, aby uwzglêdniæ
 ewentualne wystêpowanie dlaszych aliasów.  
-Je¶li alias komendy koñczy siê przerw± lub tabulatorem, to wówczas
+Je¶li alias komendy koñczy siê spacj± lub tabulatorem, to wówczas
 nastêpne s³owo zostaje równie¿ sprawdzone pod wzglêdem rozwiniêcia
 aliasów. Proces rozwijania aliasów koñczy siê przy napotkaniu
 s³owa, które nie jest aliasen, gdy napotknie siê na wycytowane s³owo,
 lub gdy napotka siê na alias, który jest w³a¶nie wyeksportowywany.
 .PP
-Nastêpuj±ce aliasy s± definiowane domy¶lnie przez otoczkê:
+Nastêpuj±ce aliasy s± definiowane domy¶lnie przez pow³okê:
 .ft B
 .RS
 autoload='typeset \-fu'
@@ -551,24 +546,23 @@ type='whence \-v'
 .RE
 .ft P
 .PP
-¦ledzone aliasy pozwalaj± otoczce na zapamiêtanie, gdzie
+¦ledzone aliasy pozwalaj± pow³oce na zapamiêtanie, gdzie
 odnalaz³a ona konkretn± komendê.
-Gdy otoczka po raz pierwszy odszukuje komendy po tropie, która
-zosta³a naznaczona ¶ledzonym aliasem, wowczas zapamiêtywuje ona
-sobie pe³ny trop do tej komendy.
-Gdy otoczka nastêpnie wykonuje danê komendê poraz drugi,
-wówczas sprawdza ona czy ten trop wci±¿ jest nadal aktualny i je¶li
-tak nie przegl±da ju¿ wiêcej pe³nego tropu w poszukiwaniu
+Gdy pow³oka po raz pierwszy szuka w ¶cie¿ce komendy oznaczonej jako alias
+¶ledzony, zapamiêtywuje ona sobie pe³n± ¶cie¿kê tej komendy.
+Gdy pow³oka nastêpnie wykonuje danê komendê po raz drugi,
+wówczas sprawdza ona czy ta ¶cie¿ka jest nadal aktualna i je¶li
+tak jest to nie przegl±da ju¿ wiêcej pe³nej ¶cie¿ki w poszukiwaniu
 danej komendy.
 ¦ledzone aliasy mo¿na wy¶wietliæ lub stworzyæ stosuj±c \fBalias
-\-t\fP.  Proszê zauwa¿yæ, ¿e zmieniajac warto¶æ parametru \fBPATH\fP 
-równie¿ wyczyszczamy tropy dla wszelkich ¶ledzoenych aliasów.
+\-t\fP. Zauwa¿, ¿e zmieniajac warto¶æ parametru \fBPATH\fP 
+czy¶cimy równie¿ ¶cie¿ki dla wszelkich ¶ledzonych aliasów.
 Je¶li zosta³a w³±czona opcja \fBtrackall\fP (\fItzn.\fP,
 \fBset \-o trackall\fP lub \fBset \-h\fP), 
-wówczas otoczka ¶ledzi wszelkie komendy. 
+wówczas pow³oka ¶ledzi wszelkie komendy. 
 Ta opcja zostaje w³±czona domy¶lnie dla wszelkich
-nieinterakcyjnych otoczek.
-Dla otoczek interakcyjnych, jedynie nastêpuj±ce komendy, s± 
+nieinterakcyjnych pow³ok.
+Dla pow³ok interakcyjnych jedynie nastêpuj±ce komendy s± 
 ¶ledzone domy¶lnie: \fBcat\fP, \fBcc\fP, \fBchmod\fP, \fBcp\fP,
 \fBdate\fP, \fBed\fP,
 \fBemacs\fP, \fBgrep\fP, \fBls\fP, \fBmail\fP, \fBmake\fP, \fBmv\fP,
@@ -576,10 +570,10 @@ Dla otoczek interakcyjnych, jedynie nastêpuj±ce komendy, s±
 .\"}}}
 .\"{{{  Substitution
 .SS "Podstawienia"
-Pierwszym krokiem, jaki otoczka wykonyje, podczas wykonywania
+Pierwszym krokiem, jaki wykonuje pow³oka podczas wykonywania
 prostej komendy, jest przeprowadzenia podstawieñ na s³owach tej¿e
 komendy.
-Istniej± trzy rodzaje podstawieñ: parameterów, komend i arytmetyczne.
+Istniej± trzy rodzaje podstawieñ: parametrów, komend i arytmetyczne.
 Podstawienia parametrów, które dok³adniej opiszemy w nastêpnej sekcji,
 maj± postaæ \fB$name\fP lub \fB${\fP...\fB}\fP; 
 podstawienia komend maj± postaæ \fB$(\fP\fIcommand\fP\fB)\fP lub
@@ -588,36 +582,35 @@ a podstawienia arytmetyczne: \fB$((\fP\fIexpression\fP\fB))\fP.
 .PP
 Je¶li podstawienie wystêpuje poza podwójnymi cudzys³owami, wówczas 
 wynik tego podstawienia podlega zwykle podzia³owi s³ów lub pól, w zale¿no¶ci
-od bierz±cej warto¶ci parametru \fBIFS\fP.
-Parametr \fBIFS\fP specyfikuje listê znaczków, które
-s³u¿± jako rozgraniczniki w podziale ci±gów znaków na pojedyñcze 
-wyrazy;
-wszelkie znaki wymienione w tym zbiorze oraz tabulator, przerywacz i 
-prze³amanie wiersza w³±cznie, nazywane s± \fIIFS bia³ymi przerywaczami\fP.
-Ci±gi jednego lub wielu bia³ych przerywaczy z IFS w powi±zaniu
-z zerem oraz jednym lub wiêcej bia³ych przerywaczy nie wymienionych w IFS,
+od bie¿±cej warto¶ci parametru \fBIFS\fP.
+Parametr \fBIFS\fP specyfikuje listê znaków, s³u¿±cych jako separatory
+w podziale ³añcuchów znakowych na pojedyncze wyrazy.
+Wszelkie znaki z tego zestawu oraz tabulator, przerywacz i 
+nowa linia w³±cznie, nazywane s± \fIbia³ymi znakami IFS\fP.
+Ci±gi jednego lub wielu bia³ych znaków z IFS w powi±zaniu
+z zerem oraz jednym lub wiêcej bia³ych znaków nie wymienionych w IFS,
 rozgraniczaj± pola.
-Jako wyj±tek poprzedajace i koñcowe bia³e przerywacze z IFS zostaj± usuniête
-(\fItzn.\fP, nie powstaj± przezeñ ¿adne prowadz±ce lub zakañczaj±ce
-puste pola); natomiast prowadz±ce lub koñcz±ce bia³e przerwy nie z IFS
-definiuj± okre¶laj± puste pola.
+Wyj±tkowo pocz±tkowe i koñcowe bia³e znaki IFS s± usuwane
+(tzn., nie s± przez nie tworzone ¿adne pocz±tkowe czy koñcowe
+puste pola); natomiast pocz±tkowe lub koñcowe bia³e znaki spoza IFS
+tworz± puste pola.
 Przyk³adowo: je¶li \fBIFS\fP zawiera `<spacja>:', to ci±g
 znaków `<spacja>A<spacja>:<spacja><spacja>B::D' zawiera
 cztery pola: `A', `B', `' i `D'.
 Proszê zauwa¿yæ, ¿e je¶li parametr \fBIFS\fP 
 jest ustawiony na pusty ci±g znaków, to wówczas ¿aden podzia³ pól
-nie ma miejsca; gdy paramter ten nie jest ustawiony w ogóle,
+nie ma miejsca; gdy parametr ten nie jest ustawiony w ogóle,
 wówczas stosuje siê domy¶lnie jako rozgraniczniki
-przerwy, tabulatora i przerwania wiersza.
+spacji, tabulatora i nowej linii.
 .PP
-Je¶li nie podajemy inaczej, to wynik podstwaienia
+Je¶li nie podajemy inaczej, to wynik podstawienia
 podlega równie¿ rozwijaniu nawiasów i nazw plików (patrz odpowiednie
 akapity poni¿ej).
 .PP
 Podstawienie komendy zostaje zast±pione wyj¶ciem, wygenerowanym
-podczas wykonania danej komendy przez podotoczkê.
+podczas wykonania danej komendy przez podpow³okê.
 Dla podstawienia \fB$(\fP\fIkomeda\fP\fB)\fP zachodz± normalne
-regó³y wycytowywania, podczas analizy \fIkomendy\fP,
+regu³y wycytowywania, podczas analizy \fIkomendy\fP,
 choæ jednak dla postaci \fB`\fP\fIkomenda\fP\fB`\fP, znak
 \fB\e\fP z jednym z
 \fB$\fP, \fB`\fP lub \fB\e\fP tu¿ po nim, zostaje usuniêty
@@ -632,18 +625,17 @@ efektywne albowiem nie zostaje odpalony ¿aden dodatkowy proces).
 .\"todo: fix this( $(..) parenthesis counting).
 UWAGA: Wyra¿enia \fB$(\fP\fIkomendacommand\fP\fB)\fP s± analizowane
 obecnie poprzez odnajdywanie zaleg³ego nawiasu, niezale¿nie od
-wycytowañ.  Miejmy nadziejê, ¿e to zostanie jak najszybciej
-skorygowane.
+wycytowañ.  Miejmy nadziejê, ¿e zostanie to mo¿liwie szybko poprawione.
 .PP
-Podstwaienia arytmetyczne zostaja zast±pione warto¶ci± wyniku
+Podstawienia arytmetyczne zostaja zast±pione warto¶ci± wyniku
 danego wyra¿enia.
 Przyk³adowo wiêc, komenda \fBecho $((2+3*4))\fP wy¶wietla 14.
 Patrz Wyra¿enia Arytmetyczne aby odnale¼æ opis \fIwyra¿eñ\fP.
 .\"}}}
 .\"{{{  Parameters
 .SS "Parametry"
-Parametry to zmienne w otoczce; mo¿na im przyporz±dkowywaæ 
-warto¶ci, oraz wyczytywaæ je poprzez podstwaienia parametrowe.
+Parametry to zmienne w pow³oce; mo¿na im przyporz±dkowywaæ 
+warto¶ci, oraz wyczytywaæ je poprzez podstawienia parametrów.
 Nazwa parametru jest albo jednym ze znaków 
 intperpunkyjnych o specjalnym znaczeniu lub cyfr±, jakie opisujemy 
 poni¿ej, lub liter± z nastêpstwem jednej lub wiêcej liter albo cyfr
@@ -651,33 +643,33 @@ poni¿ej, lub liter± z nastêpstwem jednej lub wiêcej liter albo cyfr
 Podstawienia parametrów posiadaj± postaæ \fB$\fP\fInazwa\fP lub
 \fB${\fP\fInazwa\fP\fB}\fP, gdziee \fInazwa\fP jest nazw±
 danego parametru.
-Gdy podstawienia zostanie wykonane na parametrzy, który nie zosta³
+Gdy podstawienie zostanie wykonane na parametrze, który nie zosta³
 ustalony, wówczas zerowy ci±g znaków jest jego wynikiem, chyba ¿e
-zosta³a w³aczona opcja \fBnounset\fP (\fBset \-o nounset\fP
+zosta³a w³±czona opcja \fBnounset\fP (\fBset \-o nounset\fP
 lub \fBset \-u\fP) co oznacza, ¿e wystêpuje wówczas b³±d.
 .PP
 .\"{{{  parameter assignment
 Warto¶ci mo¿na przyporz±dkowywaæ parametrom na wiele ró¿nych sposobów.
-Po pierwsze, otoczka domy¶lnie ustala pewne parametry takie jak
-\fB#\fP, \fBPWD\fP, itp.; to jedyny sposób w jaki parametry zwi±zana 
-ze specjalnymi jednoznakami s± ustawiane.  Po drugie, parametry zostaj± 
-importowane z otocznia otoczki podczas jej odpalania.  Po przecie,
-parametrom mo¿na przyporz±dkowaæ warto¶ci we wierszu komendy, tak jak np.,
-`\fBFOO=bar\fP' przyporz±dkowywuje parametrowi FOO warto¶æ bar;
-wielokrotne przyporz±dkowania warto¶ci s± mo¿liwe w jednym wierszu komendy
+Po pierwsze, pow³oka domy¶lnie ustala pewne parametry takie jak
+\fB#\fP, \fBPWD\fP, itp.; to jedyny sposób, w jaki s± ustawiane parametry 
+zwi±zane ze specjalnymi jednoznakami.  Po drugie, parametry zostaj± 
+importowane z otocznia pow³oki podczas jej odpalania.  Po trzecie,
+parametrom mo¿na przypisaæ warto¶ci we wierszu komendy, tak jak np.,
+`\fBFOO=bar\fP' przypisuje parametrowi FOO warto¶æ bar;
+wielokrotne przypisania warto¶ci s± mo¿liwe w jednym wierszu komendy
 i mo¿e po nich wystêpowaæ prosta komenda, co powoduje, ¿e
-przyporz±dkowania te s± wówczas jedynie aktualne podczas
-wykonywywania danej komendy (tego rodzaju przyporz±dkowywania
-zostaj± równie¿ wyekstportowane, patrz poni¿ej co do tego konsekwencji).
-Proszê zwróciæ uwagê, i¿, aby otoczka rozpozna³a je jako
-przyporz±dkowanie warto¶ci parametrowi, zarówno nazwa parametru jak i \fB=\fP
+przypisania te s± wówczas jedynie aktualne podczas
+wykonywywania danej komendy (tego rodzaju przypisania
+zostaj± równie¿ wyeksportowane, patrz poni¿ej co do tego konsekwencji).
+Proszê zwróciæ uwagê, i¿, aby pow³oka rozpozna³a je jako
+przypisanie warto¶ci parametrowi, zarówno nazwa parametru jak i \fB=\fP
 nie mog± byæ wycytowane.
 Czwartym sposobem ustawiania parametrów jest zastosowanie jednej
 z komend: \fBexport\fP, \fBreadonly\fP lub \fBtypeset\fP;
 patrz ich opisy w rozdziale Wykonywanie Komend.
-Po czwarte wstêgi \fBfor\fP i \fBselect\fP ustawiaj± parametry,
+Po czwarte pêtle \fBfor\fP i \fBselect\fP ustawiaj± parametry,
 tak jak i równie¿ komendy \fBgetopts\fP, \fBread\fP i \fBset \-A\fP.
-Na zakoñczenie, paramerom mo¿na przyporz±dkowywaæ warto¶ci stosuj±c
+Na zakoñczenie, parametrom mo¿na przyporz±dkowywaæ warto¶ci stosuj±c
 operatory nadania warto¶ci wewn±trz wyra¿eñ arytmetycznych
 (patrz Wyra¿enia Arytmetyczne poni¿ej) lub
 stosujac postaæ \fB${\fP\fInazwa\fP\fB=\fP\fIwarto¶æ\fP\fB}\fP
@@ -687,45 +679,45 @@ podstawienia parametru (patrz poni¿ej).
 .\"{{{  environment
 Parametry opatrzone atrybutem exportowania
 (ustawianego przy pomocy komendy \fBexport\fP lub
-\fBtypeset \-x\fP,albo poprzez przyporz±dkowywanie warto¶ci
+\fBtypeset \-x\fP albo poprzez przyporz±dkowywanie warto¶ci
 parametru z nastêpuj±c± prost± komend±) 
 zostaj± umieszczone w otoczeniu (patrz \fIenviron\fP(5)) komend
-wykonywanych przez otoczke jako pary \fInazwa\fP\fB=\fP\fIwarto¶æ\fP.
-Kolejno¶æ w jakiej parametry wystêpuj± w otoczeniu komendy jest 
-nieustalona bli¿ej.
-Podczas odpalania otoczka pozyskuje parametry ze swojego
-otoczenia,
+wykonywanych przez pow³okê jako pary \fInazwa\fP\fB=\fP\fIwarto¶æ\fP.
+Kolejno¶æ, w jakiej parametry wystêpuj± w otoczeniu komendy jest 
+bli¿ej nieustalona.
+Podczas uruchamiania pow³oka pozyskuje parametry ze swojego
+otoczenia
 i automatycznie ustawia na tych¿e parametrach atrybut exportowania.
 .\"}}}
 .\"{{{  ${name[:][-+=?]word}
 .PP
-Mo¿na stosowaæ modyfikatory do postaciu \fB${\fP\fInazwa\fP\fB}\fP 
+Mo¿na stosowaæ modyfikatory do postaci \fB${\fP\fInazwa\fP\fB}\fP 
 podstawienia parametru:
 .IP \fB${\fP\fInazwa\fP\fB:-\fP\fIs³owo\fP\fB}\fP
-je¶li \fInazwa\fP jest nastawiony i niezerowy, wówczas zostaje
+je¶li \fInazwa\fP jest ustawiony i niezerowy, wówczas zostaje
 podstawiona jego w³asna
 warto¶æ, w przeciwnym razie zostaje podstawione \fIs³owo\fP.
 .IP \fB${\fP\fInazwa\fP\fB:+\fP\fIs³owo\fP\fB}\fP
-je¶li \fInazwa\fP jest nastawiony i niezerowy, wówczas zostaje podstawione 
+je¶li \fInazwa\fP jest ustawiony i niezerowy, wówczas zostaje podstawione 
 \fIs³owo\fP, inaczej nic nie zostaje podstawione.
 .IP \fB${\fP\fInazwa\fP\fB:=\fP\fIs³owo\fP\fB}\fP
-je¶li \fInazwa\fP jest nastwaiony i niezerowy, wówczas zostaje podstawiony 
+je¶li \fInazwa\fP jest ustawiony i niezerowy, wówczas zostaje podstawiony 
 on sam, w przeciwnym razie zostaje my przyporz±dkowana warto¶æ
 \fIs³owo\fP i warto¶æ wynikaj±ca ze \fIs³owa\fP zostaje podstawiona.
 .IP \fB${\fP\fInazwa\fP\fB:?\fP\fIs³owo\fP\fB}\fP
-je¶li \fInazwa\fP jest nastawiony i niezerowy, wówczas zostaje
+je¶li \fInazwa\fP jest ustawiony i niezerowy, wówczas zostaje
 podstawiona jego w³asna warto¶æ, w przeciwnym razie \fIs³owo\fP
 zostaje wy¶wietlone na standardowym wyj¶ciu b³êdów (tu¿ po \fInazwa\fP:)
 i zachodzi b³±d
-(powoduj±cy normalnie zakoñczenie ca³ego skryptu otoczki, funkcji lub \&.-scryptyu).
-Je¶li s³owo zosta³o pominiête, wówczas zostaje u¿yty ci±g 
-`parameter null or not set' w zamian.
+(powoduj±cy normalnie zakoñczenie ca³ego skryptu pow³oki, funkcji lub \&.-scryptyu).
+Je¶li s³owo zosta³o pominiête, wówczas zamiast niego zostaje u¿yty ³añcuch
+`parameter null or not set'.
 .PP
 W powy¿szych modyfikatorach mo¿emy omin±æ \fB:\fP, czego skutkiem
 bêdzie, ¿e warunki bêd± jedynie wymagaæ aby
-\fInazwa\fP by³ nastawiony lub nie (a nie ¿eby by³ ustawiony i niezerowy).
+\fInazwa\fP by³ ustawiony lub nie (a nie ¿eby by³ ustawiony i niezerowy).
 Je¶li potrzebna jest warto¶æ \fIs³owo\fP, wówczas zostaj± nañ wykonane
-podstawienia parametrów, komend, arytmetyczne i szlaczka;
+podstawienia parametrów, komend, arytmetyczne i tyldy;
 natomiast, je¶li \fIs³owo\fP oka¿e siê byæ niepotrzebne, wówczas jego
 warto¶æ nie zostanie obliczona.
 .\"}}}
@@ -734,7 +726,7 @@ Mo¿na stosowaæ, równie¿ podstawienia parametrów o nastêpuj±cej postaci:
 .\"{{{  ${#name}
 .IP \fB${#\fP\fInazwa\fP\fB}\fP
 Ilo¶æ parametrów pozycyjnych, je¶li \fInazw±\fP jest \fB*\fP, \fB@\fP lub
-niczego nie podano, lub d³ugo¶æ ci±gu bêd±cego wasto¶ci± parametru \fInazwa\fP.
+niczego nie podano lub d³ugo¶æ ci±gu bêd±cego warto¶ci± parametru \fInazwa\fP.
 .\"}}}
 .\"{{{  ${#name[*]}, ${#name[@]}
 .IP "\fB${#\fP\fInazwa\fP\fB[*]}\fP, \fB${#\fP\fInazwa\fP\fB[@]}\fP"
@@ -743,9 +735,9 @@ Ilo¶æ elemntów w ci±gu \fInazwa\fP.
 .\"{{{  ${name#pattern}, ${name##pattern}
 .IP "\fB${\fP\fInazwa\fP\fB#\fP\fIwzorzec\fP\fB}\fP, \fB${\fP\fInazwa\fP\fB##\fP\fIwzorzec\fP\fB}\fP"
 Gdy \fIwzorzec\fP nak³ada siê na pocz±tek warto¶ci parametru \fInazwa\fP,
-wówczas pasuj±cy teks zostaje pominiêty w wynikajacym z tego podstawieniu. 
-Pojedyñczy \fB#\fP oznacza najkrótsze mo¿liwe podpasowanie pod wzorzec, a daw \fB#\fP
-oznaczaj± jak najd³u¿sze podpasowanie.
+wówczas pasuj±cy tekst zostaje pominiêty w wynikajacym z tego podstawieniu. 
+Pojedynczy \fB#\fP oznacza najkrótsze mo¿liwe dopasowanie do wzorca, a
+dwa \fB#\fP oznaczaj± jak najd³u¿sze podpasowanie.
 .\"}}}
 .\"{{{  ${name%pattern}, ${name%%pattern}
 .IP "\fB${\fP\fInazwa\fP\fB%\fP\fIwzorzec\fP\fB}\fP, \fB${\fP\fInazwa\fP\fB%%\fP\fIwzorzec\fP\fB}\fP"
@@ -754,13 +746,12 @@ koñca warto¶ci.
 .\"}}}
 .\"{{{  special shell parameters
 .PP
-Nastêpuj±ce specjalne parametry zostaja ustawione domy¶nie przez otoczkê
+Nastêpuj±ce specjalne parametry zostaj± ustawione domy¶lnie przez pow³okê
 i nie mo¿na przyporz±dkowywaæ jawnie warto¶ci nadanych:
 .\"{{{  !
 .IP \fB!\fP
-Id ostatniego zastartowanego w tle procesu. Je¶li nie ma
-aktualnie procesów zastartowanych w tle, wówczas parametr ten jest 
-nienastawiony.
+Id ostatniego uruchomionego w tle procesu. Je¶li nie ma aktualnie procesów
+uruchomionych w tle, wówczas parametr ten jest nieustawiony.
 .\"}}}
 .\"{{{  #
 .IP \fB#\fP
@@ -769,34 +760,34 @@ Ilo¶æ parametrów pozycyjnych (\fItzn.\fP, \fB$1\fP, \fB$2\fP,
 .\"}}}
 .\"{{{  $
 .IP \fB$\fP
-ID procesu odpowiadaj±cego danej otoczce lub PID pierwotnej otoczki,
-je¶li mamy do czynienia z  podotoczk±.
+ID procesu odpowiadaj±cego danej pow³oce lub PID pierwotnej pow³oki,
+je¶li mamy do czynienia z podpow³ok±.
 .\"}}}
 .\"{{{  -
 .IP \fB\-\fP
-Konkatenecja bierz±cych opcji jednoliterkowych
+Konkatenecja bie¿±cych opcji jednoliterowych
 (patrz komenda \fBset\fP poni¿ej, aby poznaæ dostêpne opcje).
 .\"}}}
 .\"{{{  ?
 .IP \fB?\fP
-Status wynikowy ostatniej wykonanej  nieasynchronicznej komendy.
-Je¶li ostatnia komenda zosta³a zabita sygna³em, wówczas, \fB$?\fP 
+Kod wyj¶cia ostatniej wykonanej komendy nieasynchronicznej.
+Je¶li ostatnia komenda zosta³a zabita sygna³em, wówczas \fB$?\fP 
 przyjmuje warto¶æ 128 plus numer danego sygna³u.
 .\"}}}
 .\"{{{  0
 .IP "\fB0\fP"
-Nazwa pod jak± dana otoczka zosta³a wywo³ana (\fItzn.\fP, \fBargv[0]\fP), lub
-\fBnazwa komendy\fP je¶li zosta³a ona wywo³ana przy urzyciu opcji \fB\-c\fP 
+Nazwa, pod jak± dana pow³oka zosta³a wywo³ana (\fItzn.\fP, \fBargv[0]\fP), lub
+\fBnazwa komendy\fP je¶li zosta³a ona wywo³ana przy u¿yciu opcji \fB\-c\fP 
 i \fBnazwa komendy\fP zosta³a podana, lub argument \fIplik\fP,
 je¶li takowy zosta³ podany.
-Je¶li opcja \fBposix\fP nie jest nastawiona, to \fB$0\fP zawiera
+Je¶li opcja \fBposix\fP nie jest ustawiona, to \fB$0\fP zawiera
 nazwê bie¿±cej funkcji lub skryptu.
 .\"}}}
 .\"{{{  1-9
 .IP "\fB1\fP ... \fB9\fP"
-Pierwszych dziewiêc parametrów pozycyjnych podanych otoczce, czy
-funkcji lub \fB.\fP-skriptowi.
-Dostêp do dlaszych parametrów pozycyjnych odbywa siê przy pomocy
+Pierwszych dziewiêæ parametrów pozycyjnych podanych pow³oce, czy
+funkcji lub \fB.\fP-skryptowi.
+Dostêp do dalszych parametrów pozycyjnych odbywa siê przy pomocy
 \fB${\fP\fIliczba\fP\fB}\fP.
 .\"}}}
 .\"{{{  *
@@ -804,9 +795,9 @@ Dostêp do dlaszych parametrów pozycyjnych odbywa siê przy pomocy
 Wszystkie parametry pozycyjne (z wyj±tkiem parametru 0), 
 \fItzn.\fP, \fB$1 $2 $3\fP....
 Gdy u¿yte poza podwójnymi cudzys³owami, wówczas parametry zostaj±
-rozgraniczone w pojedyñcze s³owa
+rozgraniczone w pojedyncze s³owa
 (podlegaj±ce rozgraniczaniu s³ów); je¶li u¿yte pomiêdzy 
-podwójnymi cudzys³owami, wowczas parametry zostaj± rozgraniczone
+podwójnymi cudzys³owami, wówczas parametry zostaj± rozgraniczone
 pierwszym znakiem podanym przez parametr \fBIFS\fP
 (albo pustymi ci±gami znaków, je¶li \fBIFS\fP jest zerowy).
 .\"}}}
@@ -816,22 +807,21 @@ Tak jak \fB$*\fP, z wyj±tkiem zastosowania w podwójnych cudzys³owach,
 gdzie oddzielne s³owo zostaje wygenerowane dla ka¿dego parametru
 pozycyjnego z osobna \- je¶li brak parametrów pozycyjnych,
 wówczas nie generowane jest ¿adne s³owo
-("$@" mo¿e byæ uzyte aby otrzymaæ dostê bezpo¶redni do argumentów
+("$@" mo¿e byæ u¿yte aby otrzymaæ dostêp bezpo¶redni do argumentów
 bez utraty argumentów zerowych lub rozgraniczania ich przerwami).
 .\"}}}
 .\"}}}
 .\"{{{  general shell parameters
 .PP
-Nastêpuj±ce parametry zostaj± nastawione przez otoczkê:
+Nastêpuj±ce parametry s± ustawiane przez pow³okê:
 .\"{{{  _
 .IP "\fB_\fP \fI(podkre¶lenie)\fP"
-Gdy jaka¶ komenda zostaje wykonywana prze otoczkê, ten parametrt przyjmuje
-w otoczeniu odpowiedniego nowego procesu warto¶æ tropu prowadz±cego
-do tej¿e komendy.
-W interakcyjnym trybie pracy, ten parametr przyjmuje w pierowtej otoczce
-ponadto warto¶æ ostatniego s³owo poprzedniej komendy
-Podczas warto¶ciowania wiadomosci typu \fBMAILPATH\fP,
-parametr ten zawiera wiêc nazwê pliku który siê zmieni³
+Gdy jaka¶ komenda zostaje wykonywana przez pow³okê, ten parametr przyjmuje
+w otoczeniu odpowiedniego nowego procesu warto¶æ ¶cie¿ki tej¿e komendy.
+W interakcyjnym trybie pracy, ten parametr przyjmuje w pierwotnej pow³oce
+ponadto warto¶æ ostatniego s³owa poprzedniej komendy
+Podczas warto¶ciowania wiadomoæci typu \fBMAILPATH\fP,
+parametr ten zawiera wiêc nazwê pliku, który siê zmieni³
 (patrz parametr \fBMAILPATH\fP poni¿ej).
 .\"}}}
 .\"{{{  CDPATH
@@ -840,13 +830,13 @@ Trop do przeszukiwania dla wbudowanej komendy \fBcd\fP.
 Dzia³a tak samo jak
 \fBPATH\fP dla katalogów nierozpoczynajacych siê od \fB/\fP 
 w komendach \fBcd\fP.
-Proszê zwróciæ uwagê, i¿ je¶li CDPATH jest nastawiony i nie zwaiera ani
-\fB.\fP ani pustego tropu, to wówczas katalog bie¿±cy nie zostaje przeszukiwany.
+Proszê zwróciæ uwagê, i¿ je¶li CDPATH jest ustawiony i nie zawiera ani
+\fB.\fP ani ¶cie¿ki pustej, to wówczas katalog bie¿±cy nie jest przeszukiwany.
 .\"}}}
 .\"{{{  COLUMNS
 .IP \fBCOLUMNS\fP
 Ilo¶æ kolumn terminala lub okienka.
-Obecnie nastawiany warto¶ci± \fBcols\fP zwracan± przez komendê
+Obecnie ustawiany warto¶ci± \fBcols\fP zwracan± przez komendê
 \fIstty\fP(1), je¶li ta warto¶æ nie wynosi zera.
 Parametr ten ma znaczenia w interakcyjnym trybie edycji wiersza komendy
 i dla komend \fBselect\fP, \fBset \-o\fP oraz \fBkill \-l\fP, w celu
@@ -854,21 +844,21 @@ w³a¶ciwego formatowania zwracanych informacji.
 .\"}}}
 .\"{{{  EDITOR
 .IP \fBEDITOR\fP
-Je¶li nie zosta³ nastawiony parametr \fBVISUAL\fP, wówczas kontroluje on
-tryb edycj wiersza komendy w otoczkach interakcyjnych.
+Je¶li nie zosta³ ustawiony parametr \fBVISUAL\fP, wówczas kontroluje on
+tryb edycj wiersza komendy w pow³okach interakcyjnych.
 Patrz parametr \fBVISUAL\fP poni¿ej, aby dowiedzieæ siê jak to dzia³a.
 .\"}}}
 .\"{{{  ENV
 .IP \fBENV\fP
-Je¶li parametr ten oka¿e siê byæ nastawionym po przetworzeniu
+Je¶li parametr ten oka¿e siê byæ ustawionym po przetworzeniu
 wszelkich plików profilowych, wówczas jego rozwinieta warto¶æ zostaje
-wyko¿ystana jako nazwa pliku zawieraj±cego dalsze komendy inicjalizacyjne
-otoczki.  Zwykle zwiera on definicje funkcji i aliasów.
+wykorzystana jako nazwa pliku zawieraj±cego dalsze komendy inicjalizacyjne
+pow³oki. Zwykle zwiera on definicje funkcji i aliasów.
 .\"}}}
 .\"{{{  ERRNO
 .IP \fBERRNO\fP
-Ca³kowita warto¶æ odpowiadaj±ca zmiennej errno otoczki 
-\(em wskazuje przyczynê wyst±pienia b³êdu, gdy ostatnie wywoa³nie
+Ca³kowita warto¶æ odpowiadaj±ca zmiennej errno pow³oki 
+\(em wskazuje przyczynê wyst±pienia b³êdu, gdy ostatnie wywo³anie
 systemowe nie powiod³o siê.
 .\" todo: ERRNO variable
 .sp
@@ -876,9 +866,9 @@ Jak dotychczas niezimplementowe.
 .\"}}}
 .\"{{{  EXECSHELL
 .IP \fBEXECSHELL\fP
-Je¶li nastawiono, to wówczas zawiera otoczkê, jakiej nale¿y u¿yæ
-do wykonywania komend których niezdo³a³ wykonaæ \fIexecve\fP(2) 
-i które nie zaczynaja siê od ci±gu `\fB#!\fP \fIotoczka\fP'.
+Je¶li ustawiono, to wówczas zawiera pow³okê, jakiej nale¿y u¿yæ
+do wykonywania komend, których nie zdo³a³ wykonaæ \fIexecve\fP(2),
+a które nie zaczynaj± siê od ci±gu `\fB#!\fP \fIpow³oka\fP'.
 .\"}}}
 .\"{{{  FCEDIT
 .IP \fBFCEDIT\fP
@@ -886,7 +876,7 @@ Edytor u¿ywany przez komendê \fBfc\fP (patrz poni¿ej).
 .\"}}}
 .\"{{{  FPATH
 .IP \fBFPATH\fP
-Podobnie jak \fBPATH\fP, je¶li otoczka natrafi na niezdefiniowan± 
+Podobnie jak \fBPATH\fP, je¶li pow³oka natrafi na niezdefiniowan± 
 funkcjê podczas pracy, stosowane do lokalizacji pliku zawieraj±cego definicjê
 tej funkcji.
 Równie¿ przeszukiwane, gdy komenda nie zosta³a odnaleziona przy
@@ -898,14 +888,14 @@ Patrz Funkcje poni¿ej co do dalszych informacji.
 Nazwa pliku u¿ywanego do zapisu historii komend.
 Je¶li warto¶æ zosta³a ustalona, wówczas historia zostaje za³adowana
 z danego pliku.
-Podobnie wielokrotne wcielenia otoczki bêd± ko¿ysta³y z jednej
+Podobnie wielokrotne wcielenia pow³oki bêd± korzysta³y z jednej
 historii, je¶li dla nich warto¶ci parametru
 \fBHISTFILE\fP wskazuje na jeden i ten sam plik.
 .br
 UWAGA: je¶li HISTFILE nie zosta³o ustawione, wówczas ¿aden plik historii
-nie zostaje u¿yty.  W originalnej wersji otoczki
+nie zostaje u¿yty.  W oryginalnej wersji pow³oki
 Korna natomiast, przyjmuje siê domy¶lnie \fB$HOME/.sh_history\fP;
-w przysz³o¶ci mo¿e pdksh, bêdzie równie¿ sotoswa³ domy¶lny
+w przysz³o¶ci mo¿e pdksh, bêdzie równie¿ stosowa³ domy¶lny
 plik historii.
 .\"}}}
 .\"{{{  HISTSIZE
@@ -915,7 +905,7 @@ Ilo¶æ komend zapamiêtywana w historii, domy¶lnie 128.
 .\"{{{  HOME
 .IP \fBHOME\fP
 Domy¶lna warto¶æ dla komendy \fBcd\fP oraz podstawiana pod
-niewycytowane \fB~\fP (patrz Rozwijanie Szlaczka poni¿ej).
+niewycytowane \fB~\fP (patrz Rozwijanie Tyldy poni¿ej).
 .\"}}}
 .\"{{{  IFS
 .IP \fBIFS\fP
@@ -926,11 +916,11 @@ prze³amanie wiersza. Szczególy zosta³y opisane w punkcie Podstawienia
 powy¿ej.
 .br
 \fBUwaga:\fP ten parametr nie zostaje importowany z otoczenia, 
-podczas odpalania otoczki.
+podczas odpalania pow³oki.
 .\"}}}
 .\"{{{  KSH_VERSION
 .IP \fBKSH_VERSION\fP
-Wersja i data kompilacji otoczki (tylko do otczytu).
+Wersja i data kompilacji pow³oki (tylko do otczytu).
 Patrz równie¿ na komedy wersji w Emacsowej Interakcyjnej Edycji Wiersza 
 Komendy i Edycji Wiersza Vi poni¿ej.
 .\"}}}
@@ -951,79 +941,78 @@ Jeszcze nie zimplementowane.
 .\"}}}
 .\"{{{  MAIL
 .IP \fBMAIL\fP
-Je¶li nastawiony, to u¿ytkownik jest informaowany
-o nadej¶ciu nowej poczty do ustawionego tam pliku docelowego.
-Ten parametr jest ignorowany, je¶li
-zosta³ nastawiony parametr \fBMAILPATH\fP.
+Je¶li ustawiony, to u¿ytkownik jest informowany o nadej¶ciu nowej poczty
+do wymienionego w tej opcji pliku docelowego.
+Ten parametr jest ignorowany, je¶li zosta³ ustawiony parametr
+\fBMAILPATH\fP.
 .\"}}}
 .\"{{{  MAILCHECK
 .IP \fBMAILCHECK\fP
-Jak czêsto otoczka ma sprawdzaæ, czy pojawi³a siê
-w plikach podanych poprzez \fBMAIL\fP lub \fBMAILPATH\fP nowa poczta. 
-Je¶li 0, to otoczka sprawdza przed ka¿d± now± zachêt±.  
+Jak czêsto pow³oka ma sprawdzaæ, czy pojawi³a siê nowa poczta
+w plikach podanych przez \fBMAIL\fP lub \fBMAILPATH\fP.
+Je¶li 0, to pow³oka sprawdza przed ka¿d± now± zachêt±.
 Warto¶ci± domy¶ln± jest 600 (10 minut).
 .\"}}}
 .\"{{{  MAILPATH
 .IP \fBMAILPATH\fP
-Lista plików sprawdzanych o now± pocztê.  Lista ta jest rozdzielana
-dwukropkami, ponadto po nazwie ka¿dego z plików mo¿na podaæ
-\fB?\fP i wiadomo¶æ która ma byæ wy¶wietlona, je¶li nadesz³a nowa poczta.  
-Podstawienia komend parametrów i arytmetyczne zostaj± wykonane na
-danej wiadomo¶ci. Podczas postawieñ parametr \fB$_\fP
-zawiera nazwê tego¿ pliku.
-Domy¶lnym zawiadomieniem jest \fByou have mail in $_\fP 
+Lista plików sprawdzanych w porzukiwaniu nowej poczty.  Lista ta rozdzielana
+jest dwukropkami, ponadto po nazwie ka¿dego z plików mo¿na podaæ
+\fB?\fP i wiadomo¶æ, która ma byæ wy¶wietlona, je¶li nadesz³a nowa poczta.  
+Dla danej wiadomo¶ci zostan± wykonane podstawienia komend, parametrów
+i arytmetyczne. Podczas podstawieñ parametr \fB$_\fP zawiera nazwê
+tego¿ pliku.
+Domy¶lnym zawiadomieniem o nowej poczcie jest \fByou have mail in $_\fP 
 (\fBmasz pocztê w $_\fP).
 .\"}}}
 .\"{{{  OLDPWD
 .IP \fBOLDPWD\fP
 Poprzedni katalog roboczy.
 Nieustalony, je¶li \fBcd\fP nie zmieni³o z powodzeniem
-katalogu od czasu odpalenie otoczki lub je¶li otoczka nie wie gdzie
-siê aktualnie obraca.
+katalogu od czasu uruchomienia pow³oki lub je¶li pow³oka nie wie, gdzie
+siê aktualnie znajduje.
 .\"}}}
 .\"{{{  OPTARG
 .IP \fBOPTARG\fP
-Podczas u¿ywania \fBgetopts\fP, zawiera argument dla aktulanie
+Podczas u¿ywania \fBgetopts\fP zawiera argument dla aktualnie
 rozpoznawanej opcji, je¶li jest on oczekiwany.
 .\"}}}
 .\"{{{  OPTIND
 .IP \fBOPTIND\fP
-Indeks ostoaniego przetworzonego argumentu podczas u¿ywania \fBgetopts\fP.
-Przyporz±dkowanie 1 temu parametrowi powoduje, ¿e \fBgetopts\fP
-przetwarza arugmenty od pocz±tku, gdy zostanie wywo³ane ponownie.
+Indeks ostatniego przetworzonego argumentu podczas u¿ywania \fBgetopts\fP.
+Przyporz±dkowanie 1 temu parametrowi spowoduje, ¿e ponownie wywo³ane
+\fBgetopts\fP przetworzy argumenty od pocz±tku.
 .\"}}}
 .\"{{{  PATH
 .IP \fBPATH\fP
 Lista rodzielonych dwukropkiem od siebie katalogów, które s± przeszukiwane
-podczas odnajdywania jakiej¶ komendy lub plików typu \fB.\fP.
-Pusty ci±g wynikaj±cy z poprzedzaj±cego lub nastêpuj±cego dwukropka,
-albo dwuch s±siednich dwukropków, jest trakowany jako `.',
-czyli katalog bierz±cy.
+podczas odnajdywania jakiej¶ komendy lub plików typu \fB.\fP. Pusty ³añcuch
+wynikaj±cy z pocz±tkowego lub koñcowego dwukropka, albo dwóch s±siednich
+dwukropków, jest traktowany jako `.', czyli katalog bie¿±cy.
 .\"}}}
 .\"{{{  POSIXLY_CORRECT
 .IP \fBPOSIXLY_CORRECT\fP
-Nstawienie tego parametru powoduje w³±czenie opcji \fBposix\fP.
+Ustawienie tego parametru powoduje w³±czenie opcji \fBposix\fP.
 Patrz Tryp POSIX-owy poni¿ej.
 .\"}}}
 .\"{{{  PPID
 .IP \fBPPID\fP
-Identyfikator ID procesu rodzicielskiego otoczki (tylko odczyt).
+Identyfikator ID procesu rodzicielskiego pow³oki (tylko odczyt).
 .\"}}}
 .\"{{{  PS1
 .IP \fBPS1\fP
-\fBPS1\fP zachêcacz pierwszego rzêdu dla otoczek interakcyjnych.
-Podlega podstawieniom parametrów, komend i arytmetycznym, poand to
+\fBPS1\fP podstawowy symbol zachêty dla pow³ok interakcyjnych.
+Podlega podstawieniom parametrów, komend i arytmetycznym, ponadto
 \fB!\fP zostaje zast±pione numerem kolejnym aktualnej komendy
 (patrz komenda \fBfc\fP
-poni¿ej).  Sam znak ! mo¿e zostaæ umieszczony w zachêcaczu stosuj±c 
+poni¿ej).  Sam znak ! mo¿e zostaæ umieszczony w zachêcie przy u¿yciu 
 !! w PS1.
 Zauwa¿, ¿e poniewa¿ edytory wiersza komendy staraj± siê obliczyæ,
-jak d³ugi jest zachêcacz, (aby móc ustaliæ, ile miejsca pozostaje
-wolnego do  parwego brzegu ekranu), sekwencje wyj¶ciowe w zachêcaczu 
+jak d³ugi jest symbol zachêty, (aby móc ustaliæ, ile miejsca pozostaje
+wolnego do prawego brzegu ekranu), sekwencje wyj¶ciowe w zachêcie 
 zwykle wprowadzaj± pewien ba³agan.
-Istnije mo¿liwo¶æ podpowiedzenia otoczce, ¿eby nie uwzglêdnia³a
+Istnieje mo¿liwo¶æ podpowiedzenia pow³oce, ¿eby nie uwzglêdnia³a
 pewnych ci±gów znaków (takich jak kody wyj¶cia) poprzez podanie
-predsionka na pocz±tku zachêcacza bêd±cego niewy¶wietlalnym znakiem
+przedrostka na pocz±tku symbolu zachêty bêd±cego niewy¶wietlalnym znakiem
 (takim jak np. control-A) z nastêpstwem prze³amania wiersza,
 oraz odgraniczaj±c nastêpnie kody wyj¶cia przy pomocy tego 
 niewy¶wietlalnego znaku.
@@ -1035,13 +1024,13 @@ u¿ytkowników, a `\fB#\ \fP' dla root-a..
 .\"}}}
 .\"{{{  PS2
 .IP \fBPS2\fP
-Durugorzêdny zachêcacz, o domy¶lnej warto¶ci `\fB>\fP ', który
-jest stosowany, gdy wymagane s± dalsze wprowadzenia w celu
+Drugorzêdna zachêta, o domy¶lnej warto¶ci `\fB>\fP ', która
+jest stosowana, gdy wymagane s± dalsze wprowadzenia w celu
 skompletowania komendy.
 .\"}}}
 .\"{{{  PS3
 .IP \fBPS3\fP
-Zachêcacz stosowany przez wyra¿enie
+Zachêta stosowana przez wyra¿enie
 \fBselect\fP podczas wczytywania wyboru z menu.
 Domy¶lnie `\fB#?\ \fP'.
 .\"}}}
@@ -1054,12 +1043,12 @@ Domy¶lnie `\fB+\ \fP'.
 .\"}}}
 .\"{{{  PWD
 .IP \fBPWD\fP
-Obecny katalog roboczy. Mo¿e byæ nienastawiony lub zerowy, je¶li
-otoczka nie wie gdzie siê znajduje.
+Obecny katalog roboczy. Mo¿e byæ nieustawiony lub zerowy, je¶li
+pow³oka nie wie gdzie siê znajduje.
 .\"}}}
 .\"{{{  RANDOM
 .IP \fBRANDOM\fP
-Prosty generator liczb pseudo przypadkowych. Za ka¿dym razem, gdy
+Prosty generator liczb pseudolosowych. Za ka¿dym razem, gdy
 odnosimy siê do \fBRANDOM\fP jego warto¶ci zostaje przyporz±dkowana
 nastêpna liczba z przypadkowego ci±gu liczb.
 Miejsce w danym ci±gu mo¿e zostaæ ustawione nadaj±c
@@ -1069,68 +1058,68 @@ warto¶æ \fBRANDOM\fP (patrz \fIrand\fP(3)).
 .IP \fBREPLY\fP
 Domy¶lny parametr dla komendy
 \fBread\fP, je¶li nie pozostan± podane jej ¿adne nazwy.
-Stosowany równie¿ we wstêgach \fBselect\fP do zapisu warto¶ci
+Stosowany równie¿ w pêtlach \fBselect\fP do zapisu warto¶ci
 wczytywanej ze standardowego wej¶cia.
 .\"}}}
 .\"{{{  SECONDS
 .IP \fBSECONDS\fP
-Sekundy, które up³ynê³y od czasu odpalenia otoczki, lub je¶li
+Sekundy, które up³ynê³y od czasu odpalenia pow³oki, lub je¶li
 parametrowi zosta³a nadana warto¶æ ca³kowita, ilo¶æ sekund od czasu
 nadania tej warto¶ci plus ta warto¶æ.
 .\"}}}
 .\"{{{  TMOUT
 .IP \fBTMOUT\fP
-Gdy nastawiony na pozytywn± warto¶æ ca³kowit±, wiêksz± od zera,
-wówczas ustala w interkacyjnej otoczce czas w sekundach, przez jaki
-bêdzie ona czeka³a na wprowadzenie po wy¶wietleniu pierwszorzêdnego
-zachêcacza (\fBPS1\fP).  Po przekroczeniu tego czasu otoczka zostaje 
+Gdy ustawiony na pozytywn± warto¶æ ca³kowit±, wiêksz± od zera,
+wówczas ustala w interkacyjnej pow³oce czas w sekundach, przez jaki
+bêdzie ona czeka³a na wprowadzenie po wy¶wietleniu podstawowego symbolu
+zachêty (\fBPS1\fP).  Po przekroczeniu tego czasu pow³oka zostaje 
 opuszczona.
 .\"}}}
 .\"{{{  TMPDIR
 .IP \fBTMPDIR\fP
-Katalog w którym tymczasowe pliki otoczki zostaj± umieszczone.
-Je¶li dany parametr nie zosta³ nastawiony, lub gdy nie zawiera 
-pe³nego tropu zapisywalnego katalogy, wówczas domy¶lnie tymczasowe
+Katalog, w którym umieszczane s± tymczasowe pliki pow³oki.
+Je¶li parametr ten nie zosta³ ustawiony lub gdy nie zawiera 
+pe³nej ¶cie¿ki do zapisywalnego katalogu, wówczas domy¶lnie tymczasowe
 pliki mieszcz± siê w \fB/tmp\fP.
 .\"}}}
 .\"{{{  VISUAL
 .IP \fBVISUAL\fP
-Je¶li zosta³ nastawiony, ustala tryb edycji wiersza komend w otoczkach
-interakcyjnych. Je¶li sotatni cz³onek tropu podanego w danym
-parametrze zawierz ci±g znaków \fBvi\fP, \fBemacs\fP lub \fBgmacs\fP,
-to odopiwednio zostaje uaktywniony tryb edycji: vi, emacs lub gmacs
+Je¶li zosta³ ustawiony, ustala tryb edycji wiersza komend w pow³okach
+interakcyjnych. Je¶li ostatni element ¶cie¿ki podanej w tym
+parametrze zawiera ci±g znaków \fBvi\fP, \fBemacs\fP lub \fBgmacs\fP,
+to odpowiednio zostaje uaktywniony tryb edycji: vi, emacs lub gmacs
 (Gosling emacs).
 .\"}}}
 .\"}}}
 .\"}}}
 .\"{{{  Tilde Expansion
-.SS "Rozwijanie Szlaczków"
-Roziwaje szlaczków, które ma miejsce równolegle do podstawieñ parametrów,
+.SS "Rozwijanie Tyld"
+Rozwijanie znaków tyldy, które ma miejsce równolegle do podstawieñ parametrów,
 zostaje wykonane na s³owach rozpoczynaj±cych siê niewycytowanym
-\fB~\fP.  Znaki po szlaczku do pierwszego
+\fB~\fP.  Znaki po tyldzie do pierwszego
 \fB/\fP, je¶li wystêpuje takowy, s± domy¶lnie traktowane jako
-nazwa u¿ytkownika.  Je¶li nazwa u¿ytkownia jest pusta, to \fB+\fP lub \fB\-\fP,
+nazwa u¿ytkownika.  Je¶li nazwa u¿ytkownika jest pusta, to \fB+\fP lub \fB\-\fP,
 warto¶æ parametrów \fBHOME\fP, \fBPWD\fP, lub \fBOLDPWD\fP zostaje
 odpowiednio podstawiona.  W przeciwnym razie zostaje 
 przeszukany plik kodów dostêpu w celu odnalezienia danej nazwy
-u¿ytkownika, i w miejsce rozwiniêcia szlaczka zostaje
-podstawiony katalog domowy danego u¿ytkownika
-Je¶li nazwa u¿ytkownika nie zostaje odnalezione w pliku hase³,
+u¿ytkownika, i w miejsce rozwiniêcia tyldy zostaje
+podstawiony katalog domowy danego u¿ytkownika.
+Je¶li nazwa u¿ytkownika nie zostaje odnalezione w pliku hase³
 lub gdy jakiekolwiek wycytowanie albo podstawienie parametru
 wystêpuje  w nazwie u¿ytkownika, wówczas nie zostaje wykonane ¿adne 
 podstawienie.
 .PP
-W nastawieniach parametrów
+W ustawieniach parametrów
 (tych poprzedzaj±cych proste komendy lub tych wystêpuj±cych w argumentach
 dla \fBalias\fP, \fBexport\fP, \fBreadonly\fP,
-i \fBtypeset\fP), rozwijanie szlaczków zostaje wykonywane po
+i \fBtypeset\fP), rozwijanie znaków tyld zostaje wykonywane po
 jakimkolwiek niewycytowanym (\fB:\fP), i nazwy u¿ytkowników zostaj± ujête
 w dwukropki.
 .PP
-Katalogi domowe poprzednio rozwinietych nazw u¿ytkowników zostaj±
+Katalogi domowe poprzednio rozwiniêtych nazw u¿ytkowników zostaj±
 umieszczone w pamiêci podrêcznej i w ponownym u¿yciu zostaj± stamt±d
 pobierane.  Komenda \fBalias \-d\fP mo¿e byæ u¿yta do wylistowania, 
-zmiany i dodawnia do tej pamiêci podrêcznej
+zmiany i dodania do tej pamiêci podrêcznej
 (\fIw szczególno¶ci\fP, `alias \-d fac=/usr/local/facilities; cd
 ~fac/bin').
 .\"}}}
@@ -1144,12 +1133,12 @@ zostaj± rozwiniête w N wyrazów, z których ka¿dy zawiera konkatenacjê
 \fIprefiks\fP, \fIci±g\fPi i  \fIsuffiks\fP
 (\fIw szczegóno¶ci.\fP, `a{c,b{X,Y},d}e' zostaje rozwiniête do czterech wyrazów:
 ace, abXe, abYe, and ade).
-Jak ju¿ wy¿ej wspomniano, rozwiniêci nawiasów mog± byæ nak³adane na siebie
+Jak ju¿ wy¿ej wspomniano, rozwiniêcia nawiasów mog± byæ nak³adane na siebie
 i wynikaj±ce s³owa nie s± sortowane.
 Wyra¿enia nawiasowe musz± zawieraæ niewycytowany przecinek
 (\fB,\fP) aby nastêpi³o rozwijanie
 (\fItak wiêc\fP, \fB{}\fP i \fB{foo}\fP nie zostaj± rozwiniête).
-Rozwiniêcie nawiasów nastêpuje po podstawnieniach parametrów i przed
+Rozwiniêcie nawiasów nastêpuje po podstawieniach parametrów i przed
 generacj± nazw plików
 .\"}}}
 .\"{{{  File Name Patterns
@@ -1158,23 +1147,23 @@ generacj± nazw plików
 Wzorcem nazwy pliku jest s³owo zwieraj±ce jeden lub wiêcej z 
 niewycytownych symboli \fB?\fP lub
 \fB*\fP lub sekwencji \fB[\fP..\fB]\fP.  
-Po wykoaniu rozwiniêci± nawiasów, otoczka zamienia wzorce nazw plików
-na uporz±dkowane nazwy plików które pod nadym wzorzec pasuj±
+Po wykonaniu rozwiniêcia nawiasów, pow³oka zamienia wzorce nazw plików
+na uporz±dkowane nazwy plików, które pasuj± do tego wzorca           
 (je¶li ¿adne pliki nie pasuj±, wówczas dane s³owo zostaje pozostawione
-bez zmian).  Elemety wzorców posiadaj±nastêpuj±ce znaczenia:
+bez zmian).  Elemety wzorców posiadaj± nastêpuj±ce znaczenia:
 .IP \fB?\fP
-obejmuje dowolny pojedyñczy znak.
+obejmuje dowolny pojedynczy znak.
 .IP \fB*\fP
-obejmuje dowoln± sekwencjê znaczków.
+obejmuje dowoln± sekwencjê znaków.
 .IP \fB[\fP..\fB]\fP
-obejmuje ka¿dy ze znaczków pomiêczy klamrami.  Zakresy znaczków mog±
-zostaæ podane rozczielajac dwa znaczki poprzez \fB\-\fP, \fItzn.\fP,
-\fB[a0\-9]\fP objemuje literê \fBa\fP lub dowoln± cyfrê.
+obejmuje ka¿dy ze znaków pomiêdzy klamrami. Mo¿na podaæ zakresy znaków
+u¿ywaj±c \fB\-\fP pomiêdzy dwoma ograniczaj±cymi zakres znakami, tzn.,
+\fB[a0\-9]\fP obejmuje literê \fBa\fP lub dowoln± cyfrê.
 Aby przedstawiæ sam znak
 \fB\-\fP nale¿y go albo wycytowaæ albo musi byæ to pierwszy lub ostatni znak
 w li¶cie znaków.  Podobnie \fB]\fP musi byæ wycytowywane albo pierwszym
 lub ostatnim znakiem w li¶cie je¶li ma oznaczaæ samego siebie a nie zakoñczenie
-listy.  Równie¿ \fB!\fP wystêpuj±cy na pocz±tmu listy posiada specjalne
+listy.  Równie¿ \fB!\fP wystêpuj±cy na pocz±tku listy posiada specjalne
 znaczenie (patrz poni¿ej), tak wiêc aby reprezentowa³ samego siebie
 musi zostaæ wycytowny lub wystêpowaæ dalej w li¶cie.
 .IP \fB[!\fP..\fB]\fP
@@ -1185,7 +1174,7 @@ obejmuje ka¿dy ci±g zawierajacy zero lub wiêcej wyst±pieñ podanych wzorców.
 Przyk³adowo: wzorzec \fB*(foo|bar)\fP obejmuje ci±gi
 `', `foo', `bar', `foobarfoo', \fIitp.\fP.
 .IP "\fB+(\fP\fIwzorzec\fP\fB|\fP ... \fP|\fP\fIwzorzec\fP\fB)\fP"
-obejmuje ka¿dy ci±g znaków obejumj±cy jedno lub wiêcej wyst±pieñ danych
+obejmuje ka¿dy ci±g znaków obejmuj±cy jedno lub wiêcej wyst±pieñ danych
 wzorców.
 Przyk³adowo: wzorzec \fB+(foo|bar)\fP obejmuje ci±gi
 `foo', `bar', `foobarfoo', \fIitp.\fP.
@@ -1204,19 +1193,19 @@ Przyk³adowo: wzorzec \fB!(foo|bar)\fP obejmuje wszystkie ci±gi poza
 wzorzec \fB!(?)*\fP obejmuje wszystkie ci±gi (proszê siê nad tym zastanowiæ).
 .PP
 Proszê zauwa¿yæ, ¿e wzorce w pdksh obecnie nigdy nie obejmuj± \fB.\fP i
-\fB..\fP, w przeciwieñstwie do roginalnej otoczki
-ksh, Bourn-a sh i bash-a, tak wiêc to bêdziemusia³o siê ewentualnie 
+\fB..\fP, w przeciwieñstwie do oryginalnej pow³oki
+ksh, Bourn-a sh i bash-a, tak wiêc to bêdzie musia³o siê ewentualnie 
 zmieniæ (na z³e).
 .PP
-Proszê zauwa¿yæ, ¿e powy¿sze elementy wzorców nigdy nie obejmuj± propki
-(\fB.\fP) na pocz±tku nazwy pliku ani pochy³ka (\fB/\fP), 
+Proszê zauwa¿yæ, ¿e powy¿sze elementy wzorców nigdy nie obejmuj± kropki
+(\fB.\fP) na pocz±tku nazwy pliku ani uko¶nika (\fB/\fP), 
 nawet gdy zosta³y one podane jawnie w sekwencji
 \fB[\fP..\fB]\fP; ponadto nazwy \fB.\fP i \fB..\fP
 nigdy nie s± obejmowane, nawet poprzez wzorzec \fB.*\fP.
 .PP
-Je¶li zosta³a nastawiona opcja \fBmarkdirs\fP, wówczas, 
+Je¶li zosta³a ustawiona opcja \fBmarkdirs\fP, wówczas, 
 wszelkie katalogi wynikaj±ce z generacji nazw plików
-zostaj± oznaczone zakoñczeniowym \fB/\fP.
+zostaj± oznaczone koñcz±cym \fB/\fP.
 .PP
 .\" todo: implement this ([[:alpha:]], \fIetc.\fP)
 POSIX-owe klasy znaków (\fItzn.\fP,
@@ -1224,25 +1213,25 @@ POSIX-owe klasy znaków (\fItzn.\fP,
 jak narazie nie zosta³y zimplementowane.
 .\"}}}
 .\"{{{  Input/Output Redirection
-.SS "Przekierunkowywanie Wej¶cia/Wyj¶cia"
+.SS "Przekierowanie Wej¶cia/Wyj¶cia"
 Podczas wykonywania komendy, jej standardowe wej¶cie, standardowe wyj¶cie
 i standardowe wyj¶cie b³êdów (odpowienio deskryptory plików 0, 1 i 2),
-zostaj± zwykle dziedziczone po otoczce.
-Trzema wyj±taki do tej regó³y s±, komendy w rurociagach, dla których
-standardowe lub standardowe wuj¶cie odpowieadaj± tym stalonym przez
-rurociag,  komendy asychroniczne stwarzane je¶li kontrola prac zosta³a
-wy³aczona, dla których standardowe wej¶cie zostaje ustawnioe na
-\fB/dev/null\fP, oraz komendy dla których jedno lub wiele z nastêpuj±cych
-przekierunkowañ zosta³o nastawione:
+zostaj± zwykle dziedziczone po pow³oce.
+Trzema wyj±tkami od tej regu³y s±, komendy w potokach, dla których
+standardowe lub standardowe wyj¶cie odpowiadaj± tym ustalonym przez
+potok, komendy asychroniczne stwarzane je¶li kontrola prac zosta³a
+wy³±czona, dla których standardowe wej¶cie zostaje ustawione na
+\fB/dev/null\fP, oraz komendy, dla których zosta³o ustawione jedno lub
+wiele z nastêpuj±cych przekierowañ:
 .IP "\fB>\fP \fIplik\fP"
 Standardowe wyj¶cie zostaje przekierowane do \fIplik\fP-u.  
 Je¶li \fIplik\fP nie istnieje, wówczas zostaje stworzony; 
-je¶li istnieje i jest to regularny plik oraz zosta³a nastawiona
+je¶li istnieje i jest to regularny plik oraz zosta³a ustawiona
 opcja \fBnoclobber\fP, wówczas wystêpuje b³±d, w przeciwnym razie
 dany plik zostaje odciêty do pocz±tku.
-Proszê zwróciæ uwagê i¿ oznacza to, ¿e komenda \fIjaka¶ < foo > foo\fP 
-otworzy plik \fIfoo\fP do odczytu a naztêpnie
-stasuje jego zawarto¶æ gdy otworzy go do zapisu,
+Proszê zwróciæ uwagê, i¿ oznacza to, ¿e komenda \fIjaka¶ < foo > foo\fP 
+otworzy plik \fIfoo\fP do odczytu a nastêpnie
+skasuje jego zawarto¶æ gdy otworzy go do zapisu,
 zanim \fIjaka¶\fP otrzyma szansê wyczytania czegokolwiek z \fIfoo\fP.
 .IP "\fB>|\fP \fIplik\fP"
 tak jak dla \fB>\fP, tylko ¿e zawarto¶æ pliku zostaje skasowana
@@ -1250,36 +1239,36 @@ niezale¿nie od ustawienia opcji \fBnoclobber\fP.
 .IP "\fB>>\fP \fIplik\fP"
 tak jak dla \fB>\fP, tylko ¿e je¶li dany plik ju¿ istnieje
 zostaje on rozszerzany zamiast kasowania poprzedniej jego zawaro¶ci.  
-Ponad to plik ten zostaje otwarty w trybie rozszerzania, tak wiêc
+Ponadto plik ten zostaje otwarty w trybie rozszerzania, tak wiêc
 wszelkiego rodzaju operacje zapisu na nim dotycz± jego aktualnego koñca.
 (patrz \fIopen\fP(2)).
 .IP "\fB<\fP \fIplik\fP"
-standardowe wej¶cie zostaje przekierunkowane na \fIplik\fP, 
-który zostaje otorzony do odczytu.
+standardowe wej¶cie zostaje przekierowane na \fIplik\fP, 
+który zostaje otwarty do odczytu.
 .IP "\fB<>\fP \fIplik\fP"
 tak jak dla \fB<\fP, tylko ¿e plik zostaje otworzony w trybie
 wpisu i czytanie.
 .IP "\fB<<\fP \fIznacznik\fP"
-po wczytaniu wiersza komendy zawieraj±cego tego rodzaju przekierunkowanie
-(zwane tu-dokumentem), otoczka kopiuje wiersze z komendy
+po wczytaniu wiersza komendy zawieraj±cego tego rodzaju przekierowanie
+(zwane tu-dokumentem), pow³oka kopiuje wiersze z komendy
 do tymczasowego pliku a¿ po natrafienie na wiersz
 odpowiadaj±cy \fIznacznik\fPowi.
-podczas wykonywania komendy standardowe wej¶cie zostaje przekierunkowane
+podczas wykonywania komendy standardowe wej¶cie zostaje przekierowane
 na dany plik tymczasowy.
 Je¶li \fIznacznik\fP nie zawiera wycytowanych znaków, zawarto¶æ danego
 pliku tymczasowego zostaje przetworzona tak, jakby zawiera³a siê w 
-podwujnych cudzys³owach za, ka¿dym razem gdy dana komenda zostaje wykonana.
+podwójnych cudzys³owach za ka¿dym razem gdy dana komenda zostaje wykonana.
 Tak wiêc zostaj± na nim wykonane podstawienia parametrów,
-komend i arytmetyczne wraz z interpretacj± wstecznego pochylnika 
+komend i arytmetyczne wraz z interpretacj± odwrotnego uko¶nika 
 (\fB\e\fP) i znaków wyj¶æ dla \fB$\fP, \fB`\fP, \fB\e\fP i \fB\enewline\fP.
-Je¶li wiele tu-dokumentów zostaje zastosowanych w jednym i tymsamym
+Je¶li wiele tu-dokumentów zostaje zastosowanych w jednym i tym samym
 wierszy komendy, wówczas zostaj± one zachowane w podanej kolejno¶ci.
 .IP "\fB<<-\fP \fIznacznik\fP"
 tak jak dla \fB<<\fP, tylko ¿e pocz±tkowe tabulatory
 zostaj± usuniête w tu-dokumencie.
 .IP "\fB<&\fP \fIfd\fP"
 standardowe wej¶cie zostaje powielone  z deskryptora pliku \fIfd\fP.
-\fIfd\fP mo¿e byæ pojedyñcz± cyfr±, wskazuj±c± na number
+\fIfd\fP mo¿e byæ pojedyncz± cyfr±, wskazuj±c± na number
 istniej±cego deskryptora pliku, literk±  \fBp\fP, wskazujac± na plik
 powi±zany w wyj¶ciem obecnego koprocesu, lub
 znakiem \fB\-\fP, wskazuj±cym, ¿e standardowe wej¶cie powinno zostaæ
@@ -1287,25 +1276,25 @@ zamkniête.
 .IP "\fB>&\fP \fIfd\fP"
 tak jak dla \fB<&\fP, tylko ¿e operacja dotyczy standardowego wyj¶cia.
 .PP
-W ka¿dym z powy¿szych przekierunkowañ, mo¿e zostaæ podany jawnie deskryptor
+W ka¿dym z powy¿szych przekierowañ, mo¿e zostaæ podany jawnie deskryptor
 pliku, którego ma ono dotyczyæ, (\fItzn.\fP, standardowego wej¶cia
 lub standard wyj¶cia) poprzez poprzedzaj±c± odpowiedni± pojedyñcz± cyfrê.
-podstawienia paramertór komend, arytmetyczne, szlaczków tak jak i
-(gdy otoczka jest interakcyjna) generacje nazw plików wszystkie 
+podstawienia paramertór komend, arytmetyczne, tyld tak jak i
+(gdy pow³oka jest interakcyjna) generacje nazw plików wszystkie 
 zostaj± wykonane na argumentach przekierowañ \fIplik\fP, \fInacznik\fP 
 i \fIfd\fP.
-Proszê jednak zwróciæ uwagê, i¿ wyniki wszelkiego rodzaju przekierunkowañ 
+Zauwa¿ jadnak¿e, i¿ wyniki wszelkiego rodzaju przekierowañ 
 plików zostaj± jedynie u¿yte je¶li zawieraj± jedynie nazwê jednego pliku;
 je¶li natomiast obejmuj± one wiele plików, wówczas zostaje zastosowane
 dane s³owo bez rozwiniêc wynikaj±cych z generacji nazw plików.
-proszê zwróciæ uwagê, i¿ w otoczkach ograniczonych, 
-przekierunkowania tworz±ce nowe pliki nie mog± byæ stosowane.
+Proszê zwróciæ uwagê, ¿e w pow³okach ograniczonych, 
+przekierowania tworz±ce nowe pliki nie mog± byæ stosowane.
 .PP
-Dla prostych komend, przekierunkowania mog± wystêpowaæ w dowolnym miejscu
+Dla prostych komend, przekierowania mog± wystêpowaæ w dowolnym miejscu
 komendy, w komendach z³o¿onych (wyra¿eniach \fBif\fP, \fIitp.\fP), 
-wszelkie przekierunkowani musz± znajdowaæ siê na koñcu.
-Przekierunkowania s± przetwarzane po tworzeniu ruroci±gów i w kolejno¶ci
-w której zosta³y podane, tak wiêc
+wszelkie przekierowania musz± znajdowaæ siê na koñcu.
+Przekierowania s± przetwarzane po tworzeniu potoków i w kolejno¶ci,
+w jakiej zosta³y podane, tak wiêc
 .RS
 \fBcat /foo/bar 2>&1 > /dev/null | cat \-n\fP
 .RE
@@ -1317,14 +1306,14 @@ Ca³kowite wyra¿enia arytmetyczne mog± byæ stosowane przy pomocy
 komendy \fBlet\fP, wewn±trz wyra¿eñ \fB$((\fP..\fB))\fP,
 wewn±trz dereferencji ³añcuchów (\fIw szczególno¶ci\fP, 
 \fInzwa\fP\fB[\fP\fIwyra¿enie\fP\fB]\fP),
-jako numerbyczne argumenty komendy \fBtest\fP,
+jako numeryczne argumenty komendy \fBtest\fP,
 i jako warto¶ci w przyporz±dkowywaniach do ca³kowitych parametrów.
 .PP
 Wyra¿enia mog± zawieraæ alfa-numeryczne identyfikatory parametrów,
 dereferencje ³añcuchów i ca³kowite sta³e. Mog± zostaæ równie¿
 po³±czone nastêpuj±cymi operatorami jêzyka C:
-(wymienione i ugrupowane z kolejno¶ci odpowiadaj±cej zwiêkszonej
-ich precedencji).
+(wymienione i zgrupowane w kolejno¶ci rosn±cego
+priorytetu).
 .TP
 Operatory unarne:
 \fB+ \- ! ~ ++ --\fP
@@ -1355,7 +1344,7 @@ Operatory binarne:
 \fB* / %\fP
 .TP
 Operatory trinarne:
-\fB?:\fP (precedencja jest bezpo¶redino wy¿sza od przyporz±dkowania)
+\fB?:\fP (priorytet jest bezpo¶rednio wy¿szy od przyporz±dkowania)
 .TP
 Operatory grupuj±ce:
 \fB( )\fP
@@ -1378,9 +1367,9 @@ arithmetyczna negacja (bit-w-bit).
 .IP "\fB++\fP"
 inkrement; musi byæ zastosowanym do parametru (a nie litera³u lub
 innego wyra¿enia) - parametr zostaje powiêkszony o 1.
-Je¶li zosta³ zastosowany jako operator prefiksowy, wówczas wynikiem jest 
+Je¶li zosta³ zastosowany jako operator przedrostkowy, wówczas wynikiem jest 
 inkrementowana warto¶æ parametru, a je¶li zosta³ zastosowany jako
-operator postfiksowy, to wynikiem jest pierwotna warto¶æ parametru.
+operator przyrostkowy, to wynikiem jest pierwotna warto¶æ parametru.
 .IP "\fB--\fP"
 podobnie do \fB++\fP, tylko, ¿e wynikiem jest dekrement parametru o 1.
 .IP "\fB,\fP"
@@ -1390,7 +1379,7 @@ wyra¿enia po prawej stronie.
 .IP "\fB=\fP"
 przyporz±dkowanie; zmiennej po lewej zostaje nadana warto¶æ po prawej.
 .IP "\fB*= /= %= += \-= <<= >>= &= ^= |=\fP"
-operatoray przyporz±dkowania; \fI<var> <op>\fP\fB=\fP \fI<expr>\fP 
+operatory przyporz±dkowania; \fI<var> <op>\fP\fB=\fP \fI<expr>\fP 
 jest tym samym co
 \fI<var>\fP \fB=\fP \fI<var> <op>\fP \fB(\fP \fI<expr>\fP \fB)\fP.
 .IP "\fB||\fP"
@@ -1411,19 +1400,19 @@ arytmetyczna koniunkacja (bit-w-bit).
 .IP "\fB==\fP"
 równo¶æ; wynikiem jest 1, je¶li obydwa argumenty s± sobie równe, 0 gdy nie.
 .IP "\fB!=\fP"
-nierówno¶c; wynikiem jest 0, je¶li obydwa arguemnty s± sobie równe, 1 gdy nie.
+nierówno¶æ; wynikiem jest 0, je¶li obydwa argumenty s± sobie równe, 1 gdy nie.
 .IP "\fB<\fP"
 mniejsze od; wynikiem jest 1, je¶li lewy argument jest mniejszy od prawego,
 0 gdy nie.
 .IP "\fB<= >= >\fP"
 mniejsze lub równe, wieksze lub równe, wiêksze od.  Patrz <.
 .IP "\fB<< >>\fP"
-przesuñ w lewo (prawo); wynikiem jst lewy argument z bitami przesuniêtymi
+przesuñ w lewo (prawo); wynikiem jest lewy argument z bitami przesuniêtymi
 na lewo (prawo) o ilo¶æ pól podan± w prawym argumencie.
 .IP "\fB+ - * /\fP"
 suma, ró¿nica, iloczyn i iloraz.
 .IP "\fB%\fP"
-reszta; wynikiem jest reszta z dzielenia lewego arguemntu prze prawy.  
+reszta; wynikiem jest reszta z dzielenia lewego arguemntu przez prawy.  
 Znak wyniku jest nieustalony, je¶li jeden z argumentów jest negatywny.
 .IP "\fI<arg1>\fP \fB?\fP \fI<arg2>\fP \fB:\fP \fI<arg3>\fP"
 je¶li \fI<arg1>\fP jest niezerowy, to wynikiem jest \fI<arg2>\fP,
@@ -1432,11 +1421,11 @@ w przeciwnym razie \fI<arg3>\fP.
 .\"}}}
 .\"{{{  Co-Processes
 .SS "Koprocesy"
-Koproces to ruroci±g stworzony poprzez operator \fB|&\fP,
-który jest asynchronicznym proecsem do którego otoczka mo¿e 
+Koproces to potok stworzony poprzez operator \fB|&\fP,
+który jest asynchronicznym proecsem do którego pow³oka mo¿e 
 zrówno pisaæ (u¿ywaj±c \fBprint \-p\fP) i czytaæ (u¿ywaj±c \fBread \-p\fP).
 Wej¶cie i wyj¶cie koprocesu mog± byæ ponadto manipulowane
-przy pomocy przekietowañ \fB>&p\fP i odpowiednio \fB<&p\fP.
+przy pomocy przekierowañ \fB>&p\fP i odpowiednio \fB<&p\fP.
 Po odpaleniu koprocesu, nastêpne nie mog± byæ odpalane zanim
 dany koproces zakoñczy pracê, lub zanim wej¶cie kopocesu
 nie zosta³o przekierowane poprzez \fBexec \fP\fIn\fP\fB>&p\fP.
@@ -1453,19 +1442,19 @@ Pewne uwagi dotycz±ce koprocesów:
 jedyn± mo¿liwo¶ci± zamkniêcia wej¶cia koprocesu
 (tak aby koproces wczyta³ zakoñczenie pliku) jest przekierowanie
 wej¶cia na numerowany deskryptor pliku, a nastêpnie zamkniêcie tego
-deskryptora (\fIw szczególno¶ci\fP, \fBexec 3>&p;exec 3>&-\fP).
+deskryptora (w szczególno¶ci, \fBexec 3>&p;exec 3>&-\fP).
 .IP \ \ \(bu
-aby kopreocesy móg³y wspó³dzieliæ jedno wyj¶cie, otoczka musi
-zachowaæ otwart± czê¶ci wpisow± danego ruroci±gu wyj¶ciowego.
+aby kopeocesy móg³y wspó³dzieliæ jedno wyj¶cie, pow³oka musi
+zachowaæ otwart± czê¶ci wpisow± danego potoku wyj¶ciowego.
 Oznacza to, ¿e zakoñczenie pliku nie zostanie wykryte do czasu a¿
 wszystkie koprocesy wspó³dziel±ce wyj¶cie koprocesów zostan± zakoñczone
-(gdy zostan± one zakoñczone, wówczas  otoczka zamyka swoj± kopiê
-ruroci±gu).
-Mo¿na temu zapobiec przekierunkowuj±ca wyj¶cie na numerowany
+(gdy zostan± one zakoñczone, wówczas  pow³oka zamyka swoj± kopiê
+potoku).
+Mo¿na temu zapobiec przekierowuj±c wyj¶cie na numerowany
 deskryptor pliku
-(poniewa¿ powoduje to równie¿ zamkniêcie przez otoczkê swojej kopi).
-Proszê zwróciæ uwagê i¿ to zachowaniê siê jest nieco odmienne od oryginalnej
-otoczki Korn-a, która zamyka swoj± cz±¶æ zapisow± swojej kopi wyj¶cia
+(poniewa¿ powoduje to równie¿ zamkniêcie przez pow³okê swojej kopii).
+Proszê zwróciæ uwagê, i¿ to zachowaniê siê jest nieco odmienne od oryginalnej
+pow³oki Korn-a, która zamyka swoj± czê¶æ zapisow± swojej kopii wyj¶cia
 koprocesu, gdy ostatnio odpalony koproces 
 (zamiast gdy wszystkie wspó³dziel±ce koprocesy) zostanie zakoñczony.
 .IP \ \ \(bu
@@ -1477,62 +1466,61 @@ i sotsowane jest \fBprint \-u\fP\fIn\fP.
 .\"}}}
 .\"{{{  Functions
 .SS "Funkcje"
-Funkcje definiuje siê albo przy pomocy syntaktyki otoczki
+Funkcje definiuje siê albo przy pomocy syntaktyki pow³oki
 Korn-a \fBfunction\fP \fIname\fP,
-albo syntaktyki otoczki Bourn-a/POSIX-owej \fIname\fP\fB()\fP
+albo syntaktyki pow³oki Bourn-a/POSIX-owej \fIname\fP\fB()\fP
 (patrz poni¿ej co do ró¿nic zachodz±cych pomiêdzy tymi dwoma formami).
-Funkcje, tak jak i \fB.\fP-skrypty, zostaj± wykonywane w bierz±cym
+Funkcje, tak jak i \fB.\fP-skrypty, zostaj± wykonywane w bie¿±cym
 otoczeniu, aczkolwiek, w przeciwieñstwie do \fB.\fP-skryptów,
-argumenty otoczki
+argumenty pow³oki
 (\fItzn.\fP, argumenty pozycyjne, \fB$1\fP, \fIitd.\fP) niegdy nie s±
 widoczne wewn±trz nich.
-Podczas ustalania lokacji komendy funkcje s± przeszukiwane po przeszukani
-specjalnych wbydowanych komend i przed regularnymi oraz nieregularnymi
-komendami wbudowanymi, a zanim \fBPATH\fP zostanie przeszukany.
+Podczas ustalania po³o¿enia komendy funkcje s± przeszukiwane po przeszukaniu
+specjalnych komend wbudowanych, za¶ przed regularnymi oraz nieregularnymi
+komendami wbudowanymi i przed przeszukaniem \fBPATH\fP.
 .PP
 Istniej±ca funkcja mo¿e zostaæ usuniêta poprzez
 \fBunset \-f\fP \fInazwa-funkcji\fP.
 Listê funkcji mo¿na otrzymaæ poprzez \fBtypeset +f\fP, a definicje
 funkcji mo¿na otrzymaæ poprzez \fBtypeset \-f\fP.
 \fBautoload\fP (co jest aliasem dla \fBtypeset \-fu\fP) mo¿e zostaæ
-u¿yte do tworzenia niezdefiniowanych funkcji;
-je¶li ma byæ wykonana niezdefiniowana funkcja, wówczas otoczka
-przeszukuje trop podany w parametrze \fBFPATH\fP za plikiem o nazwie
-identycznej do nazwy danej funkcji, który, gdy zostanie odnaleziony 
-takowy, zostaje wczytany i wykonany.
-Je¶li po wykonaniu tego pliku dana funkcja bêdzie zdefiniowany, wówczas
+u¿yte do tworzenia niezdefiniowanych funkcji.
+Je¶li ma byæ wykonana niezdefiniowana funkcja, wówczas pow³oka
+przeszukuje ¶cie¿kê podan± w parametrze \fBFPATH\fP szukaj±c pliku
+o nazwie identycznej z nazw± danej funkcji. Je¶li plik taki zostanie
+odnaleziony, to bêdzie wczytany i wykonany.
+Je¶li po wykonaniu tego pliku dana funkcja bêdzie zdefiniowana, wówczas
 zostanie ona wykonana, w przeciwnym razie zostanie wykonane zwyk³e
 odnajdywanie komend
-(\fItzn.\fP, otoczka przeszukuje tablicê zwyk³ych komend wbudowanych
+(\fItzn.\fP, pow³oka przeszukuje tablicê zwyk³ych komend wbudowanych
 i \fBPATH\fP).
 Proszê zwróciæ uwagê, ¿e je¶li komenda nie zostanie odnaleziona
 na podstawie \fBPATH\fP, wówczas zostaje podjêta próba odnalezienia
-funkcji poprzez \fBFPATH\fP (jest to niezdokumentowanym zachowaniem
-siê oryginalnej otoczki Korn-a).
+funkcji poprzez \fBFPATH\fP (jest to nieudokumentowanym zachowaniem
+siê oryginalnej pow³oki Korn-a).
 .PP
 Funkcje mog± mieæ dwa atrybuty ¶ledzenia i eksportowania, które
-mog± byæ ustwaieane przez \fBtypeset \-ft\fP i odpowiednio 
+mog± byæ ustawiane przez \fBtypeset \-ft\fP i odpowiednio 
 \fBtypeset \-fx\fP.
-Podczas wykonywania funkcji ¶ledzonej, opcja \fBxtrace\fP otoczki
+Podczas wykonywania funkcji ¶ledzonej, opcja \fBxtrace\fP pow³oki
 zostaje w³±czona na czas danej funkcji, w przeciwnym razie
 opcja \fBxtrace\fP pozostaje wy³±czona.
 Atrybut exportowania nie jest obecnie u¿ywany.  W oryginalnej
-otoczce Korn-a, wyexportowane funkcje s± widoczne dla skrytów otoczki,
+pow³oce Korn-a, wyexportowane funkcje s± widoczne dla skryptów pow³oki,
 gdy s± one wykonywane.
 .PP
-Poniewa¿ funckje zostaj± wykonywane w obecnym konketscie otoczki,
+Poniewa¿ funkcje zostaj± wykonywane w obecnym kontek¶cie pow³oki,
 przyporz±dkowania parametrów wykonane wewn±trz funkcji pozostaj±
 widoczne po zakoñczeniu danej funkcji.
-Je¶li jest to nieporz±dane, wówczas komenda \fBtypeset\fP mo¿e
+Je¶li jest to niepo¿±dane, wówczas komenda \fBtypeset\fP mo¿e
 byæ zastosowana wewn±trz funkcji do tworzenia lokalnych parametrów.
-Proszê zwrócic uwagê i¿ specjale parametry
-(\fItzn.\fP, \fB$$\fP, \fB$!\fP) nie mog± zostaæ ograniczone w 
+Proszê zwrócic uwagê, i¿ specjalne parametry
+(tzn., \fB$$\fP, \fB$!\fP) nie mog± zostaæ ograniczone w 
 ich widoczno¶ci w ten sposób.
 .PP
-Statusem zakoñczeniownym kuncji jest status ostatniej
-wykonanej w niej komendy.
-Funkcjê mo¿na przerwaæ bezpo¶redino przy pomocy komendy \fBreturn\fP;
-mo¿na to równie¿ zastosowaæ do jawnej specyfikacji statusu zakoñczenia.
+Kodem wyj¶cia funkcji jest kod wyj¶cia ostatniej wykonanej w niej komendy.
+Funkcjê mo¿na przerwaæ bezpo¶rednio przy pomocy komendy \fBreturn\fP;
+mo¿na to równie¿ zastosowaæ do jawnej specyfikacji kodu wyj¶cia.
 .PP
 Funkcje zdefiniowane przy pomocy zarezerwowanego s³owa \fBfunction\fP, s±
 traktowane odmiennie w nastêpuj±cych punktach od funkcji zdefiniowanych
@@ -1540,15 +1528,15 @@ poprzez notacjê \fB()\fP:
 .nr P2 \n(PD
 .nr PD 0
 .IP \ \ \(bu
-parametr \fB$0\fP zostaje nastawiony na nazwê funkcji
+parametr \fB$0\fP zostaje ustawiony na nazwê funkcji
 (funkcje w stylu Bourne-a nie tykaj± \fB$0\fP).
 .IP \ \ \(bu
 przyporz±dkowania warto¶ci parametrom poprzedzaj±ce wywo³anie
-funkcji nie zostaj± zaczowane w bierz±cym kontekscie otoczki
+funkcji nie zostaj± zachowane w bie¿±cym kontek¶cie pow³oki
 (wykonywanie funkcji w stylu Bourne-a functions zachowuje te
 przyporz±dkowania).
 .IP \ \ \(bu
-\fBOPTIND\fP zostake zachowany i skasowany 
+\fBOPTIND\fP zostanie zachowany i skasowany 
 na pocz±tku oraz nastêpnie odtworzony na zakoñczenie funkcji, tak wiêc
 \fBgetopts\fP mo¿e byæ poprawnie stosowane zarówno wewn±trz jak i poza
 funkcjami
@@ -1556,45 +1544,45 @@ funkcjami
 stosowanie \fBgetopts\fP wewn±trz funkcji jest niezgodne ze stosowaniem
 \fBgetopts\fP poza funkcjami).
 .nr PD \n(P2
-W przysz³o¶ci nastêpuj±ce ró¿nice zostan± równie¿ dodane:
+W przysz³o¶ci zostan± dodane równie¿ nastêpuj±ce ró¿nice:
 .nr P2 \n(PD
 .nr PD 0
 .IP \ \ \(bu
-Oddzielny kontekst ¶ledznia/sygna³ów bêdzie stosowany podczas sykonywania
-funkcji.
-Tak wiêc ¶ledzenia nastawione wewn±trz funkcji nie bêd± mia³y wp³ywu 
-na ¶ledzenia i sygna³y otoczki nie ignorowane przez ni± (które mog±
+Podczas wykonywania funkcji bêdzie stosowany oddzielny kontekst
+¶ledzenia/sygna³ów.
+Tak wiêc ¶ledzenia ustawione wewn±trz funkcji nie bêd± mia³y wp³ywu 
+na ¶ledzenia i sygna³y pow³oki nie ignorowane przez ni± (które mog±
 byæ przechwytywane) bêd± mia³y domy¶lne ich znaczenie wewn±trz funkcji.
 .IP \ \ \(bu
-¦ledzenie EXIT-a, je¶li zostanie nastawione wewn±trz funkcji, 
+¦ledzenie EXIT-a, je¶li zostanie ustawione wewn±trz funkcji, 
 zostanie wykonane, po zakoñczeniu funkcji.
 .nr PD \n(P2
 .\"}}}
 .\"{{{  POSIX mode
 .SS "Tryb POSIX-owy"
-Dana otoczka ma byæ w zasadzie zgodna ze standardem POSIX, 
-aczkolwiej jednak, w niektórych przypadkach, zachowanie zgodne ze
+Dana pow³oka ma byæ w zasadzie zgodna ze standardem POSIX, 
+aczkolwiek jednak, w niektórych przypadkach, zachowanie zgodne ze
 standardem POSIX jest albo sprzeczne z zachowaniem oryginalnej
-otocznik Korn-a albo wygod± u¿ytkownika.
-Jak otoczka zachowuje siê w takich wypadkach jest ustalane poprzez
+pow³oki Korn-a albo wygod± u¿ytkownika.
+Jak pow³oka zachowuje siê w takich wypadkach jest ustalane poprzez
 status opcji posix (\fBset \-o posix\fP) \(em je¶li jest ona
 w³±czona wówczas zachowuje siê zgodnie z POSIX-em, a w przeciwnym 
 razie nie.
-Opcja \fBposix\fP zostaje automatycznie nastawiona je¶li otoczka startuje
+Opcja \fBposix\fP zostaje automatycznie ustawiona je¶li pow³oka startuje
 w otoczeniu zawieraj±cym ustawiony parametr \fBPOSIXLY_CORRECT\fP.
-(Otoczkê mo¿na równie¿ skompilowaæ tak aby zachowanie zgodne z
+(Pow³okê mo¿na równie¿ skompilowaæ tak aby zachowanie zgodne z
 POSIX-em by³o domy¶lnie ustawione, aczkolwiek jest to zwykle 
-nieporz±dane).
+niepo¿±dane).
 .PP
 A oto lista wp³ywów ustawienia opcji \fBposix\fP:
 .nr P2 \n(PD
 .nr PD 0
 .IP \ \ \(bu
-\fB\e"\fP wewn±trz wycytowanych podwójnymi cuczys³owami \fB`\fP..\fB`\fP 
-podstwieñ komend:
+\fB\e"\fP wewn±trz wycytowanych podwójnymi cudzys³owami \fB`\fP..\fB`\fP 
+podstawieñ komend:
 w trybie posix-owym, the \fB\e"\fP zostaje zinterpretowane podczas interpretacji
 komendy;
-w trybie nie posix-ownym, pochy³ek w lewo zostaje usuniety przed
+w trybie nie posix-ownym, odwrotny uko¶nik zostaje usuniêty przed
 interpretacj± podstawienia komendy. 
 Przyk³adowo \fBecho "`echo \e"hi\e"`"\fP produkuje `"hi"' w
 trybie posix-owym, `hi' a w trybie nie-posix-owym.  
@@ -1605,42 +1593,41 @@ podstawienia komend.
 zostaj± wymieniane wiersz po wierszu;
 w nie-posix-owym trybie, numery sygna³ów ich nazwy i opis zostaj± wymienione
 w kolumnach.
-W przysz³o¶ci nowa opcja zostanie dodana (pewnie \fB\-v\fP) w celu
+W przysz³o¶ci zostanie dodana nowa opcja (zapewne \fB\-v\fP) w celu
 rozró¿nienia tych dwóch zachowañ.
 .IP \ \ \(bu
-\fBfg\fP status zakoñczenia: w trybie posix-owym, status zakoñczenia wynosi
+\fBfg\fP kod wyj¶cia: w trybie posix-owym, kod wyj¶cia wynosi
 0, je¶li nie wyst±pi³y ¿adne b³êdy;
-w trybie nie-posix-owym, status zakoñczeniowy odpowiada statusowi
-ostatniego zadania wykonywanego w pierwszym planie.
+w trybie nie-posix-owym, kod wyj¶cia odpowiada kodowi ostatniego zadania
+wykonywanego w pierwszym planie.
 .IP \ \ \(bu
-\fBgetopts\fP: w trybie posix-owym, optcje musz± zaczynaæ siê od \fB\-\fP;
+\fBgetopts\fP: w trybie posix-owym, opcje musz± zaczynaæ siê od \fB\-\fP;
 w trybie nie-posix-owym, opcje mog± siê zaczynaæ od albo \fB\-\fP albo \fB+\fP.
 .IP \ \ \(bu
 rozwijanie nawiasów (zwane równie¿ przemian±): w trybie posix opwym, 
-rozwijanie nawiasów jest wy³±czoen; w trybie nie-posix-owym, 
+rozwijanie nawiasów jest wy³±czone; w trybie nie-posix-owym, 
 rozwijanie nawiasów jest w³±czone.
-Proszê zauwa¿yæ, ¿e \fBset \-o posix\fP (lub nastawienie 
+Proszê zauwa¿yæ, ¿e \fBset \-o posix\fP (lub ustawienie 
 parametru \fBPOSIXLY_CORRECT\fP)
 automatycznie wy³±cza opcjê \fBbraceexpand\fP, mo¿e ona byæ jednak jawnie
-w³±czona pu¼niej.
+w³±czona pó¼niej.
 .IP \ \ \(bu
 \fBset \-\fP: w trybie posix-owym, nie wy³±cza to ani opcji \fBverbose\fP, ani
 \fBxtrace\fP; w trybie nie-posix-owym, wy³±cza.
 .IP \ \ \(bu
-\fBset\fP status zakoñczenia: w trybie posix-owym, 
-status zakoñczenia wynosi 0, je¶li nie wyst±pi³y ¿adne b³êdy; 
-w trybie nie-posix-owym, status zakoñczeniowy odpowiada statusie
-wszelkich podstawieb komend wykonywanych podczas
-generacji komendy set.
+\fBset\fP kod wyj¶cia: w trybie posix-owym, 
+kod wyj¶cia wynosi 0, je¶li nie wyst±pi³y ¿adne b³êdy; 
+w trybie nie-posix-owym, kod wyj¶cia odpowiada kodowi
+wszelkich podstawieñ komend wykonywanych podczas generacji komendy set.
 Przyk³adowo, `\fBset \-\- `false`; echo $?\fP' wypisuje 0 w trybie posix,
 a 1 w tybie nie-posix.  Ten konstrukt jest stosowany w wiêkszo¶ci
-skrytpów otoczji stosujacych stary wariant komendy \fIgetopt\fP(1).
+skryptów pow³oki stosujacych stary wariant komendy \fIgetopt\fP(1).
 .IP \ \ \(bu
 rozwijanie argumentów dla komend \fBalias\fP, \fBexport\fP, \fBreadonly\fP, i
 \fBtypeset\fP: w trybie posix-owym, nastêpuje normalme rozwijanie argumentów;
 w trybie nie-posix-owym, rozdzielanie pól, rozszerzanie plików, 
-rozwijanie nawiasów i (zwyk³e) rozwijanie szlaczków s± wy³±czone, oraz
-rozwijanie szlaczków w przyporz±dkowania pozostaje w³±czone.
+rozwijanie nawiasów i (zwyk³e) rozwijanie tyld s± wy³±czone, oraz
+rozwijanie tyld w przyporz±dkowania pozostaje w³±czone.
 .IP \ \ \(bu
 specyfikacja sygna³ów: w trybie posix-owym, signa³y mog± byæ
 podawane jedynie cyframi, je¶li numery sygna³ów s± one zgodne z 
@@ -1652,7 +1639,7 @@ rozwijanie aliasów: w trybie posix-owym, rozwijanie aliasów
 zostaje jedynie wykonywane, podczas wczytywania s³ów komend; w trybie 
 nie-posix-owym, rozwijanie aliasów zostaje wykonane równie¿ na
 ka¿dym s³owie po jakim¶ aliasie, które koñczy siê bia³± przerw±.
-Przyk³adowo w nastêpuj±ca wstêga for
+Przyk³adowo w nastêpuj±ca pêtla for
 .RS
 .ft B
 alias a='for ' i='j'
@@ -1673,27 +1660,27 @@ domy¶lnie równy 1).
 .\"}}}
 .\"{{{  Command Execution (built-in commands)
 .SS "Wykonywanie Komend"
-Po wyliczeniu argumentów wiersza komnedy, wykonaniu przekierunkowañ
+Po wyliczeniu argumentów wiersza komendy, wykonaniu przekierowañ
 i przyporz±dkowañ parametrów, zostaje ustalony typ komendy:
 specjalna wbudowana, funkcja, regularna wbudowana
-lub nazwa pliku który nale¿y wykonaæ przy pomocy parametru
+lub nazwa pliku, który nale¿y wykonaæ przy pomocy parametru
 \fBPATH\fP.
 Testy te zostaj± wykonane w wy¿ej podanym porz±dku.
 Specjalne wbudowane komendy ró¿ni± siê tym od innych komend, 
-¿e pramert \fBPATH\fP nie jest u¿ywany do ich odnalezienie, b³±d
+¿e do ich odnalezienia nie jest u¿ywany paramert \fBPATH\fP, b³±d
 podczas ich wykonywania mo¿e spowodowaæ zakoñczenie nieinterakcyjnej
-otocz i przyporz±dkowania wartosci parametrów poprzedzaj±ce
+otocz i przyporz±dkowania warto¶ci parametrów poprzedzaj±ce
 komendê zostaj± zachowane po jej wykonaniu.
 Aby tylko wprowadziæ zamieszanie, je¶li opcja
 posix zosta³a w³±czona (patrz komenda \fBset\fP
 poni¿ej) pewne specjale komendy staj± siê bardzo specjalne, gdy¿
 nie wykonywane s± rozdzielanie pól, rozwijanie nazw plików,
-rozwijanie nawiasów ani rozwijanie szlaczków na argumentach, 
+rozwijanie nawiasów ani rozwijanie tyld na argumentach, 
 które wygl±daj± jak przyporz±dkowania.
-Zwyk³e wbudowane komendy wyró¿niaj±siê jedynie tym,¿e
-parametr \fBPATH\fP nie jest stosowany do ich odnalezienia.
+Zwyk³e wbudowane komendy wyró¿niaj± siê jedynie tym,¿e
+do ich odnalezienia nie jest stosowany parametr \fBPATH\fP.
 .PP
-Orignalny ksh i POSIX ró¿ni± siê nieco w tym jakie
+Orignalny ksh i POSIX ró¿ni± siê nieco w tym, jakie
 komendy s± traktowane jako specjalne a jakie jako zwyk³e:
 .IP "Specjalne komend w POSIX"
 .TS
@@ -1707,7 +1694,7 @@ break	exec	readonly	shift
 lw(8m)fB lw(8m)fB lw(8m)fB lw(8m)fB lw(8m)fB .
 builtin	times	typeset		
 .TE
-.IP "Bardzo specjalne komendy (tyb nie-posix-owy)"
+.IP "Bardzo specjalne komendy (tryb nie-posix-owy)"
 .TS
 lw(8m)fB lw(8m)fB lw(8m)fB lw(8m)fB lw(8m)fB .
 alias	readonly	set	typeset	
@@ -1736,17 +1723,17 @@ zostaj± wykonane i wyeksportowane na czas trwania komendy.
 W nastêpuj±cym opisujemy specjalne i regularne komendy wbudowane:
 .\"{{{  . plik [ arg1 ... ]
 .IP "\fB\&.\fP \fIplik\fP [\fIarg1\fP ...]"
-Wyknoaj komendy w \fIplik\fP w bierz±dym otoczeniu.
+Wykonaj komendy w \fIplik\fP w bierz±cym otoczeniu.
 Plik zostaje odszukiwany przy u¿yciu katalogów z \fBPATH\fP.
 Je¶li zosta³y podane argumenty, wówczas parametry pozycyjne mog± byæ
 u¿ywane do dostêpu do nich podczas wykonywania \fIplik\fP-u.
 Je¶li nie zosta³y podane ¿adne argumenty, wówczas argumenty pozycyjne
-odpowiadaja tym z bierz±cego otoczenia, w którym dana komenda zosta³a
+odpowiadaja tym z bie¿±cego otoczenia, w którym dana komenda zosta³a
 u¿yta.
 .\"}}}
 .\"{{{  : [ ... ]
 .IP "\fB:\fP [ ... ]"
-Komenda zerowa. Statusem zakoñczenia jest zero.
+Komenda zerowa. Kodem wyj¶cia jest zero.
 .\"}}}
 .\"{{{  alias [ -d | +-t [ -r ] ] [+-px] [+-] [nazwa1[=warto¶æ1] ...]
 .IP "\fBalias\fP [ \fB\-d\fP | \fB\(+-t\fP [\fB\-r\fP] ] [\fB\(+-px\fP] [\fB\(+-\fP] [\fIname1\fP[\fB=\fP\fIvalue1\fP] ...]"
@@ -1755,16 +1742,16 @@ Dla ka¿dej nazwy bez podanej warto¶ci zostaje wliczony istniej±cy
 odpowiedni alias.
 Ka¿da nazwa z podan± warto¶ci± definiuje alias (patrz aliasy Aliases powy¿ej).
 .sp
-podczas wyliczania aliasów mo¿na u¿yæ jednego z dwuch formatów: 
+podczas wyliczania aliasów mo¿na u¿yæ jednego z dwóch formatów: 
 zwykle aliasy s± wyliczane jako \fInazwa\fP\fB=\fP\fIwarto¶æ\fP, przy czym
-\fIwarto¶æ\fP jest wycytowana; je¶li opcje mia³y przedsionek \fB+\fP 
-lub same \fB+\fP zosta³o podane we wierszu komendy, tyko \fInazwa\fP
+\fIwarto¶æ\fP jest wycytowana; je¶li opcje mia³y przedrostek \fB+\fP 
+lub samo \fB+\fP zosta³o podane we wierszu komendy, tylko \fInazwa\fP
 zostaje wy¶wietlona.
 Ponad to, je¶li zosta³a zstosowana opcja \fB\-p\fP, ka¿dy wiersz zostaje
-zaczêty dodtakowo od ci±gu "\fBalias\fP\ ".
+zaczêty dodatkowo od ci±gu "\fBalias\fP\ ".
 .sp
-Opcja \fB\-x\fP nastawia, (a \fB+x\fP kasuje) atrybut eksportu dla aliasa,
-lub, je¶li nie podano ¿adnych nazw, wylicza aliasy wraz z ich atrybutem
+Opcja \fB\-x\fP ustawia (a \fB+x\fP kasuje) atrybut eksportu dla aliasa
+lub je¶li nie podano ¿adnych nazw, wylicza aliasy wraz z ich atrybutem
 eksportu (eksportowanie aliasu nie ma posiada ¿adnego efektu).
 .sp
 Opcja \fB\-t\fP wskazuje, ¿e ¶ledzone aliasy maj± byæ wyliczone ustawione
@@ -1774,25 +1761,25 @@ Opcja \fB\-r\fP wskazuje, ¿e wszystkie ¶ledzone aliasy
 maj± zostaæ usuniête.
 .sp
 Opcja \fB\-d\fP nakazuje wyliczenie lub ustawienie aliasów katalogów, 
-które s± stosowane w rozwiniêcziach szlaczków
-(patrz Rozwiniêcia Szlaczków powy¿ej).
+które s± stosowane w rozwiniêcziach tyld
+(patrz Rozwiniêcia Tyld powy¿ej).
 .\"}}}
 .\"{{{  bg [job ...]
 .IP "\fBbg\fP [\fIjob\fP ...]"
 Podejmij ponownie wymienione zatrzymane zadanie(-a) w tle.
-Je¶li nie podana ¿adnego zadaniam wówczas przyjmuje siê domy¶lnie \fB%+\fP.
-Ta komenda jest jeynie dostêpna na systemach wspomagaj±cych kontrolê zadañ.
+Je¶li nie podano ¿adnego zadania wówczas przyjmuje siê domy¶lnie \fB%+\fP.
+Ta komenda jest dostêpna jedynie w systemach obs³uguj±cych kontrolê zadañ.
 Patrz Kontrola Zadañ poni¿ej co do dalszych informacji.
 .\"}}}
 .\"{{{  bind [-l] [-m] [key[=editing-command] ...]
 .IP "\fBbind\fP [\fB\-m\fP] [\fIklawisz\fP[\fB=\fP\fIkomenda-edycji\fP] ...]"
-Nastawienie lub wyliczenie obecnych przyporz±dkowañ klwaiszy/mark w 
+Ustawienie lub wyliczenie obecnych przyporz±dkowañ klawiszy/mark w 
 emacs-owym trybie edycji komend.
 Patrz Emacs-owa Interakcyjna Edycja Wiersza Komendy w celu pe³nego opisu.
 .\"}}}
 .\"{{{  break [level]
 .IP "\fBbreak\fP [\fIpoziom\fP]"
-\fBbreak\fP przerywa \fIpoziom\fPth zagnie¿d¿enia we wstêgach
+\fBbreak\fP przerywa \fIpoziom\fPth zagnie¿d¿enia w pêtlach
 for, select, until, lub while.
 \fIpoziom\fP wynosi domy¶lnie 1.
 .\"}}}
@@ -1803,67 +1790,66 @@ Wykonuje wbudowan± komendê \fIkomenda\fP.
 .\"{{{  cd [-LP] [dir]
 .IP "\fBcd\fP [\fB\-LP\fP] [\fIkatalog\fP]"
 Ustawia aktualny katalog roboczy na \fIkatalog\fP.  
-Je¶li zosta³ nastawiony parameter \fBCDPATH\fP, to wypisuje
+Je¶li zosta³ ustawiony parametr \fBCDPATH\fP, to wypisuje
 listê katalogów, w których nale¿y szukaæ pod-\fIkatalog\fP.
 Pusta zawarto¶æ w \fBCDPATH\fP oznacza katalog bie¿±cy.
-Je¶li niepusty katalog z \fBCDPATH\fP zostanie zastosowany,
-wówczas zostanie wy¶wietlony pe³ny wynikaj±cy trop na standardowym
-wyj¶ciu.
+Je¶li zostanie u¿yty niepusty katalog z \fBCDPATH\fP,
+to na standardowym wyj¶ciu bêdzie wy¶wietlona jego pe³na ¶cie¿ka.
 Je¶li nie podano \fIkatalog\fP, wówczas
 zostaje u¿yty katalog domowy \fB$HOME\fP.  Je¶li \fIkatalog\fP-iem jest
-\fB\-\fP, to porzedni katalog roboczy zostaje zastosowany (patrz
+\fB\-\fP, to zostaje zastosowany poprzedni katalog roboczy (patrz
 parametr OLDPWD).
-Je¶li u¿yto opcji \fB\-L\fP (logiczny trop) lub je¶li opcja \fBphysical\fP
-nie zosta³a nastawiona
+Je¶li u¿yto opcji \fB\-L\fP (¶cie¿ka logiczna) lub je¶li 
+nie zosta³a ustawiona opcja \fBphysical\fP
 (patrz komenda \fBset\fP poni¿ej), wówczas odniesienia do \fB..\fP w 
-\fIkatalogu\fP s± wzglêdnymi wobec tropu zastosowanego do doj¶ci± do danego
+\fIkatalogu\fP s± wzglêdnymi wobec ¶cie¿ki zastosowanej do doj¶cia do danego
 katalogu.
-Je¶li podano opcjê \fB\-P\fP (fizyczny trop) lub gdy zosta³a nastawiona
+Je¶li podano opcjê \fB\-P\fP (fizyczna ¶cie¿ka) lub gdy zosta³a ustawiona
 opcja \fBphysical\fP, wówczas \fB..\fP jest wzglêdne wobec drzewa katalogów 
 systemu plików.
-Parametry \fBPWD\fP i \fBOLDPWD\fP zostaj± uaktualnione taki, aby odpowiednio
+Parametry \fBPWD\fP i \fBOLDPWD\fP zostaj± uaktualnione tak, aby odpowiednio
 zawiera³y bie¿±cy i poprzedni katalog roboczy.
 .\"}}}
 .\"{{{  cd [-LP] old new
 .IP "\fBcd\fP [\fB\-LP\fP] \fIstary nowy\fP"
 Ci±g \fInowy\fP zostaje podstawiony wzamian za \fIstary\fP w bie¿±cym
-katalogu, i otoczka próbuje przej¶æ do nowego katalogu.
+katalogu, i pow³oka próbuje przej¶æ do nowego katalogu.
 .\"}}}
 .\"{{{  command [ -pvV ] cmd [arg1 ...]
 .IP "\fBcommand\fP [\fB\-pvV\fP] \fIkomenda\fP [\fIarg1\fP ...]"
 Je¶li nie zosta³a podana opcja \fB\-v\fP ani opcja \fB\-V\fP, wówczas
 \fIkomenda\fP
 zostaje wykonana dok³adnie tak jakby nie podano \fBcommand\fP,
-z dwoma wyj±takami: po pierwsze, \fIkomenda\fP nie mo¿e byæ funkcj± w otoczce,
-oraz po drugie, specjalne wbudowane komendy trac± swoj± specjalno¶æ (\fItzn.\fP,
-przekierowania i b³êdy w u¿yciu nie powoduj±, ¿e otoczka zostaje zakoñczona, a
+z dwoma wyj±tkami: po pierwsze, \fIkomenda\fP nie mo¿e byæ funkcj± w pow³oce,
+oraz po drugie, specjalne wbudowane komendy trac± swoj± specjalno¶æ (tzn.,
+przekierowania i b³êdy w u¿yciu nie powoduj±, ¿e pow³oka zostaje zakoñczona, a
 przyporz±dkowania parametrów nie zostaj± wykonane).
-Je¶li podano opcjê \fB\-p\fP, zostaje stosowany pewien domy¶lny trop
-zamiast obecnej warto¶ci \fBPATH\fP (warto¶æ domy¶lna tropu jest zale¿na
-od systemy w jakim pracujemy: w systemach POSIX-owatych, jest to
+Je¶li podano opcjê \fB\-p\fP, zostaje zastosowana pewna domy¶lna ¶cie¿ka
+zamiast obecnej warto¶ci \fBPATH\fP (warto¶æ domy¶lna ¶cie¿ki jest zale¿na
+od systemu, w jakim pracujemy: w systemach POSIX-wych, jest to
 warto¶æ zwracana przez
 .ce
 \fBgetconf CS_PATH\fP
 ).
 .sp
 Je¶li podano opcjê \fB\-v\fP, wówczas zamiast wykonania \fIkomenda\fP, 
-zostaje podana informacja co by zosta³o wykonane (i to same dotyczny 
-równia¿ \fIarg1\fP ...):
-dla specjalnych i zwyklych wbudowanych komend i funkcji,
+zostaje podana informacja co by zosta³o wykonane (i to samo dotyczy 
+równie¿ \fIarg1\fP ...):
+dla specjalnych i zwyk³ych wbudowanych komend i funkcji,
 zostaj± po prostu wy¶wietlone ich nazwy,
 dla aliasów, zostaje wy¶wietlona komenda definiuj±ca dany alias,
-oraz dla komend odnajdownych poprzez przeszukiwanie zawarto¶ci
-parametru \fBPATH\fP, zostaje wy¶wietlony pe³ny trop danej komendy.
-Je¶li komenda nie zostanie odnaleziona, (\fItzn.\fP, przeszukiwanie tropu
+oraz dla komend odnajdowanych poprzez przeszukiwanie zawarto¶ci
+parametru \fBPATH\fP, zostaje wy¶wietlona pe³na ¶cie¿ka danej komendy.
+Je¶li komenda nie zostanie odnaleziona, (tzn., przeszukiwanie ¶cie¿ki
 nie powiedzie siê), nic nie zostaje wy¶wietlone i \fBcommand\fP zostaje
-zakoñczone z niezerowym statusem.
+zakoñczone z niezerowym kodem wyj¶cia.
 Opcja \fB\-V\fP jest podobna do opcji \fB\-v\fP, tylko ¿e bardziej
 gadatliwa.
 .\"}}}
 .\"{{{  continue [levels]
 .IP "\fBcontinue\fP [\fIpoziom\fP]"
-\fBcontinue\fP stacze na pocz±tek \fIpoziom\fP-u z najg³êbiej
-zagnie¿d¿onej wstêgi for,
+\fBcontinue\fP skacze na pocz±tek \fIpoziom\fP-u z najg³êbiej
+zagnie¿d¿onej pêtli for,
 select, until, lub while.
 \fIlevel\fP domy¶lnie 1.
 .\"}}}
@@ -1872,58 +1858,58 @@ select, until, lub while.
 Wy¶wietla na standardowym wyj¶ciu swoje argumenty (rozdzielone przerwami)
 zakoñczone prze³amaniem wiersza.
 Prze³amanie wiersza nie nastêpuje je¶li którykolwiek z parametrów
-zawiera sekwencjê pochy³ka wstecznego \fB\ec\fP.
+zawiera sekwencjê odwrotnego uko¶nika \fB\ec\fP.
 Patrz komenda \fBprint\fP poni¿ej, co do listy innych rozpoznawanych
-sekwencji pochy³ków wstecznych.
+sekwencji odwrotnych uko¶ników.
 .sp
 Nastêpuj±ce opcje zosta³y dodane dla zachowania zgodno¶ci ze
 skryptami z systemów BSD:
 \fB\-n\fP wy³±cza koñcowe prze³amanie wiersza, \fB\-e\fP w³±cza
-interpretacjê pochy³ków wstecznych (operacja zerowa, albowiem ma to
+interpretacjê odwrotnych uko¶ników (operacja zerowa, albowiem ma to
 domy¶lnie miejsce), oraz \fB\-E\fP wy³±czaj±ce interpretacjê
-pochy³ków wstecznych.
+odwrotnych uko¶ników.
 .\"}}}
 .\"{{{  eval command ...
 .IP "\fBeval\fP \fIkomenda ...\fP"
-Zrgumenty zostaj± powi±zane (z przerwami pomiêdzy nimi) do jednego
-ci±gu, który nastêpnie otoczka rozpoznaje i wykonuje w obecnym
+Argumenty zostaj± powi±zane (z przerwami pomiêdzy nimi) do jednego
+ci±gu, który nastêpnie pow³oka rozpoznaje i wykonuje w obecnym
 otoczeniu.
 .\"}}}
 .\"{{{  exec [command [arg ...]]
 .IP "\fBexec\fP [\fIkomenda\fP [\fIarg\fP ...]]"
-Komenda zostaje wykonana bez forkowania, zastêpuj±c proces otoczki.
+Komenda zostaje wykonana bez rozwidlania (fork), zastêpuj±c proces pow³oki.
 .sp
 Je¶li nie podano ¿adnych argumentów wszelkie przekierowania wej¶cia/wyj¶cia
-s± dozwolone i otocznia nie zostaje zast±piona.
+s± dozwolone i pow³oka nie zostaje zast±piona.
 Wszelkie deskryptory plików wiêksze ni¿ 2 otwarte lub z\fIdup\fP(2)-owane
-w ten sopsób nie s± dostêpne dla innych wykonywanych komend
-(\fItzn.\fP, komend nie wbydownych w otoczkê).
-Proszê zwróciæ uwagê i¿ otoczka Bourne-a ró¿ni siê w tym: 
+w ten sposób nie s± dostêpne dla innych wykonywanych komend
+(\fItzn.\fP, komend nie wbudowanych w pow³okê).
+Zauwa¿, ¿e pow³oka Bourne-a ró¿ni siê w tym: 
 przekazuje bowiem deskryptory plików.
 .\"}}}
-.\"{{{  exit [status]
-.IP "\fBexit\fP [\fIstatus\fP]"
-Otoczka zostaje zakoñczona z podanym statusem.
-Je¶li \fIstatus\fP nie zosta³ podany, wówczas status zakoñczenia
+.\"{{{  exit [kod]
+.IP "\fBexit\fP [\fIkod\fP]"
+Pow³oka zostaje zakoñczona z podanym kodem wyj¶cia.
+Je¶li \fIkod\fP nie zosta³ podany, wówczas kod wyj¶cia
 przyjmuje bie¿±c± warto¶æ parametru \fB?\fP.
 .\"}}}
 .\"{{{  export [-p] [parameter[=value] ...]
 .IP "\fBexport\fP [\fB\-p\fP] [\fIparametr\fP[\fB=\fP\fIwarto¶æ\fP]] ..."
-Nastawia atrybut eksportu danego parametru.
+Ustawia atrybut eksportu danego parametru.
 Eksportowane parametry zostaj± przekazywane w otoczeniu do wykonywanych
 komend.
-Je¶il podano warto¶ci wówczas zostaj± one równia¿ przyporz±dkowany
+Je¶li podano warto¶ci wówczas zostaj± one równie¿ przyporz±dkowane
 danym parametrom.
 .sp
-Je¶li nie podano ¿adnych parametró, wówczas nazwy wszystkich parametrów
+Je¶li nie podano ¿adnych parametrów, wówczas nazwy wszystkich parametrów
 z atrybutem eksportu zostaj± wy¶wietlone wiersz po wierszu, chyba ¿e u¿yto
-opcji \fB\-p\fP, w którym to wypadu zostaj± wy¶wietlone komendy
+opcji \fB\-p\fP, w którym to wypadku zostaj± wy¶wietlone komendy
 \fBexport\fP definiuj±ce wszystkie eksportowane parametry wraz z ich
 warto¶ciami.
 .\"}}}
 .\"{{{  false
 .IP "\fBfalse\fP"
-Komenda koñcz±ca siê z niezerowym statusem.
+Komenda koñcz±ca siê z niezerowym kodem powrotu.
 .\"}}}
 .\"{{{  fc [-e editor | -l [-n]] [-r] [first [ last ]]
 .IP "\fBfc\fP [\fB\-e\fP \fIedytor\fP | \fB\-l\fP [\fB\-n\fP]] [\fB\-r\fP] [\fIpierwszy\fP [\fIostatni\fP]]"
@@ -1933,19 +1919,19 @@ lub podaj±c ci±g znaków okre¶laj±cy ostatnio u¿yt± komendê rozpoczynaj±c±
 siê od tego¿ ci±gu.
 Opcja \fB\-l\fP wy¶wietla dan± komendê na stdout,
 a \fB\-n\fP wy³±cza domy¶lne numery komend.  Opcja \fB\-r\fP
-odwraca kolejno¶æ koemnd w li¶cie historii.  Bez \fB\-l\fP, wybrane
+odwraca kolejno¶æ komend w li¶cie historii.  Bez \fB\-l\fP, wybrane
 komendy podlegaj± edycji przez edytor podany poprzez opcjê
 \fB\-e\fP, albo je¶lki nie podano \fB\-e\fP, przez edytor
-podany w parametrze \fBFCEDIT\fP (je¶li nie zosta³ nastawiony ten
+podany w parametrze \fBFCEDIT\fP (je¶li nie zosta³ ustawiony ten
 parametr, wówczas sotsuje siê \fB/bin/ed\fP),
-i nastêpnie wykonana przez otoczkê.
+i nastêpnie wykonana przez pow³okê.
 .\"}}}
 .\"{{{  fc [-e - | -s] [-g] [old=new] [prefix]
 .IP "\fBfc\fP [\fB\-e \-\fP | \fB\-s\fP] [\fB\-g\fP] [\fIstare\fP\fB=\fP\fInowe\fP] [\fIprefix\fP]"
 Wykonaj ponownie wybran± konendê (domy¶lnie poprzedni± komendê) po
 wykonaniu opcjonalnej zamiany \fIstare\fP na \fInowe\fP.  Je¶li
-podano \fB\-g\fP, wówczas wszelkie wysotmpienia \fIstare\fP zostaj±
-zastêpione przez \fInowe\fP.  Z tej komendy ko¿ysta siê zwykle
+podano \fB\-g\fP, wówczas wszelkie wyst±pienia \fIstare\fP zostaj±
+zastêpione przez \fInowe\fP.  Z tej komendy korzysta siê zwykle
 przy pomocy zdefiniowanego domy¶lnie aliasa \fBr='fc \-e \-'\fP.
 .\"}}}
 .\"{{{  fg [job ...]
@@ -1959,7 +1945,7 @@ Patrz Kontrola Zadañ dla dalszych informacji.
 .\"}}}
 .\"{{{  getopts optstring name [arg ...]
 .IP "\fBgetopts\fP \fIci±gopt\fP \fInazwa\fP [\fIarg\fP ...]"
-\fBgetopts\fP jest stosowany przez procedury otoczki
+\fBgetopts\fP jest stosowany przez procedury pow³oki
 do rozeznawania podanych argumentów
 (lub parametrów pozycyjnychi, je¶li nie podano ¿adnych argumentów)
 i do sprawdzenia zasadno¶ci opcji.
@@ -1973,47 +1959,47 @@ zsotaje potraktowana jako argument danej opcji. W przeciwnym razie
 nastêpny argument jest argumentem opcji.
 .sp
 Za ka¿dym razem, gdy zostaje wywo³ane \fBgetopts\fP, 
-umieszcza siê nastêpn± opcjê w parametrze otoczki
+umieszcza siê nastêpn± opcjê w parametrze pow³oki
 \fInazwa\fP i indeks nastêpnego argumentu pod obróbkê
-w parmaetrze otoczki \fBOPTIND\fP.
+w parametrze pow³oki \fBOPTIND\fP.
 Je¶li opcja zosta³a podana z \fB+\fP, to opcja zostaje umieszczana
-w \fInazwa\fP z prefiksem \fB+\fP.
+w \fInazwa\fP z przedrostkiem \fB+\fP.
 Je¶li opcja wymaga argumentu, to \fBgetopts\fP umieszcza go
-w parametrze otoczki \fBOPTARG\fP.
+w parametrze pow³oki \fBOPTARG\fP.
 Je¶li natrafi siê na niedopuszczaln± opcjê lub brakuje
-argumentu opcji, wówczas znak zapytania albo dwukropek zostaje
-umieszczony w \fInazwa\fP
+argumentu opcji, wówczas w \fInazwa\fP zostaje umieszczony znak zapytania
+albo dwukropek
 (wskazuj±c na nielegaln± opcjê, albo odpowiednio brak argumentu)
-i \fBOPTARG\fP zostaje nastawiony na znak który by³ przyczyn± tego problemu.
+i \fBOPTARG\fP zostaje ustawiony na znak, który by³ przyczyn± tego problemu.
 Ponadto zostaje wówczas wy¶wietlony komunikat o b³êdzie na standardowym
 wyj¶ciu b³êdów, je¶li \fIci±gopt\fP nie zaczyna siê od dwukropka.
 .sp
 Gdy napotkamy na koniec opcji, \fBgetopts\fP przerywa pracê
-niezerowym statusem zakoñczenia.
+niezerowym kodem wyj¶cia.
 Opcje koñcz± siê na pierwszym (nie podlegaj±cym opcji) argumencie,
 który nie rozpoczyna siê od \-, albo je¶li natrafimy na argument \fB\-\-\fP.
 .sp
-Rozpoznawania opcji mo¿e zostaæ ponowione ustawiaj±c \fBOPTIND\fP na 1
-(co nastêpuje automatycznie za ka¿dym razem, gdy otoczka lub 
-funkcja w otoczce zostaje wywo³ana).
+Rozpoznawanie opcji mo¿e zostaæ ponowione ustawiaj±c \fBOPTIND\fP na 1
+(co nastêpuje automatycznie za ka¿dym razem, gdy pow³oka lub 
+funkcja w pow³oce zostaje wywo³ana).
 .sp
-Ostrze¿enie: Zmiana warto¶ci parametru otoczki \fBOPTIND\fP na
+Ostrze¿enie: Zmiana warto¶ci parametru pow³oki \fBOPTIND\fP na
 warto¶æ wiêksz± ni¿ 1, lub rozpoznawanie odmiennych zestawów
 parametrów bez ponowienia \fBOPTIND\fP mo¿e doprowadziæ do nieoczekiwanych
 wyników.
 .\"}}}
 .\"{{{  hash [-r] [name ...]
 .IP "\fBhash\fP [\fB\-r\fP] [\fInazwa ...\fP]"
-Je¶li brak argumentów, wówczas wszelkie tropy wykonywalnych komend z
-kluczem zostaj± wymienione.
+Je¶li brak argumentów, wówczas wszystkie ¶cie¿ki
+wykonywalnych komend z kluczem s± wymieniane.
 Opcja \fB\-r\fP nakazuje wyrzucenia wszelkim komend z kluczem z tablicy
 kluczy.
-Ka¿da \fInazwa\fP zostaje odszukiwana tak jak by to by³a nazwa komedy
-i dodna do tablicy kluczy je¶li jest to wykonywalna komenda.
+Ka¿da \fInazwa\fP zostaje odszukiwana tak, jak by to by³a nazwa komendy
+i dodana do tablicy kluczy je¶li jest to wykonywalna komenda.
 .\"}}}
 .\"{{{  jobs [-lpn] [job ...]
 .IP "\fBjobs\fP [\fB\-lpn\fP] [\fIzadanie\fP ...]"
-Wy¶wietlij informacje o danych zadaniach; gdy nie podano ¿adnych
+Wy¶wietl informacje o danych zadaniach; gdy nie podano ¿adnych
 zadañ wszystkie zadania zostaj± wy¶wietlone.
 Je¶li podano opcjê \fB\-n\fP, wówczas informacje zostaj± wy¶wietlone
 jedynie o zadaniach których stan zmieni³ siê od czasu ostaniego
@@ -2022,7 +2008,7 @@ Zastosowanie opcji \fB\-l\fP powoduje dodatkowo
 wykazanie identyfikatora ka¿dego
 procesu w zadaniach.
 Opcja \fB\-p\fP powoduje, ¿e zostaje wy¶wietlona jedynie
-jedynie grupa procesowa kadego zadania.
+jedynie grupa procesowa ka¿dego zadania.
 patrz Kontrola Zadañ dla informacji o formie parametru
 \fIzdanie\fP i formacie w którym zostaj± wykazywane zadania.
 .\"}}}
@@ -2033,24 +2019,22 @@ procesów.
 Je¶li nie podano jawnie ¿adnego sygna³u, wówczas domy¶lnie zostaje wys³any
 sygna³ TERM.
 Je¶li podano zadanie, wówczas sygna³ zostaje wys³any do grupy 
-procesów danego zadnia.
-Patrz poni¿ej Kontrola Zadab dla informacji o formacie \fIzadania\fP.
-.\"}}}
-.\"{{{  kill -l [exit-status ...]
-.IP "\fBkill \-l\fP [\fIstatus-zakoñczenia\fP ...]"
+procesów danego zadania.
+Patrz poni¿ej Kontrola Zadañ dla informacji o formacie \fIzadania\fP.
+.IP "\fBkill \-l\fP [\fIkod_wyj¶cia\fP ...]"
 Wypisz nazwê sygna³u, który zabi³ procesy, które zakoñczy³y siê
-danym \fIstatusem-zakoñczenia\fP.
+danym \fIkodem_wyj¶cia\fP.
 Je¶li brak argumentów, wówczas zostaje wy¶wietlona lista
 wszelkich sygna³ów i ich numerów, wraz z krótkim ich opisem.
 .\"}}}
 .\"{{{  let [expression ...]
 .IP "\fBlet\fP [\fIwyra¿enie\fP ...]"
 Ka¿de wyra¿enie zostaje wyliczone, patrz Wyra¿enie Arytmetyczne powy¿ej.
-Je¶li wszelkie wyra¿enia zosta³y poprawnie wyliczone,statusem zakoñczenia
+Je¶li wszelkie wyra¿enia zosta³y poprawnie wyliczone, kodem wyj¶cia
 jest 0 (1), je¶li warto¶ci± ostatniego wyra¿enia
  nie by³o zero (zero).
 Je¶li wyst±pi b³±d podczas rozpoznawania lub wyliczania wyra¿enia,
-status zakoñczenia jest wiêkszy od 1.
+kod wyj¶cia jest wiêkszy od 1.
 Poniewa¿ m¿e zaj¶æ konieczno¶æ wycytowania wyra¿eñ, wiêc
 \fB((\fP \fIwyr.\fP \fB))\fP jest syntaktycznie s³odszym wariantem \fBlet
 "\fP\fIwyr\fP\fB"\fP.
@@ -2072,24 +2056,21 @@ wyno¶i domy¶lnie 1 przy pominiêciu),
 natomiast opcja \fB\-p\fP pisze do do koprocesu
 (patrz Koprocesy powy¿ej).
 .sp
-Opcja \fB\-R\fP jest stowoana do emulacji, w pewnym stopniu, komendy 
+Opcja \fB\-R\fP jest stosowana do emulacji, w pewnym stopniu, komendy 
 echo w wydaniu BSD, która nie przetwarza sekwencji \e bez podania opcji
 \fB\-e\fP.
-Jak powy¿ej opcja \fB\-n\fP zapobiega zakonieczeniowemu prze³amaniu
-wiersza.
+Jak powy¿ej opcja \fB\-n\fP zapobiega koñcowemu prze³amaniu wiersza.
 .\"}}}
 .\"{{{  pwd [-LP]
 .IP "\fBpwd\fP [\fB\-LP\fP]"
-Wypisz bierz±cy katalog roboczy.
-Przy zastosowaniu opcji \fB\-L\fP lub gdy nie zosta³a nastawiona opcja
+Wypisz bie¿±cy katalog roboczy.
+Przy zastosowaniu opcji \fB\-L\fP lub gdy nie zosta³a ustawiona opcja
 \fBphysical\fP
-(patrz komenda \fBset\fP poni¿ej), zostaje wy¶wietlony trop
-logiczny (\fItzn.\fP, trop knieczny aby wykonaæ \fBcd\fP 
-do bierz±cego katalogu).
-Przy zastosowaniu opcji \fB\-P\fP (fizyczny trop) lub gdy
-opcja \fBphysical\fP zosta³a nastawiona, zostaje wy¶wietlony trop
-ustalone przez wystem plików (¶ledz±c katalogi \fB..\fP
-a¿ po katalog pniowy).
+(patrz komenda \fBset\fP poni¿ej), zostaje wy¶wietlona ¶cie¿ka
+logiczna (tzn. ¶cie¿ka konieczna aby wykonaæ \fBcd\fP do bie¿±cego katalogu).
+Przy zastosowaniu opcji \fB\-P\fP (¶cie¿ka fizyczna) lub gdy
+zosta³a ustawiona opcja \fBphysical\fP, zostaje wy¶wietlona ¶cie¿ka
+ustalona przez system plików (¶ledz±c katalogi \fB..\fP a¿ po katalog g³ówny).
 .\"}}}
 .\"{{{  read [-prsun] [parameter ...]
 .IP "\fBread\fP [\fB\-prsu\fP\fIn\fP] [\fIparametr ...\fP]"
@@ -2097,27 +2078,27 @@ Wczytuje wiersz wprowadzenia ze standardowego wej¶cia, rozdziela ten
 wiersz na pola przy uwzglêdnieniu parametru \fBIFS\fP (
 patrz Podstawienia powy¿ej), i przyporz±dkowywuje pola odpowienio danym 
 parametrom.
-Je¶li mamy wiêcej parametrów ni¿ pul, wówczas dodatkowe parametry zostaj±
-ustawione na zero, a natomiast je¶li jest wiêcej pól ni¿ paramtrów to
+Je¶li mamy wiêcej parametrów ni¿ pól, wówczas dodatkowe parametry zostaj±
+ustawione na zero, a natomiast je¶li jest wiêcej pól ni¿ paramterów to
 ostatni parametr otrzymuje jako warto¶æ wszystkie dodatkowe pola (wraz ze
 wszelkimi rozdzielaj±cymi przerwami).
 Je¶li nie podano ¿adnych parametrów, wówczas zostaje zastosowany
 parametr \fBREPLY\fP.
-Je¶li wiersz wprowadzenie koñczy siê na pochy³ku wstecznym
-i nie podano opcji \fB\-r\fP, to pochy³ek wsteczny i prze³amanie
-wiersza zostaj± usuniête i wiêcej wprowadznia zostaje wczytane.
-Gdy nie zostanie wczytane ¿adne wprowadznie, \fBread\fP zakañcza siê
-niezerowym statusem.
+Je¶li wiersz wprowadzania koñczy siê odwrotnym uko¶nikiem
+i nie podano opcji \fB\-r\fP, to odwrotny uko¶nik i prze³amanie
+wiersza zostaj± usuniête i zostaje wczytana dalsza czê¶æ danych.
+Gdy nie zostanie wczytane ¿adne wprowadzenie, \fBread\fP koñczy siê
+niezerowym kodem wyj¶cia.
 .sp
-Pierwszy parametro mo¿e mieæ do³±czony znak zapytania i ci±g, co oznacza, ¿e
-dany ci±g zostania zastosowany jako zachêta do wprowadzenia 
-(wy¶wietlana na standardowym wyj¶ciu b³edów zanim
-zostanie wczytane jakiekolwiek wprowadzenie) je¶li wej¶cie jest tty-em
+Pierwszy parametr mo¿e mieæ do³±czony znak zapytania i ci±g, co oznacza, ¿e
+dany ci±g zostanie zastosowany jako zachêta do wprowadzenia 
+(wy¶wietlana na standardowym wyj¶ciu b³êdów zanim
+zostanie wczytane jakiekolwiek wprowadzenie) je¶li wej¶cie jest terminalem
 (\fIe.g.\fP, \fBread nco¶?'ile co¶ków: '\fP).
 .sp
-Opcje \fB\-u\fP\fIn\fP i \fB\-p\fPpowoduj± ¿e wprowadzenia zostanie
-wczytywane z deskryptora pliku \fIn\fP albo odpowiednio bierz±cego ko-procesu 
-(patrz komenta¿e na ten temat w Ko-procesy powy¿ej).
+Opcje \fB\-u\fP\fIn\fP i \fB\-p\fPpowoduj±, ¿e wprowadzenia zostanie
+wczytywane z deskryptora pliku \fIn\fP albo odpowiednio bie¿±cego ko-procesu 
+(patrz komentarze na ten temat w Ko-procesy powy¿ej).
 Je¶li zastosowano opcjê \fB\-s\fP, wówczas wprowadznie zostaje zachowane
 w pliku historii.
 .\"}}}
@@ -2125,34 +2106,34 @@ w pliku historii.
 .IP "\fBreadonly\fP [\fB\-p\fP] [\fIparametr\fP[\fB=\fP\fIwarto¶æ\fP]] ..."
 Patrz parametr wy³±cznego odczytu nazwanych parametrów.
 Je¶li zosta³y podane warto¶ci wówczas zostaj± one nadane parametrom przed
-ustawieniem danego strybutu.
+ustawieniem danego atrybutu.
 Po nadaniu cechy wy³±cznego odczytu parametrowi, nie ma wiêcej mo¿liwo¶ci
 wykasowania go lub zmiany jego warto¶ci.
 .sp
 Je¶li nie podano ¿adnych parametrów, wówczas zostaj± wypisane nazwy
 wszystkich parametrów w cech± wy³±cznego odczytu wiersz po wierszu, chyba
 ¿e zastosowano opcjê \fB\-p\fP, co powoduje wypisanie pe³nych komend
-\fBreadonly\fP definiuj±cych parametry wy³±czneg odczytu wraz z ich
+\fBreadonly\fP definiuj±cych parametry wy³±cznego odczytu wraz z ich
 warto¶ciami.
 .\"}}}
-.\"{{{  return [status]
-.IP "\fBreturn\fP [\fIstatus\fP]"
-Powrót z funkcji lub \fB.\fP scryptu, ze statusem zakoñczenia \fIstatus\fP.
-Je¶li nie podano warto¶ci \fIstatus\fP, wówczas zostaje domy¶lnie
-zastosowany status ostatnio wykonanej komendy.
-Przy zastosowaniu poza funkcji lub \fB.\fP scryptem, komenda ta ma ten
+.\"{{{  return [kod]
+.IP "\fBreturn\fP [\fIkod\fP]"
+Powrót z funkcji lub \fB.\fP skryptu, z kodem wyj¶cia \fIkod\fP.
+Je¶li nie podano warto¶ci \fIkod\fP, wówczas zostaje domy¶lnie
+zastosowany kod wyj¶cia ostatnio wykonanej komendy.
+Przy zastosowaniu poza funkcj± lub \fB.\fP skryptem, komenda ta ma ten
 sam efekt co \fBexit\fP.
-Proszê zwróciæ uwagê i¿ pdksh traktuje zarówno profile jak i pliki z 
-\fB$ENV\fP jako \fB.\fP scrypty, podczas gdy
-oryginalny Korn shell jedynie profile traktuje jako \fB.\fP scrypty.
+Proszê zwróciæ uwagê, i¿ pdksh traktuje zarówno profile jak i pliki z 
+\fB$ENV\fP jako \fB.\fP skrypty, podczas gdy
+oryginalny Korn shell jedynie profile traktuje jako \fB.\fP skrypty.
 .\"}}}
 .\"{{{  set [+-abCefhkmnpsuvxX] [+-o [option]] [+-A name] [--] [arg ...]
 .IP "\fBset\fP [\fB\(+-abCefhkmnpsuvxX\fP] [\fB\(+-o\fP [\fIopcja\fP]] [\fB\(+-A\fP \fInazwa\fP] [\fB\-\-\fP] [\fIarg\fP ...]"
-Komenda set s³u¿y do nastawiania (\fB\-\fP) albo kasowania (\fB+\fP)
-opkcji otoczki, nastawiania prarmetrów pozycyjnych, lub
-nastawiania parametru ci±gowego.
+Komenda set s³u¿y do ustawiania (\fB\-\fP) albo kasowania (\fB+\fP)
+opcji pow³oki, ustawiania prarmetrów pozycyjnych lub
+ustawiania parametru ci±gowego.
 Opcje mog± byæ zmienione przy pomocy syntaktyki \fB\(+-o\fP \fIopcja\fP,
-gdzie \fIopcja\fP jest pe³n± nazw± pewnej opcji, lub stosuj±c postaæ
+gdzie \fIopcja\fP jest pe³n± nazw± pewnej opcji lub stosuj±c postaæ
 \fB\(+-\fP\fIlitera\fP, gdzie \fIlitera\fP oznacza jednoliterow±
 nazwê danej opcji (niewszystkie opcje posiadaj± jednoliterow± nazê).
 Nastêpuj±ca tablica wylicza zarówno litery opcji (gdy mamy takowe), jak i
@@ -2164,26 +2145,26 @@ afB lfB lw(3i).
 \-A		T{
 Ustawia elementy parametru ci±gowego \fInazwa\fP na \fIarg\fP ...;
 Je¶li zastosowano \fB\-A\fP, ci±g zostaje uprzednio ponowiony (\fItzn.\fP, wyczyszczony);
-Je¶li zastosowano \fB+A\fP, zastaj± nastawione pierwsze N elementów (gdzie N
-jest ilo¶ci± \fIarg\fPsów), reszta pozostaje niezmienioa.
+Je¶li zastosowano \fB+A\fP, zastaj± ustawione pierwsze N elementów (gdzie N
+jest ilo¶ci± \fIarg\fPsów), reszta pozostaje niezmieniona.
 T}
 \-a	allexport	T{
-wszystkie nowe parametry zostaj± tworzone z cecha eksportowania
+wszystkie nowe parametry zostaj± tworzone z cech± eksportowania
 T}
 \-b	notify	T{
 Wypisuj komunikaty o zadaniach asynchronicznie, zamiast tu¿ przed zachêt±.
 Ma tylko znaczenia je¶li zosta³a w³±czona kontrola zadañ (\fB\-m\fP).
 T}
 \-C	noclobber	T{
-Zapobiegaj przepisywaniu istniej±cych ju¿ plików poprzez przekierunkowania
-\fB>\fP (\fB>|\fP musi zostaæ zastosowane do wymuszenia przepisania).
+Zapobiegaj przepisywaniu istniej±cych ju¿ plików poprzez przekierowania
+\fB>\fP (do wymuszenia przepisania musi zostaæ zastosowane \fB>|\fP).
 T}
 \-e	errexit	T{
-Wyjd¼ (po wykoaniu komendy pu³apki \fBERR\fP) tu¿ po wyst±pieniu
-b³êdu lub niepomy¶lnym wykoaniu jakiej¶ komendy
-(\fItzn.\fP, je¶li zosta³a ona zakoñczona niezerowym statusem).
-Niedotyczy to komend których status zakoñczenia zostaje jawnie przetestowny
-konstruktem otoczki takim jak wyra¿enia \fBif\fP, \fBuntil\fP,
+Wyjd¼ (po wykonaniu komendy pu³apki \fBERR\fP) tu¿ po wyst±pieniu
+b³êdu lub niepomy¶lnym wykonaniu jakiej¶ komendy
+(\fItzn.\fP, je¶li zosta³a ona zakoñczona niezerowym kodem wyj¶cia).
+Nie dotyczy to komend, których kod wyj¶ciaa zostaje jawnie przetestowny
+konstruktem pow³oki takim jak wyra¿enia \fBif\fP, \fBuntil\fP,
 \fBwhile\fP, \fB&&\fP lub
 \fB||\fP.
 T}
@@ -2193,42 +2174,42 @@ T}
 \-h	trackall	T{
 Twórz ¶ledzone aliasy dla wszystkich wykonywanych komend (patrz Aliasy
 powy¿ej).
-Domy¶lnie w³±czone dla nieinterakcyjnych otoczek.
+Domy¶lnie w³±czone dla nieinterakcyjnych pow³ok.
 T}
 \-i	interactive	T{
 W³±cz tryb interakcyjny \- mo¿e zostaæ 
-w³±czone/wy³±czone jedynie podczas odpalania otoczki.
+w³±czone/wy³±czone jedynie podczas odpalania pow³oki.
 T}
 \-k	keyword	T{
 Przyporz±dkowania warto¶ci parametrom zostaj± rozpoznawane
 gdziekolwiek w komendzie.
 T}
 \-l	login	T{
-Otoczka ma byæ otoczk± zameldowania \- mo¿e zostaæ 
-w³±czone/wy³±czone jedynie podczas odpalania otoczki
-(patrz Odpalania Otoczki powy¿ej).
+Pow³oka ma byæ pow³ok± zameldowania \- mo¿e zostaæ 
+w³±czone/wy³±czone jedynie podczas odpalania pow³oki
+(patrz Odpalania Pow³oki powy¿ej).
 T}
 \-m	monitor	T{
-W³±cz kontrloê zadabñ (domy¶lne dla otoczek interakcyjnych).
+W³±cz kontrloê zadabñ (domy¶lne dla pow³ok interakcyjnych).
 T}
 \-n	noexec	T{
 Nie wykonuj jakichkolwiek komend \- przydatne do sprawdzania
-syntaktyki skryptów (ignorowane dla interakcyjnych otoczek).
+syntaktyki skryptów (ignorowane dla interakcyjnych pow³ok).
 T}
 \-p	privileged	T{
-Nastawiane automatycznie, je¶li gdy otoczka zostaje odpalona i rzeczywiste
+Ustawiane automatycznie, je¶li gdy pow³oka zostaje odpalona i rzeczywiste
 uid lub gid nie jest identyczne z odpowiednio efektywnym uid lub gid.
-Patrz Odpalanie Otoczki powy¿ej dla opisu co to znaczy.
+Patrz Odpalanie Pow³oki powy¿ej dla opisu, co to znaczy.
 T}
 -r	restricted	T{
-Nastaw tryb ograniczony \(em ta opcja mo¿e zostaæ jedynie
-zastosowan podczas odpalania otoczki.  Patrz Odpalania Otoczki
-dla opisy co to znaczy.
+Ustaw tryb ograniczony \(em ta opcja mo¿e zostaæ jedynie
+zastosowana podczas odpalania pow³oki.  Patrz Odpalania Pow³oki
+dla opisu, co to znaczy.
 T}
 \-s	stdin	T{
-Gdy zostanie zastosowane podczas odpalania otoczki, wówczas komendy
+Gdy zostanie zastosowane podczas odpalania pow³oki, wówczas komendy
 zostaj± wczytywane ze standardowego wej¶cia.
-Nastawione automatycznie, je¶li otoczka zosta³a odpalona bez jakichkolwiek
+Ustawione automatycznie, je¶li pow³oka zosta³a odpalona bez jakichkolwiek
 argumentów.
 .sp
 Je¶li \fB\-s\fP zostaje zastosowane w komendzie \fBset\fP, wówczas
@@ -2237,12 +2218,12 @@ parametrom pozycyjnym
 (lub ci±gowi \fInazwa\fP, je¶li \fB\-A\fP zosta³o zastosowane).
 T}
 \-u	nounset	T{
-Odniesienie do nienastawionego parametru zostaje traktowane jako b³±d,
-chyba ¿e jeden z modyfikatorów \fB\-\fP, \fB+\fP lub \fB=\fP 
-zosta³ zastosowany.
+Odniesienie do nieustawionego parametru zostaje traktowane jako b³±d,
+chyba ¿e zosta³ zastosowany jeden z modyfikatorów \fB\-\fP, \fB+\fP
+lub \fB=\fP.
 T}
 \-v	verbose	T{
-Wypisuj wprowadzenia otoczki na standardowym wyj¶ciu b³êdów podczas
+Wypisuj wprowadzenia pow³oki na standardowym wyj¶ciu b³êdów podczas
 ich wczytywania.
 T}
 \-x	xtrace	T{
@@ -2250,8 +2231,7 @@ Wypisuj komendy i przyporz±dkowania parametrów podczas ich wykonywania
 poprzedzone warto¶ci± \fBPS4\fP.
 T}
 \-X	markdirs	T{
-Naznaczaj katalogi nastêpuj±cym \fB/\fP podczas generacji nazw
-plików.
+Podczas generowania nazw plików oznaczaj katalogi koñcz±cym \fB/\fP.
 T}
 	bgnice	T{
 Zadania w tle zostaj± wykonywane z ni¿szym priorytetem.
@@ -2261,50 +2241,50 @@ W³±cz rozwijanie nawiasów (aka, alternacja).
 T}
 	emacs	T{
 W³±cz edycjê wiersza komendy  w stylu BRL emacs-a (dotyczy wy³±cznie
-otoczek interakcyjnych);
+pow³ok interakcyjnych);
 patrz Emacsowy Interakcyjny Tryb Edycji Wiersza Wprowadzenia.
 T}
 	gmacs	T{
 W³±cz edycjê wiersza koemndy w stylo gmacs-like (Gosling emacs) 
-(dotyczy wy³±cznie otoczek interakcyjnych);
+(dotyczy wy³±cznie pow³ok interakcyjnych);
 obecnie identyczne z trybem edycji emacs z wyj±tkiem tego, ¿e przemiana (^T) 
 zachowuje siê nieco inaczej.
 T}
 	ignoreeof	T{
-Otoczka nie zostanie zakoñczona je¶li zostanie wczytany znak zakoñczenia
+Pow³oka nie zostanie zakoñczona je¶li zostanie wczytany znak zakoñczenia
 pliku. Nale¿y u¿yæ jawnie \fBexit\fP.
 T}
 	nohup	T{
-Nie zabijaj bie¿±cych zadañ sygna³em \fBHUP\fP gdy otoczka zameldowania
+Nie zabijaj bie¿±cych zadañ sygna³em \fBHUP\fP gdy pow³oka zameldowania
 zostaje zakoñczona.
-Obecnie nastawione domy¶lnie, co siê jednak zmieni w przysz³o¶ci w celu
-poprawienia kompatybilijnosæ z oryginalnym Korn shell (który nie posiada
+Obecnie ustawione domy¶lnie, co siê jednak zmieni w przysz³o¶ci w celu
+poprawienia kompatybilno¶ci z oryginalnym Korn shell (który nie posiada
 tej opcji, aczkolwiek wysy³a sygna³ \fBHUP\fP).
 T}
 	nolog	T{
-Bez znaczenia \- w originalej otoczce Korn. Zapobiega sortowaniu definicji
+Bez znaczenia \- w oryginalej pow³oce Korn. Zapobiega sortowaniu definicji
 funkcji w pliku historii.
 T}
 	physical	T{
 Powoduje, ¿e komendy \fBcd\fP oraz \fBpwd\fP stosuj± `fizyczne'
-(\fItzn.\fP, pochodz±ce od systemu plików) \fB..\fP katalogi zamiast `logicznych'
-katalogów (\fItzn.\fP,  ¿e otoczka interpretuje \fB..\fP, co pozwala
-u¿ytkownikowi nietroszczyæ siê o pod³±czenia symboliczne do katalogów).
-Domy¶lnie wykasowane.  Proszê zwróciæ uwagê i¿ nastawianie tej opcji
+(tzn. pochodz±ce od systemu plików) \fB..\fP katalogi zamiast `logicznych'
+katalogów (tzn., ¿e pow³oka interpretuje \fB..\fP, co pozwala
+u¿ytkownikowi nietroszczyæ siê o dowi±zania symboliczne do katalogów).
+Domy¶lnie wykasowane.  Proszê zwróciæ uwagê, i¿ ustawianie tej opcji
 nie wp³ywa na bie¿±c± warto¶æ parametru \fBPWD\fP;
 jedynie komenda \fBcd\fP zmienia \fBPWD\fP.
-Patrz komendy \fBcd\fP i \fBpwd\fP powy¿ej dla dalszych szczegu³ów.
+Patrz komendy \fBcd\fP i \fBpwd\fP powy¿ej dla dalszych szczegó³ów.
 T}
 	posix	T{
 W³±cz tryb posix-owy.  Patrz Tryb POSIX-owy powy¿ej.
 T}
 	vi	T{
-W³±cz edycjê wiersza komendy  w stylu vi (dotyczy tylko otoczek 
+W³±cz edycjê wiersza komendy  w stylu vi (dotyczy tylko pow³ok 
 interakcyjnych).
 T}
 	viraw	T{
-Bez znaczenia \- w oryginalnej otoczce Korn-a, dopóki nie zosta³o 
-nastawione viraw, tryb wiersza komendy vi
+Bez znaczenia \- w oryginalnej pow³oce Korn-a, dopóki nie zosta³o 
+ustawione viraw, tryb wiersza komendy vi
 pozostawia³ pracê napêdowi tty a¿ do wprowadzenia ESC (^[).
 pdksh jest zawsze w trybie viraw.
 T}
@@ -2313,21 +2293,21 @@ W trybie edycji wiersza komendy vi wykonuj rozwijania komend / plików
 gdy zostanie wprowadzone escape (^[) w trybie komendy.
 T}
 	vi-show8	T{
-Prefiksuj znaki z nastawionym ósmym bitem poprzez `M-'.
-Je¶li nie zostanie nastawiona ta opcja, wówczas, znaki z zakresu
-128-160 zostaj± wypisane bez zmian co mo¿e byæ przyczyn± problemów.
+Dodaj przedrostek `M-' dla znaków z ustawionym ósmym bitem.
+Je¶li nie zostanie ustawiona ta opcja, wówczas, znaki z zakresu
+128-160 zostaj± wypisane bez zmian, co mo¿e byæ przyczyn± problemów.
 T}
 	vi-tabcomplete	T{
-W trybie edycji wiersza komendy vi wykonyj rozwiania koemnd/ plików
-je¶li tab (^I) zostanie wrowadzone w trybie wprowadzania.
+W trybie edycji wiersza komendy vi wykonuj rozwijania komend/ plików
+je¶li tab (^I) zostanie wprowadzone w trybie wprowadzania.
 T}
 .TE
 .sp
-Tych opcji mo¿na urzyæ równie¿ podczas odpalania otoczki.
+Tych opcji mo¿na u¿yæ równie¿ podczas odpalania pow³oki.
 Obecny zestaw opcji (z jednoliterowymi nazwami) znajduje siê w
 parametrze \fB\-\fP.
 \fBset -o\fP bez podania nazwy opcji wy¶wietla
-wszystki opcja i informacjê o ich nastawieniu lub nie;
+wszystki opcja i informacjê o ich ustawieniu lub nie;
 \fBset +o\fP wypisuje pe³ne nazwy opcji obecnie w³±czonych.
 .sp
 Pozosta³e argumenty, je¶li podano takowe, s± traktowane jako parametry
@@ -2350,8 +2330,8 @@ przeniesione pod \fB1\fP, \fB2\fP, \fIitd.\fP
 .\"{{{  test expression, [ expression ]
 .IP "\fBtest\fP \fIwyra¿enie\fP"
 .IP "\fB[\fP \fIwyra¿enie\fP \fB]\fP"
-\fBtest\fP wylicza \fIwyra¿enia\fP i zwraca status zero je¶li
-prawda, i status 1 jeden je¶li fa³sz, awiêcej ni¿ 1 je¶li wyst±pi³ b³±d.
+\fBtest\fP wylicza \fIwyra¿enia\fP i zwraca kod wyj¶cia zero je¶li
+prawda, i kod 1 jeden je¶li fa³sz, a wiêcej ni¿ 1 je¶li wyst±pi³ b³±d.
 Zostaje zwykle zastosowane jako komenda warunkowa wyra¿eñ \fBif\fP i
 \fBwhile\fP.
 Mamy do dyspozycji nastêpuj±ce podstawowe wyra¿enia:
@@ -2359,14 +2339,14 @@ Mamy do dyspozycji nastêpuj±ce podstawowe wyra¿enia:
 .TS
 afB ltw(2.8i).
 \fIci±g\fP	T{
-\fIci±g\fP ma niezerow± d³ugo¶æ.  Proszê zwróciæ uwagê i¿ mog± wyst±piæ
-tródno¶ci je¶li \fIci±g\fP oka¿e siê byæ operatorem 
-(\fIdok³adniej\fP, \fB-r\fP) - ogólnie lepiej jest stosowaæ
+\fIci±g\fP ma niezerow± d³ugo¶æ.  Proszê zwróciæ uwagê, i¿ mog± wyst±piæ
+trudno¶ci je¶li \fIci±g\fP oka¿e siê byæ operatorem 
+(\fIdok³adniej\fP, \fB-r\fP) - ogólnie lepiej jest zamiast tego stosowaæ
 test postaci
 .RS
 \fB[ X"\fP\fIciag\fP\fB" != X ]\fP
 .RE
-wzamian (podwójne wycytowania zostaj± zastosowaneje¶li
+(podwójne wycytowania zostaj± zastosowane je¶li
 \fIci±g\fP zawiera przerwy lub znaki rozwijania plików).
 T}
 \-r \fIplik\fP	T{
@@ -2397,7 +2377,7 @@ T}
 \fIplik\fP jest specjalnym plikiem napêdu blokowego
 T}
 \-p \fIplik\fP	T{
-\fIplik\fP jest nazwanym ruroci±giem
+\fIplik\fP jest potokiem nazwanym
 T}
 \-u \fIplik\fP	T{
 \fIplik\fP o ustawionym bicie setuid
@@ -2412,25 +2392,25 @@ T}
 \fIplik\fP nie jest pusty
 T}
 \-O \fIplik\fP	T{
-w³a¶ciciel \fIpliku\fP zgadza siê z efektywnym user-ID otoczki
+w³a¶ciciel \fIpliku\fP zgadza siê z efektywnym user-ID pow³oki
 T}
 \-G \fIplik\fP	T{
-grupa \fIpliku\fP  zgadza siê z efektywn± group-ID otoczki
+grupa \fIpliku\fP  zgadza siê z efektywn± group-ID pow³oki
 T}
 \-h \fIplik\fP	T{
-\fIplik\fP jest symbolicznym pod³±czeniem
+\fIplik\fP jest symbolicznym [WK: twardym?] dowi±zaniem
 T}
 \-H \fIplik\fP	T{
 \fIplik\fP jest zale¿nym od kontekstu katalogiem (tylko sensowne pod HP-UX)
 T}
 \-L \fIplik\fP	T{
-\fIplik\fP jest symbolicznym pod³±czeniem
+\fIplik\fP jest symbolicznym dowi±zaniem
 T}
 \-S \fIplik\fP	T{
 \fIplik\fP jest gniazdem
 T}
 \-o \fIopcja\fP	T{
-\fIOpcja\fP otoczki jest nastawiona (patrz komenda \fBset\fP powy¿ej
+\fIOpcja\fP pow³oki jest ustawiona (patrz komenda \fBset\fP powy¿ej
 dla listy mo¿liwych opcji).
 Jako niestandardowe rozszerzenie, je¶li opcja zaczyna siê od
 \fB!\fP, to wynik testu zostaje negowany; test wypada zawsze negatywnie
@@ -2450,11 +2430,11 @@ T}
 pierwszy \fIplik\fP jest torzsamy z drugim \fIplikiem\fP
 T}
 \-t\ [\fIfd\fP]	T{
-Deskryptor pliku jest przy¿±dem tty.
-Je¶li nie zosta³a nastawiona opcja posix-a (\fBset \-o posix\fP, 
+Deskryptor pliku jest przyrz±dem tty.
+Je¶li nie zosta³a ustawiona opcja posix-a (\fBset \-o posix\fP, 
 patrz Tryb POSIX powy¿ej), wówczas \fIfd\fP mo¿e zostaæ pominiêty, 
-co oznacza przyjêcie domu¶lnej warto¶ci 1
-(zachowanie siê jest wówczas odmienne z powodu specjalnych regó³
+co oznacza przyjêcie domy¶lnej warto¶ci 1
+(zachowanie siê jest wówczas odmienne z powodu specjalnych regu³
 POSIX-a opisywanych powy¿ej).
 T}
 \fIci±g\fP	T{
@@ -2515,70 +2495,70 @@ operuj±cych na plikach (z wyj±tkiem testu \fB-e\fP).
 W.sz., \fB[ -w /dev/fd/2 ]\fP sprawdza czy jest dostêpny zapis na
 deskryptor pliku 2.
 .sp
-Proszê zwróciæ uwagê ¿e zachodz± specjalne regó³y
+Proszê zwróciæ uwagê, ¿e zachodz± specjalne regu³y
 (zawdziêczane POSIX-owi), je¶li liczba argumentów
 do \fBtest\fP lub \fB[\fP \&... \fB]\fP jest mniejsza od piêciu: 
-je¶li pierwsze argumenty \fB!\fP mog± zostaæ pominiête tak ¿e pozostaje tylko
-jeden argument, wówczas zostaje przeprowadzony test d³ugosci ci±gu
+je¶li pierwsze argumenty \fB!\fP mog± zostaæ pominiête, tak ¿e pozostaje tylko
+jeden argument, wówczas zostaje przeprowadzony test d³ugo¶ci ci±gu
 (ponownie, nawet je¶li dany argument jest unarnym operatorem);
 je¶li pierwsze argumenty \fB!\fP mog± zostaæ pominiête tak, ¿e pozostaj± trzy
 argumenty i drugi argument jest operatorem binarnym, wówczas zostaje
 wykonana dana binarna operacja (nawet je¶li pierwszy argument
 jest unarnym operatorem operator, wraz z nieusuniêtym \fB!\fP).
 .sp
-\fBUwaga:\fP Czêstym b³êdem jest stosowanie \fBif [ $co¶ = tam ]\fP co
+\fBUwaga:\fP Czêstym b³êdem jest stosowanie \fBif [ $co¶ = tam ]\fP, co
 daje wynik negatywny je¶li parametr \fBco¶\fP jest zerowy lub
-nienastawiony, zwiera przerwy
-(\fItzn.\fP, znaki z \fBIFS\fP), lub gdy jest unarnym operatorem, takim jak
-\fB!\fP lub \fB\-n\fP.  Proszê stosowaæ testy typu 
-\fBif [ "X$co¶" = Xtam ]\fP wzamian.
+nieustawiony, zawiera przerwy
+(\fItzn.\fP, znaki z \fBIFS\fP), lub gdy jest operatorem jednoargumentowym,
+takim jak \fB!\fP lub \fB\-n\fP.  Proszê zamiast tego stosowaæ testy typu 
+\fBif [ "X$co¶" = Xtam ]\fP.
 .\"}}}
 .\"{{{  times
 .IP \fBtimes\fP
-Wy¶wietla zgromadzony czas w przestrzeniu u¿ytkownika oraz systemu,
-który spotrzebowa³a otoczka i w niej wystartowane 
-procesy które w siê zakoñczy³y.
+Wy¶wietla zgromadzony czas w przestrzeni u¿ytkownika oraz systemu,
+który spotrzebowa³a pow³oka i w niej wystartowane 
+procesy, które siê zakoñczy³y.
 .\"}}}
 .\"{{{  trap [handler signal ...]
 .IP "\fBtrap\fP [\fIobrabiacz\fP \fIsygna³ ...\fP]"
-Nastawia obrabiacz, który nale¿y wykonaæ w razie odebrania danego sygna³u.
+Ustawia obrabiacz, który nale¿y wykonaæ w razie odebrania danego sygna³u.
 \fBObrabiacz\fP mo¿e byæ albo zerowym ci±giem, wskazujacym na zamiar
 ignorowania sygna³ów danego typu, minusem (\fB\-\fP), 
 wskazuj±cym, ¿e ma zostaæ podjêta akcja domy¶lna dla danego sygna³u
-(patrz signal(2 or 3)), lub ci±giem zawierajacym komendy otoczki
+(patrz signal(2 or 3)), lub ci±giem zawierajacym komendy pow³oki
 które maj± zostaæ wyliczone i wykonane przy pierwszej okazji
-(\fItzn.\fP, po zakoñczeniu bierz±cej komendy, lub przed
-wypisaniem nastêpnego zachêcacza \fBPS1\fP) po odebraniu
+(\fItzn.\fP, po zakoñczeniu bie¿±cej komendy, lub przed
+wypisaniem nastêpnego symboli zachêty \fBPS1\fP) po odebraniu
 jednego z danych sygna³ów.
 \fBSigna³\fP jest nazw± danego wygna³u (\fItak jak np.\fP, PIPE lub ALRM)
 lub jego numerem (patrz komenda \fBkill \-l\fP powy¿ej).
 Istnieja dwa specjalne sygna³y: \fBEXIT\fP (równie¿ znany jako \fB0\fP),
-który zostaje wykonany tu¿ przed zakoñczeniem otoczki, i
-\fBERR\fP który zostaje wykonany po wyst±pieniu b³edu
-(b³êdem jest co¶ co powodowa³oby zakonczenie otoczki
-je¶li zosta³y nastawioe opcje \fB\-e\fP lub \fBerrexit\fP \(em
-patrz komendy \fBset\fP opwy¿ej).
+który zostaje wykonany tu¿ przed zakoñczeniem pow³oki, i
+\fBERR\fP który zostaje wykonany po wyst±pieniu b³êdu
+(b³êdem jest co¶, co powodowa³oby zakoñczenie pow³oki
+je¶li zosta³y ustawione opcje \fB\-e\fP lub \fBerrexit\fP \(em
+patrz komendy \fBset\fP powy¿ej).
 Obrabiacze \fBEXIT\fP zostaj± wykonane w otoczeniu
 ostatniej wykonywanej komendy.
-Proszê zwróciæ uwage, ¿e dla otoczek nieinterakcyjnych obrabiacz wykroczeñ
-nie mo¿e zostaæ zmieniony dla sygna³ów które by³y ignorowane podczas
-startu danej otoczki.
+Proszê zwróciæ uwage, ¿e dla pow³ok nieinterakcyjnych obrabiacz wykroczeñ
+nie mo¿e zostaæ zmieniony dla sygna³ów, które by³y ignorowane podczas
+startu danej pow³oki.
 .sp
 Bez argumentów, \fBtrap\fP wylicza, jako seria komend \fBtrap\fP,
-obecny status wykroczeñ, które zosta³y nastawione od czasu staru otoczki.
+obecny status wykroczeñ, które zosta³y ustawione od czasu startu pow³oki.
 .sp
 .\" todo: add these features (trap DEBUG, trap ERR/EXIT in function)
 Traktowanie sygna³ów \fBDEBUG\fP oraz \fBERR\fP i
-\fBEXIT\fP i oryginalnej otoczki Korn'a w funkcjach nie zosta³o jak do tej
+\fBEXIT\fP i oryginalnej pow³oki Korn'a w funkcjach nie zosta³o jak do tej
 pory jeszcze zrealizowane.
 .\"}}}
 .\"{{{  true
 .IP \fBtrue\fP
-Komenda zakoñczaj±ca siê zerow± warto¶ci± statusu.
+Komenda koñcz±ca siê zerow± warto¶ci± kodu wyj¶cia.
 .\"}}}
 .\"{{{  typeset [[+-Ulprtux] [-L[n]] [-R[n]] [-Z[n]] [-i[n]] | -f [-tux]] [name[=value] ...]
 .IP "\fBtypeset\fP [[\(+-Ulprtux] [\fB\-L\fP[\fIn\fP]] [\fB\-R\fP[\fIn\fP]] [\fB\-Z\fP[\fIn\fP]] [\fB\-i\fP[\fIn\fP]] | \fB\-f\fP [\fB\-tux\fP]] [\fInazwa\fP[\fB=\fP\fIwarto¶æ\fP] ...]"
-Wy¶wietlaj lub nastawiaj warto¶ci atrybutów parametrów.
+Wy¶wietlaj lub ustawiaj warto¶ci atrybutów parametrów.
 Bez argumentów \fInazwa\fP, zostaj± wy¶wietlone atrybuty parametrów: 
 je¶li brak argumentów opcyjnych, zostaja wy¶wietlone atrybuty
 wszystkich parametór jako komendy typeset; je¶li podano opcjê
@@ -2588,7 +2568,7 @@ wy¶wietlone;
 je¶li opcje zaczynaj± siê od \fB+\fP, to nie zostaj± wy¶wietlone warto¶ci
 oparametrów.
 .sp
-Je¶li podano argumenty If \fInazwa\fP, zostaj± nastawione atrybuty
+Je¶li podano argumenty If \fInazwa\fP, zostaj± ustawione atrybuty
 danych parametrów (\fB\-\fP) lub odpowiednio wykasowane (\fB+\fP).
 Warto¶ci parametrów mog± zostaæ ewentualnie podane.
 Je¶li typeset zostanie zastosowane wewn±trz funkcji, 
@@ -2596,7 +2576,7 @@ wszystkie nowotworzone parametry pozostaj± lokalne dla danej funkcji.
 .sp
 Je¶li zastosowano \fB\-f\fP, wówczas typeset operuje na atrybutach funkcji.
 Tak jak dla parametrów, je¶li brak \fInazw\fPs, zostaj± wymienione funkcje
-wraz z ich warto¶ciami (\fItzn.\fP, definicjami) chyba, ¿e opdano
+wraz z ich warto¶ciami (\fItzn.\fP, definicjami), chyba ¿e opdano
 opcje zaczynaj±ce siê od \fB+\fP, w którym wypadku
 zostaj± wymienione tylko nazwy funkcji.
 .sp
@@ -2605,16 +2585,16 @@ expand;
 afB lw(4.5i).
 \-L\fIn\fP	T{
 Atrybut przyrównania do lewego brzegu: \fIn\fP oznacza szeroko¶æ pola.
-Je¶li brak \fIn\fP, to zostaje zastosowana bierz±ca szeroko¶æ parametru 
+Je¶li brak \fIn\fP, to zostaje zastosowana bie¿±ca szeroko¶æ parametru 
 (lub szeroko¶æ pierwszej przyporz±dkowywanej warto¶ci).
 Prowadz±ce bia³e przerwy (tak jak i zera, je¶li
-nastawiono opcjê \fB\-Z\fP) zostaj± wykasowane.
+ustawiono opcjê \fB\-Z\fP) zostaj± wykasowane.
 Je¶li trzeba, warto¶ci zostaj± albo obciête lub dodane przerwy
 do osi±gniêcia wymaganej szeroko¶ci.
 T}
 \-R\fIn\fP	T{
 Atrybut przyrównania do prawego brzegu: \fIn\fP oznacza szeroko¶æ pola.
-Je¶li brak \fIn\fP, to zostaje zastosowana bierz±ca szeroko¶æ parametru
+Je¶li brak \fIn\fP, to zostaje zastosowana bie¿±ca szeroko¶æ parametru
 (lub szeroko¶æ pierwszej przyporz±dkowywanej warto¶ci).
 Bia³e przerwy na koñcu zostaj± usuniête.
 Je¶li trzeba, warto¶ci zostaj± albo pozbawione prowadz±cych znaków
@@ -2638,16 +2618,16 @@ T}
 Atrybut dodatniej ca³kowito¶ci: liczby ca³kowite zostaj± wy¶wietlone
 jako warto¶ci bez znaku
 (stosowne jedynie w powi±zaniu z opcj± \fB\-i\fP).
-Tej opcji brak w oryginalnej otoczce Korn'a.
+Tej opcji brak w oryginalnej pow³oce Korn'a.
 T}
 \-f	T{
-Tryb funkcji: wy¶wietlaj lub nastawiaj funkcje i ich atrybuty, zamiast
+Tryb funkcji: wy¶wietlaj lub ustawiaj funkcje i ich atrybuty, zamiast
 parametrów.
 T}
 \-l	T{
 Atrybut ma³ej litery: wszystkie znaki z du¿ej litery zostaj± 
-w wartosci zamienione na ma³e litery.
-(W orignalnej otoczce Korn'a, parametr ten oznacza³ `d³ugi ca³kowity' 
+w warto¶ci zamienione na ma³e litery.
+(W orygnalnej pow³oce Korn'a, parametr ten oznacza³ `d³ugi ca³kowity' 
 gdy by³ stosowany w po³±czeniu z opcj± \fB\-i\fP).
 T}
 \-p	T{
@@ -2659,20 +2639,20 @@ T}
 \-r	T{
 Atrybut wy³acznego odczytu: parametry z danym atrybutem
 nie przyjmuj± nowych warto¶ci i nie mog± zostaæ wykasowane.
-Po nastawieniu tego atrybutu nie mo¿na go ju¿ wiêcej odaktywniæ.
+Po ustawieniu tego atrybutu nie mo¿na go ju¿ wiêcej odaktywniæ.
 T}
 \-t	T{
-Atrybut zaznaczenia: bez znaczenia dla otoczki; istnieje jedynie do
+Atrybut zaznaczenia: bez znaczenia dla pow³oki; istnieje jedynie do
 zastosowania w aplikacjach.
 .sp
 Dla funkcji \fB\-t\fP, to atrybut ¶ledzenia.
 Je¶li zostaj± wykonywane funkcje z atrybutem ¶ledzenia, to
-opcja otoczki \fBxtrace\fP (\fB\-x\fP) zostaje tymczasowo w³aczona.
+opcja pow³oki \fBxtrace\fP (\fB\-x\fP) zostaje tymczasowo w³aczona.
 T}
 \-u	T{
 Atrybut du¿ej litery: wszystkie znaki z ma³ej litery w warto¶ciach zostaj±
 przestawione na du¿e litery.
-(W oryginalnej otoczce Korn'a, ten parametr oznacza³ `ca³kowity bez znaku' je¶li
+(W oryginalnej pow³oce Korn'a, ten parametr oznacza³ `ca³kowity bez znaku' je¶li
 zosta³ zastosowany w po³±czeniu z opcj± \fB\-i\fP, oznacza³o to, ¿e
 nie mo¿na by³o sotsowaæ du¿ych liter dla baz wiêkszych ni¿ 10.  
 patrz opcja \fB\-U\fP).
@@ -2689,12 +2669,12 @@ T}
 .\"}}}
 .\"{{{  ulimit [-acdfHlmnpsStvw] [value]
 .IP "\fBulimit\fP [\fB\-acdfHlmnpsStvw\fP] [\fIwarto¶æ\fP]"
-Wy¶wietlij lub nastaw ograniczenia dla procesów.
+Wy¶wietlij lub ustaw ograniczenia dla procesów.
 Je¶li brak opcji, to ograniczenie ilo¶ci plików (\fB\-f\fP) zostaje
 przyjête jako domy¶le.
 \fBwarto¶æ\fP, je¶li podana, mo¿e byæ albo wyra¿eniem arytmetycznym
 lub s³owem \fBunlimited\fP (nieograniczone).
-Ograniczenia dotycz± otoczki i wszelkich procesów przez ni± tworzonych
+Ograniczenia dotycz± pow³oki i wszelkich procesów przez ni± tworzonych
 po nadaniu ograniczenia.
 Proszê zwróciæ uwagê, i¿ niektóre systemy mog± zabraniaæ podnoszenia
 warto¶ci ograniczeñ po ich nadaniu.
@@ -2706,31 +2686,31 @@ ograniczania \fB\-f\fP.
 Wy¶wietla wszystkie ograniczenia; je¶li nie podano \fB\-H\fP,
 to zostaj± wy¶wietlone ograniczenia miêkkie.
 .IP \fB\-H\fP
-Nastaw jedynie ograniczenie twarde (domy¶lnie zostaj± ustawione zarówno
+Ustaw jedynie ograniczenie twarde (domy¶lnie zostaj± ustawione zarówno
 ograniczenie twarde jak te¿ i miêkkie).
 .IP \fB\-S\fP
-Nastaw jedynie ograniczenie miêkkie (domy¶lnie zostaj± ustawione zarówno
+Ustaw jedynie ograniczenie miêkkie (domy¶lnie zostaj± ustawione zarówno
 ograniczenie twarde jak te¿ i miêkkie).
 .IP \fB\-c\fP
-Ogranicz wielko¶ci plików zrzutów core do \fIn\fP blków.
+Ogranicz wielko¶ci plików zrzutów core do \fIn\fP bloków.
 .IP \fB\-d\fP
-Ogranicz wielko¶æ area³u danych do \fIn\fP kbytów.
+Ogranicz wielko¶æ obszaru danych do \fIn\fP kbytów.
 .IP \fB\-f\fP
-Ogranicz wielkosæ plików zapisywanych przez otoczkê i jej programy pochodne
+Ogranicz wielko¶æ plików zapisywanych przez pow³okê i jej programy pochodne
 do \fIn\fP plików (pliki dowolnej wielko¶ci mog± byæ wczytywane).
 .IP \fB\-l\fP
 Ogranicz do \fIn\fP kbytów ilo¶æ podkluczonej (podpiêtej) fizycznej pamiêci.
 .IP \fB\-m\fP
-Ogranicz do \fIn\fP kbytów ilo¶æ uzywanej fizycznej pamiêci.
+Ogranicz do \fIn\fP kbytów ilo¶æ u¿ywanej fizycznej pamiêci.
 .IP \fB\-n\fP
 Ogranicz do \fIn\fP ilo¶æ jednocze¶nie otwartych deskryptorów plików.
 .IP \fB\-p\fP
 Ogranicz do \fIn\fP ilo¶æ jednocze¶nie wykonywanych procesów danego
 u¿ytkownika.
 .IP \fB\-s\fP
-Ogranicz do \fIn\fP kbytów rozmiar area³u stosu.
+Ogranicz do \fIn\fP kbytów rozmiar obszaru stosu.
 .IP \fB\-t\fP
-Ogranicz do \fIn\fP sekund czas zu¿ywany przez pojedyñcze procesy.
+Ogranicz do \fIn\fP sekund czas zu¿ywany przez pojedyncze procesy.
 .IP \fB\-v\fP
 Ogranicz do \fIn\fP kbytów ilo¶æ u¿ywanej wirtualnej pamiêci;
 pod niektórymi systemami jest to maksymalny stosowany wirtualny adres
@@ -2738,24 +2718,24 @@ pod niektórymi systemami jest to maksymalny stosowany wirtualny adres
 .IP \fB\-w\fP
 Ogranicz do \fIn\fP kbytów ilo¶æ stosowanego obszaru odk³adania.
 .PP
-Dla \fBulimit\fP blok to zawsze512 bajtów.
+Dla \fBulimit\fP blok to zawsze 512 bajtów.
 .RE
 .\"}}}
 .\"{{{  umask [-S] [mask]
 .IP "\fBumask\fP [\fB\-S\fP] [\fImaska\fP]"
 .RS
-Wy¶wietl lub nastaw maskê zezwoleñ w tworzeniu plików, lub umask 
+Wy¶wietl lub ustaw maskê zezwoleñ w tworzeniu plików, lub umask 
 (patrz \fIumask\fP(2)).
 Je¶li zastosowano opcjê \fB\-S\fP, maska jest wy¶wietlana lub podawana
-symbolicznie, natomias jako liczba oktalna w przeciwnym razie.
+symbolicznie, w przeciwnym razie jako liczba ósemkowa.
 .sp
 Symboliczne maski s± podobne do tych stosowanych przez \fIchmod\fP(1):
 .RS
 [\fBugoa\fP]{{\fB=+-\fP}{\fBrwx\fP}*}+[\fB,\fP...]
 .RE
-gdzie pierwsza grupa znaków jest czê¶ci± \fIkto\fP, a druga grupa czêsci±
+gdzie pierwsza grupa znaków jest czê¶ci± \fIkto\fP, a druga grupa czê¶ci±
 \fIop\fP, i ostatnio grupa czê¶ci± \fIperm\fP.
-Czê¶æ \fIkto\fP okre¶la która czê¶æ umaski ma zostaæ zmodyfikowana.
+Czê¶æ \fIkto\fP okre¶la, która czê¶æ umaski ma zostaæ zmodyfikowana.
 Litery oznaczaj±:
 .RS
 .IP \fBu\fP
@@ -2768,7 +2748,7 @@ prawa pozosta³ych (nie-u¿ytkownika, nie-groupy)
 wszelkie prawa naraz (u¿ytkownika, grupy i pozosta³ych)
 .RE
 .sp
-Czê¶æ \fIop\fP wskazujê jak prawa \fIkto\fP majê byæ zmienioe:
+Czê¶æ \fIop\fP wskazujê jak prawa \fIkto\fP maj± byæ zmienioe:
 .RS
 .IP \fB=\fP
 nadaj
@@ -2788,12 +2768,12 @@ prawo zapisu
 prawo wykonywania
 .RE
 .sp
-Gdy stosuje siê symboliczne maski, do opisuj± one które prawa mog± zostaæ
-udostêpnioe (w przeciwieñstwie do masek oktalnych, w których nastawienie
-bita oznacze, ¿e ma on zostaæ wykasowany).
-przyk³ad: `ug=rwx,o=' nastawia maskê tak, ¿e pliki nie bêd± odczytywalne,
-zapisywalne i wykonywalne przez `innych', i jest ekwiwalnetne
-(w wiêkszo¶ci systemów) do oktalnej maski `07'.
+Gdy stosuje siê maski symboliczne, to opisuj± one, które prawa mog± zostaæ
+udostêpnione (w przeciwieñstwie do masek ósemkowych, w których ustawienie
+bitu oznacza, ¿e ma on zostaæ wykasowany).
+Przyk³ad: `ug=rwx,o=' ustawia maskê tak, ¿e pliki nie bêd± odczytywalne,
+zapisywalne i wykonywalne przez `innych'. Jest ono równowa¿ne
+(w wiêkszo¶ci systemów) oktalnej masce `07'.
 .RE
 .\"}}}
 .\"{{{  unalias [-adt] name ...
@@ -2808,29 +2788,29 @@ aliasach katalogów.
 .IP "\fBunset\fP [\fB\-fv\fP] \fIparametr\fP ..."
 Kasuj wymienione parametry (\fB\-v\fP, oznacza domy¶lne) lub funkcje
 (\fB\-f\fP).
-Statusem zakoñczenia jest nie-zerowy je¶li który¶ z danych parametrów by³
+Status zakoñczenia jest nie-zerowy je¶li który¶ z danych parametrów by³
 ju¿ wykasowany, a zero z przeciwnym razie.
 .\"}}}
 .\"{{{  wait [job]
 .IP "\fBwait\fP [\fIzadanie\fP]"
 Czekaj na zakoñczenie danego zadania/zadañ.
-Statusem zakoñczenia wait jest status ostaniego podanego zadania:
-je¶li dane zadanie zosta³o zabite sygna³em, status zakoñczenia wynosi
-128 + number danego sygna³u (patrz \fBkill \-l\fP \fIstatus-zakoñczenia\fP
+Kodem wyj¶cia wait jest kod ostatniego podanego zadania:
+je¶li dane zadanie zosta³o zabite sygna³em, kod wyj¶cia wynosi
+128 + number danego sygna³u (patrz \fBkill \-l\fP \fIkod_wyj¶cia\fP
 powy¿ej); je¶li ostatnie dane zadanie nie mo¿e zostaæ odnalezione
-(bo nigdy nie istnia³o, lub ju¿ zosta³o zakoñczone), to status
+(bo nigdy nie istnia³o, lub ju¿ zosta³o zakoñczone), to kod wyj¶cia
 zakoñczenia wait wynosi 127.
 Patrz Kontrola Zadañ poni¿ej w celu informacji o
 formacie \fIzadanie\fP.
-\fBWait\fP zostaje zakoñczone je¶li zajdzie sygna³ na który zosta³
-nastawiony obrabiacz, lub gdy zostanie odebrany sygna³ HUP, INT lub
+\fBWait\fP zostaje zakoñczone je¶li zajdzie sygna³, na który zosta³
+ustawiony obrabiacz, lub gdy zostanie odebrany sygna³ HUP, INT lub
 QUIT.
 .sp
 Je¶li nie podano zadañ, \fBwait\fP wait czeka na zakoñczenie
 wszelkich obecnych zadañ (je¶li istnieja takowe) i koñczy siê
-statusem zerowym.
+zerowym kodem wyj¶cia.
 Je¶li kontrola zadañ zosta³a w³±czona, to zostaje wy¶wietlony
-status zakoñczeniowy zadañ
+kod wyj¶cia zadañ
 (to nie ma miejsca, je¶li zadania zosta³y jawnie podane).
 .\"}}}
 .\"{{{  whence [-pv] [name ...]
@@ -2838,30 +2818,30 @@ status zakoñczeniowy zadañ
 Dla ka¿dej nazwy zostaje wymieniony odpowiednio typ komendy
 (reserved word, built-in, alias,
 function, tracked alias lub executable).
-Je¶li podano opcjê \fB\-p\fP, to zostaje odszykany trop
-dla \fInazw\fP, bêd±cych zarezerwowanymi z³owami, aliasmi, \fIitp.\fP
+Je¶li podano opcjê \fB\-p\fP, to zostaje odszukana ¶cie¿ka
+dla \fInazw\fP, bêd±cych zarezerwowanymi s³owami, aliasami, itp.
 Bez opcji \fB\-v\fP \fBwhence\fP dzia³a podobnie do \fBcommand \-v\fP,
 poza tym, ¿e \fBwhence\fP odszukuje zarezerwowane s³owa i nie wypisuje
 aliasów jako komendy alias;
-z opcj± \fB\-v\fP, \fBwhence\fP to tosamo co \fBcommand \-V\fP.
-Proszê zwróciæ uwagê, ¿e dla \fBwhence\fP, opcja \fB\-p\fP nie ma wp³ywu
-na przeszukiwany trop, tak jak dla \fBcommand\fP.
-Je¶li typ jednej lub wiêcej sposród nazw niemóg³ zostaæ ustalony 
-do status zakoñczenia jest niezerowy.
+z opcj± \fB\-v\fP, \fBwhence\fP to to samo co \fBcommand \-V\fP.
+Zauwa¿, ¿e dla \fBwhence\fP, opcja \fB\-p\fP nie ma wp³ywu
+na przeszukiwan± ¶cie¿kê, tak jak dla \fBcommand\fP.
+Je¶li typ jednej lub wiêcej spo¶ród nazw nie móg³ zostaæ ustalony 
+to kod wyj¶cia jest niezerowy.
 .\"}}}
 .\"}}}
 .\"{{{  job control (and its built-in commands)
 .SS "Kontrola Zadañ"
-Kontrola zadañ oznacza zdolno¶æ otoczki to monitorowania i kontrolowania
+Kontrola zadañ oznacza zdolno¶æ pow³oki to monitorowania i kontrolowania
 wykonywanych \fBzadañ\fP,
 które s± procesami lub grupami procesów tworzonych przez komendy lub 
-ruroci±gi.
-Otoczka przynajmniej ¶ledzi status obecnych zadañ w tle
+potoki.
+Pow³oka przynajmniej ¶ledzi status obecnych zadañ w tle
 (\fItzn.\fP, asynchronicznych); t± informacjê mo¿na otrzymaæ
-wykonyj±æ komendê \fBjobs\fP.
-Je¶li zosta³a uaktywnioa pe³na kontrola zadañ
+wykonuj±c komendê \fBjobs\fP.
+Je¶li zosta³a uaktywniona pe³na kontrola zadañ
 (stosuj±c \fBset \-m\fP lub
-\fBset \-o monitor\fP), tak jak w otoczkach interakcjynych,
+\fBset \-o monitor\fP), tak jak w pow³okach interakcjynych,
 to procesy pewnego zadania zostaj± umieszczane we w³asnej grupie
 procesów, pierwszoplanowe zadnia mog± zostaæ zatrzymane przy pomocy
 klawisza wstrzymania z termialu (zwykle ^Z),
@@ -2873,17 +2853,17 @@ wznowione.
 .sp
 Proszê zwróciæ uwgaê, ¿e tylko komendy tworz±ce procesy
 (\fItzn.\fP,
-komendy asynchroniczne, komendy podotoczek, i niewbudowane komendy
+komendy asynchroniczne, komendy podpow³ok i niewbudowane komendy
 nie bêd±ce funkcjami) mog± zostaæ wstrzymane; takie komendy
 jak \fBread\fP nie mog± tego.
 .sp
-Gdy zostaje stworzone zadnie, to przyporzadkowywuje mu siê numer zadania.
-Dla interakcyjnych otoczek, numer ten zostaje wy¶wietlone w \fB[\fP..\fB]\fP,
+Gdy zostaje stworzone zadanie, to przyporz±dkowywuje mu siê numer zadania.
+Dla interakcyjnych pow³ok, numer ten zostaje wy¶wietlony w \fB[\fP..\fB]\fP,
 i w nastêpstwie identyfikatory procesów w zadaniu, je¶li zostaje
 wykonywane asynchroniczne zadanie.
 Do zadania mo¿emy odnosiæ siê w komendach \fBbg\fP, \fBfg\fP, \fBjobs\fP,
 \fBkill\fP i 
-\fBwait\fP albo poprzez id ostatniego procesu w ruroci±gu komend
+\fBwait\fP albo poprzez id ostatniego procesu w potoku komend
 (tak jak jest on zapisywany w parametrze \fB$!\fP) lub poprzedzaj±c
 numer zadania znakiem procentu (\fB%\fP).
 Równie¿ nastêpuj±ce sekwencjê z procentem mog± byæ stosowane do
@@ -2893,17 +2873,17 @@ odnoszenia siê do zadañ:
 expand;
 afB lw(4.5i).
 %+	T{
-Ostatnio zatrzymane zadanie, lub, gdy brak zatrzymanych zadañ, najstarsze 
+Ostatnio zatrzymane zadanie lub, gdy brak zatrzymanych zadañ, najstarsze 
 wykonywane zadanie.
 T}
 %%\fR, \fP%	T{
 To samo co \fB%+\fP.
 T}
 %\-	T{
-Zadanie, które wy³oby pod \fB%+\fP gdyby nie zosta³o zakoñczone.
+Zadanie, które by³oby pod \fB%+\fP gdyby nie zosta³o zakoñczone.
 T}
 %\fIn\fP	T{
-Zadanie z numeram zadania \fIn\fP.
+Zadanie z numerem zadania \fIn\fP.
 T}
 %?\fIci±g\fP	T{
 Zadanie zawieracjace ci±g \fIci±g\fP (wystêpuje b³±d, gdy odpowiada mu 
@@ -2917,7 +2897,7 @@ T}
 .sp
 Je¶li zadanie zmienia status (\fItzn.\fP, gdy zadanie w tle
 zostaje zakoñczone lub zadanie na pierwszym planie zostaje wstrzymane), 
-otoczka wy¶wietla nastêpuj±ce informacje o statusie:
+pow³oka wy¶wietla nastêpuj±ce informacje o statusie:
 .RS
 \fB[\fP\fInumer\fP\fB]\fP \fIflaga status komenda\fP
 .RE
@@ -2928,52 +2908,52 @@ to numer danego zadania.
 jest \fB+\fP lub \fB-\fP je¶li zadaniem jest odpowiednio zadanie z 
 \fB%+\fP lub \fB%-\fP, lub przerwa je¶li nie jest ani jednym ani drugim.
 .IP "\ \fIstatus\fP"
-Wskazuje opbecny stan danego zadania
+Wskazuje obecny stan danego zadania
 i mo¿e to byæ
 .RS
 .IP "\fBRunning\fP"
-Zadania nie jest ani wstrzymane ani zakoñczone (proszê zwróciæ uwagê, i¿
+Zadanie nie jest ani wstrzymane ani zakoñczone (proszê zwróciæ uwagê, i¿
 przebieg nie koniecznie musi oznaczaæ spotrzebowywanie
 czasu CPU \(em proces mo¿e byæ zablokowany, czekaj±c na pewne zaj¶cie).
 .IP "\fBDone\fP [\fB(\fP\fInumer\fP\fB)\fP]"
-zadanie zakoñczone. \fInumer\fP to status zakoñczeniowy danego zadania,
-który zostaje pominiety, je¶li wynosi on zero.
+zadanie zakoñczone. \fInumer\fP to kod wyj¶cia danego zadania,
+który zostaje pominiêty, je¶li wynosi on zero.
 .IP "\fBStopped\fP [\fB(\fP\fIsygna³\fP\fB)\fP]"
 zadanie zosta³o wstrzymane danym sygna³em \fIsygna³\fP (gdy brak sygna³u,
-to zadnie zosta³o zatrzymane przez SIGTSTP).
+to zadanie zosta³o zatrzymane przez SIGTSTP).
 .IP "\fIopis-sygna³u\fP [\fB(core dumped)\fP]"
 zadanie zosta³o zabite sygna³em (\fItzn.\fP, Memory\ fault,
 Hangup, \fIitp.\fP \(em zastosuj
 \fBkill \-l\fP dla otrzymania listy opisów sygna³ów).
-Wiadomosæ \fB(core\ dumped)\fP wskazuje, ¿e proces stworzy³ plik zrzutu core.
+Wiadomo¶æ \fB(core\ dumped)\fP wskazuje, ¿e proces stworzy³ plik zrzutu core.
 .RE
 .IP "\ \fIcommand\fP"
 to komenda, która stworzy³a dany proces.
-Je¶li dane zadania zwiera kilka procesów, to k±dy proces zostanie wy¶wietlony
+Je¶li dane zadanie zawiera kilka procesów, to ka¿dy proces zostanie wy¶wietlony
 w osobnym wierszy pokazujacym jego \fIcommand\fP i ewentualnie jego
 \fIstatus\fP, je¶li jest on odmienny od statusu poprzedniego procesu.
 .PP
-Je¶li próbuje siê zakoñczyæ otoczkê, podczas gdy istniej± zadania w
-stanie zatrzymania, to otoczka ostrzega u¿ytkownika, ¿e s± zadania w stanie
-zatrzymania i nie zakañcza siê.
-Gdy tu¿ potem zostanie podjêta ponowna próba zakoñczenia otoczki, to
-zatrzymane zadania otrzymuj± sygna³ \fBHUP\fP i otoczka koñczy pracê.
-podobnie, je¶li nie zosta³a nastawiona opcja \fBnohup\fP,
-i s± zadania w pracy, gdy zostanie podjeta próba zakoñczenia otoczki
-zameldowania, otoczka ostrzega u¿ytkownika i nie koñczy pracy.
-Gdy tu¿ potem zotanie ponownie podjeta próba zakoñczenia pracy otoczki,
-to bierz±ce procesy otrzymuj± sygna³ \fBHUP\fP i otoczka koñczy pracê.
+Je¶li próbuje siê zakoñczyæ pow³okê, podczas gdy istniej± zadania w
+stanie zatrzymania, to pow³oka ostrzega u¿ytkownika, ¿e s± zadania w stanie
+zatrzymania i nie koñczy pracy.
+Gdy tu¿ potem zostanie podjêta ponowna próba zakoñczenia pow³oki, to
+zatrzymane zadania otrzymuj± sygna³ \fBHUP\fP i pow³oka koñczy pracê.
+podobnie, je¶li nie zosta³a ustawiona opcja \fBnohup\fP,
+i s± zadania w pracy, gdy zostanie podjêta próba zakoñczenia pow³oki
+zameldowania, pow³oka ostrzega u¿ytkownika i nie koñczy pracy.
+Gdy tu¿ potem zotanie ponownie podjeta próba zakoñczenia pracy pow³oki,
+to bie¿±ce procesy otrzymuj± sygna³ \fBHUP\fP i pow³oka koñczy pracê.
 .\"}}}
 .\"{{{  Emacs Interactive Input Line Editing
 .SS "Interakcyjna Edycja Wiersza Wprowadzeñ w Trybie Emacs"
-Je¶li zosta³a nastawiona opcja \fBemacs\fP,jest w³±czona interakcyjna
+Je¶li zosta³a ustawiona opcja \fBemacs\fP,jest w³±czona interakcyjna
 edycja wiersza wprowadzeñ.  \fBOstrze¿enie\fP: Ten tryb zachowuje siê
-nieco inaczej ni¿ tryb emacs-a w oryginalnej otoczce Korn-a
-i 8-smy bit zostaje wykasowany w trybie emacs-a.
+nieco inaczej ni¿ tryb emacs-a w oryginalnej pow³oce Korn-a
+i 8-my bit zostaje wykasowany w trybie emacs-a.
 W trybie tym ró¿ne komendy edycji (zazwyczaj pod³±czone pod jeden lub wiecej
-znaków kontrolnych) powoduj± natychmiastowe akcje bez odczekiwania
-nastêpnego prze³amania wiersza.  Wiele komend edycji jest zwi±zywana z 
-pewnymi znakami kontrolnymi podczas odpalania otoczki; te zwi±zki mog± zostaæ
+znaków steruj±cych) powoduj± natychmiastowe akcje bez odczekiwania
+nastêpnego prze³amania wiersza.  Wiele komend edycji jest zwi±zywanych z 
+pewnymi znakami steruj±cymi podczas odpalania pow³oki; te zwi±zki mog± zostaæ
 zmienione przy pomocy nastêpuj±cych komend:
 .\"{{{  bind
 .IP \fBbind\fP
@@ -2982,13 +2962,13 @@ Obecne zwi±zki zostaj± wyliczone.
 .\"{{{  bind string=[editing-command]
 .IP "\fBbind\fP \fIci±g\fP\fB=\fP[\fIkomenda-edycji\fP]"
 Dana komenda edycji zostaje podwi±zana pod dany \fBci±g\fP, który
-powinnien sk³adaæ siê ze znaku kontrolnego (zapisanego przy pomocy
+powinnien sk³adaæ siê ze znaku steruj±cego (zapisanego przy pomocy
 strza³ki w górê \fB^\fP\fIX\fP), poprzedzonego ewentualnie
 jednym z dwóch znaków przedsionkownych.  Wprowadzenie danego
 \fIci±gu\fP bêdzie wówczas powodowa³o bezpo¶rednie wywo³anie danej
 komendy edycji.  Proszê zwróciæ uwagê, ¿e choæ tylko
-dwa znaki przedsionkowe mog± (zwykle ESC i ^X) s± wspomagane, to
-równie¿ niektóre ci±gi wieloznakowe równie¿ mog± zostaæ podane.  
+dwa znaki przedsionkowe (zwykle ESC i ^X) s± wspomagane, to
+mog± równie¿ zostaæ podane niektóre ci±gi wieloznakowe.
 Nastêpuj±ce pod³±cza klawisze terminala ANSI lub xterm
 (które s± w domy¶lnych podwi±zaniach).  Oczywi¶cie niektóre
 sekwencje wyprowadzenia nie chc± dzia³aæ tak g³adko:
@@ -3012,26 +2992,26 @@ Wymieñ nazwy funkcji do których mo¿na pod³aczyæ klawisze.
 .\"{{{  bind -m string=[substitute]
 .IP "\fBbind \-m\fP \fIci±g\fP\fB=\fP[\fIpodstawienie\fP]"
 Dany ci±g wprowadzenia \fIci±g\fP zostanie zamieniony bezpo¶rednio na
-dane \fIpodstawienie\fP które mo¿e zawieraæ komendy edycji.
+dane \fIpodstawienie\fP, które mo¿e zawieraæ komendy edycji.
 .\"}}}
 .PP
 Nastêpuje lista dostêpnych komend edycji.
 Ka¿dy z poszczególnych opisów zaczyna siê nazw± komendy,
 liter± \fIn\fP, je¶li komenda mo¿e zostaæ poprzedzona licznikiem,
-i wszelkimi klawiszami do których dana komenda jest pod³aczona
+i wszelkimi klawiszami, do których dana komenda jest pod³aczona
 domy¶lnie (w zapisie sotsujacym notacjê strza³kow±, \fItzn.\fP, 
 znak ASCII ESC jest pisany jako ^[).
 Licznik poprzedzaj±cy komendê wprowadzamy stosuj±c ci±g
 \fB^[\fP\fIn\fP, gdzie \fIn\fP to ci±g sk³adaj±cy siê z jednej
 lub wiêcej cyfr;
-chyba, ¿e podano inaczej licznik, je¶li zosta³ pominiêty, wynosi 
+chyba ¿e podano inaczej licznik, je¶li zosta³ pominiêty, wynosi 
 domy¶lnie 1.
 Proszê zwróciæ uwagê, ¿e nazwy komend edycji stosowane s± jedynie
 w komendzie \fBbind\fP.  Ponadto, wiele komend edycji jest przydatnych
 na terminalach z widocznym kursorem.  Domy¶lne podwi±zania zosta³y wybrane
 tak, aby by³y zgodne z odpowiednimi podwi±zaniami EMACS-a.  
 Znaki u¿ytkownika tty (\fIw szczególno¶ci\fP, ERASE) zosta³y
-pod³±czenia do stosownych podstawnieñ i przekasowywuj± domy¶lne
+pod³±czenia do stosownych podstawieñ i przekasowywuj± domy¶lne
 pod³±czenia.
 .\"{{{  abort ^G
 .IP "\fBabort ^G\fP"
@@ -3066,8 +3046,8 @@ Przemienia pierwszy znak w nastêpnych \fIn\fP s³owach na du¿± literê,
 pozostawiaj±c kursor za koñcem ostatniego s³owa.
 .\"}}}
 .\"{{{  comment ^[#
-Je¶li bierz±cy wiersz nie zaczyna siê od znaku komentarza, zostaje on
-dodany na pocz±tku wiersza i wiesz zostaje wprowadzony (tak jakby
+Je¶li bie¿±cy wiersz nie zaczyna siê od znaku komentarza, zostaje on
+dodany na pocz±tku wiersza i wiersz zostaje wprowadzony (tak jakby
 naci¶niêto prze³amanie wiersza), w przeciwnym razie istniej±ce znaki
 komentarza zostaj± usuniête i kursor zostaje umieszczony na pocz±tku 
 wiersza.
@@ -3077,9 +3057,9 @@ wiersza.
 Automatycznie dope³nia tyle ile jest jednoznaczne w nazwie komendy
 lub nazwie pliku zawieraj±cej kursor.  Je¶li ca³a pozosta³a czê¶æ
 komendy lub nazwy pliku jest jednoznaczna to przerwa zostaje wy¶wietlona
-po wype³nieniy, chyba ¿e jest to nazwa katalogu, w którym to razie zostaje
+po wype³nieniu, chyba ¿e jest to nazwa katalogu, w którym to razie zostaje
 do³±czone \fB/\fP.  Je¶li nie ma komendy lub nazwy pliku zaczynajacej
-siê od takiej czêsci s³owa, to zostaje wyprowadzony znak dzwonka 
+siê od takiej czê¶ci s³owa, to zostaje wyprowadzony znak dzwonka 
 (zwykle powodujacy s³yszalne zabuczenie).
 .\"}}}
 .\"{{{  complete-command ^X^[
@@ -3096,7 +3076,7 @@ zawieraj±cego czê¶ciowe s³owo przed kursorem, tak jak w komendzie
 .\"}}}
 .\"{{{  complete-list ^[=
 .IP "\fBcomplete-list ^[=\fP"
-Wymieñ mo¿liwe dope³nienia bierz±cego s³owa.
+Wymieñ mo¿liwe dope³nienia bie¿±cego s³owa.
 .\"}}}
 .\"{{{  delete-char-backward n ERASE, ^?, ^H
 .IP "\fBdelete-char-backward\fP \fIn\fP \fBERASE\fP, \fB^?\fP, \fB^H\fP"
@@ -3124,15 +3104,15 @@ miejscu w buforze historii, tak wiêc
 .\"}}}
 .\"{{{  downcase-word n ^[L, ^[l
 .IP "\fBdowncase-word\fP \fIn\fP \fB^[L\fP, \fB^[l\fP"
-Przemieñ na ma³e litery nastêpnych \fIn\fP s³ów.
+Zamieñ na ma³e litery nastêpnych \fIn\fP s³ów.
 .\"}}}
 .\"{{{  end-of-history ^[>
 .IP "\fBend-of-history ^[>\fP"
-Porousza do koñca historii.
+Porusza do koñca historii.
 .\"}}}
 .\"{{{  end-of-line ^E
 .IP "\fBend-of-line ^E\fP"
-Przesuwa kursor na konieæ wiersza wprowadzenia.
+Przesuwa kursor na koniec wiersza wprowadzenia.
 .\"}}}
 .\"{{{  eot ^_
 .IP "\fBeot ^_\fP"
@@ -3150,12 +3130,12 @@ Error (ring the bell).
 .\"}}}
 .\"{{{  exchange-point-and-mark ^X^X
 .IP "\fBexchange-point-and-mark ^X^X\fP"
-Umie¶æ kursor na znaczniku i nastaw znacznik na miejsce w którym by³
+Umie¶æ kursor na znaczniku i ustaw znacznik na miejsce, w którym by³
 kursor.
 .\"}}}
 .\"{{{  expand-file ^[*
 .IP "\fBexpand-file ^[*\fP"
-Dodaje * do bierz±cego s³owa i zastêpuje dane s³owo wynikiem
+Dodaje * do bie¿±cego s³owa i zastêpuje dane s³owo wynikiem
 rozwiniêcia nazwy pliku na danym s³owie.
 Gdy nie pasuj± ¿adne pliki, zadzwoñ.
 .\"}}}
@@ -3182,36 +3162,35 @@ Kasuje wprowadzenie pomiêdzy kursorem a znacznikiem.
 .\"{{{  kill-to-eol n ^K
 .IP "\fBkill-to-eol\fP \fIn\fP \fB^K\fP"
 Je¶li ominiêto \fIn\fP, to kasuje wprowadzenia od kursora do koñca wiersza,
-w przeciwnym razie kasuje znaki pomiêdzu cursorem a
-\fIn\fP-t± kolumn±.
+w przeciwnym razie kasuje znaki pomiêdzy kursorem a \fIn\fP-t± kolumn±.
 .\"}}}
 .\"{{{  list ^[?
 .IP "\fBlist ^[?\fP"
 Wy¶wietla sortowan±, skolumnowan± listê nazw komend lub nazw plików
-(je¶li s± takowe) które mog³yby dope³niæ czê¶ciowe s³owo zawieraj±ce kursr.
+(je¶li s± takowe), które mog³yby dope³niæ czê¶ciowe s³owo zawieraj±ce kursor.
 Do nazw katalogów zostaje do³±czone \fB/\fP.
 .\"}}}
 .\"{{{  list-command ^X?
 .IP "\fBlist-command ^X?\fP"
 Wy¶wietla sortowan±, skolumnowan± listê nazw komend
-(je¶li s± takowe) które mog³yby dope³niæ czê¶ciowe s³owo zawieraj±ce kursr.
+(je¶li s± takowe), które mog³yby dope³niæ czê¶ciowe s³owo zawieraj±ce kursor.
 .\"}}}
 .\"{{{  list-file ^X^Y
 .IP "\fBlist-file ^X^Y\fP"
 Wy¶wietla sortowan±, skolumnowan± listê nazw plików
-(je¶li s± takowe) które mog³yby dope³niæ czê¶ciowe s³owo zawieraj±ce kursr.
+(je¶li s± takowe), które mog³yby dope³niæ czê¶ciowe s³owo zawieraj±ce kursor.
 Specyfikatory rodzaju plików zostaj± do³±czone tak jak powy¿ej opisano
 pod \fBlist\fP.
 .\"}}}
 .\"{{{  newline ^J and ^M
 .IP "\fBnewline ^J\fP, \fB^M\fP"
-Powoduje przetworzenie bierz±cego wiersza wprowadzeñ przez otoczkê.
+Powoduje przetworzenie bie¿±cego wiersza wprowadzeñ przez pow³okê.
 Kursor mo¿e znajdowaæ siê aktualnie gdziekolwiek w wierszu.
 .\"}}}
 .\"{{{  newline-and-next ^O
 .IP "\fBnewline-and-next ^O\fP"
-Powoduje przetworzenie bierz±cego wiersza wprowadzeñ przez otoczkê,
-po czym nastêpny wiersz z historii staje siê wierszem bierz±cym.
+Powoduje przetworzenie bie¿±cego wiersza wprowadzeñ przez pow³okê,
+po czym nastêpny wiersz z historii staje siê wierszem bie¿±cym.
 Ma to tylko sens po poprzednim up-history lub search-history.
 .\"}}}
 .\"{{{  no-op QUIT
@@ -3234,20 +3213,20 @@ na miejscu kursora.
 .\"}}}
 .\"{{{  quote ^^
 .IP "\fBquote ^^\fP"
-Nastêpuj±cy znak zostaje wziêty dos³ownie zamiast jako komenda edycji.
+Nastêpny znak zostaje wziêty dos³ownie zamiast jako komenda edycji.
 .\"}}}
 .\"{{{  redraw ^L
 .IP "\fBredraw ^L\fP"
-Przerysuj ponownie zachêcacz i bierz±cy wiersz wprowadzenia.
+Przerysuj ponownie zachêtê i bie¿±cy wiersz wprowadzenia.
 .\"}}}
 .\"{{{  search-character-backward n ^[^]
 .IP "\fBsearch-character-backward\fP \fIn\fP \fB^[^]\fP"
-Szukaj w ty³ w bierz±cym wierszu \fIn\fP-tego wyst±pienia
+Szukaj w ty³ w bie¿±cym wierszu \fIn\fP-tego wyst±pienia
 nastêpnego wprowadzonego znaku.
 .\"}}}
 .\"{{{  search-character-forward n ^]
 .IP "\fBsearch-character-forward\fP \fIn\fP \fB^]\fP"
-Szukaj w przód w bierz±cym wierszu \fIn\fP-tego wyst±pienia
+Szukaj w przód w bie¿±cym wierszu \fIn\fP-tego wyst±pienia
 nastêpnego wprowadzonego znaku.
 .\"}}}
 .\"{{{  search-history ^R
@@ -3264,13 +3243,13 @@ wyrzucone.
 .\"}}}
 .\"{{{  set-mark-command ^[<space>
 .IP "\fBset-mark-command ^[\fP<space>"
-Postaw znacznik na bierz±cej pozycji kursora.
+Postaw znacznik na bie¿±cej pozycji kursora.
 .\"}}}
 .\"{{{  stuff
 .IP "\fBstuff\fP"
 Pod systemami to wspomagaj±cymi, wypycha pod³±czony znak spowrotem
-do wej¶cia terminala, dzie mo¿e on zostaæ specjalnie przetworzony przez
-terminal.  Jest to przydatne n.p. dla opcji BRL \fB^T\fP mini-systat'a.
+do wej¶cia terminala, gdzie mo¿e on zostaæ specjalnie przetworzony przez
+terminal.  Jest to przydatne np. dla opcji BRL \fB^T\fP mini-systat'a.
 .\"}}}
 .\"{{{  stuff-reset
 .IP "\fBstuff-reset\fP"
@@ -3281,7 +3260,7 @@ przerwanie.
 .IP "\fBtranspose-chars ^T\fP"
 Na koñcu wiersza lub je¶li w³±czono opcjê \fBgmacs\fP, 
 zamienia dwa poprzedzaj±ce znaki; w przeciwnym razie zamienia
-poprzedni i bi¿±cy znak, po czym przesuwa cursor jeden znak na prawo.
+poprzedni i bie¿±cy znak, po czym przesuwa kursor jeden znak na prawo.
 .\"}}}
 .\"{{{  up-history n ^P
 .IP "\fBup-history\fP \fIn\fP \fB^P\fP"
@@ -3293,14 +3272,14 @@ Zamienia nastêpnych \fIn\fP s³ów w du¿e litery.
 .\"}}}
 .\"{{{  version ^V
 .IP "\fBversion ^V\fP"
-Wypisujê wersjê ksh.  Obecny bufor edycji zostaje odtworzony
+Wypisuje wersjê ksh.  Obecny bufor edycji zostaje odtworzony
 gdy tylko zostanie naci¶niêty jakikolwiek klawisz 
 (po czym ten klawisz zostaje przetworzony, chyba ¿e
  jest to przerwa).
 .\"}}}
 .\"{{{  yank ^Y
 .IP "\fByank ^Y\fP"
-Wprowad¼ ostatnio skasowny ci±g tekstu na bierz±c± pozycjê kursora.
+Wprowad¼ ostatnio skasowany ci±g tekstu na bie¿±c± pozycjê kursora.
 .\"}}}
 .\"{{{  yank-pop ^[y
 .IP "\fByank-pop ^[y\fP"
@@ -3322,7 +3301,7 @@ ma komendy uzupe³niania nazw plików i komend
 opcjonalnie, \fB<tab>\fP),
 .IP \ \ \(bu
 komenda \fB_\fP dzia³a odmiennie (w ksh jst to komenda ostatniego argumentu,
-a w vi przechodzenie do pocz±tku bierz±cego wiersza),
+a w vi przechodzenie do pocz±tku bie¿±cego wiersza),
 .IP \ \ \(bu
 komendy \fB/\fP i \fBG\fP poruszaj± siê w kierunkach odwrotnych do komendy
 \fBj\fP
@@ -3340,7 +3319,7 @@ odpowiednio (bez ¿artów).
 .PP
 Tak jak w vi, s± dwa tryby: tryb wprowadzania i tryb komend.
 W trybie wprowadzania, wiêkszo¶æ znakow zostaje po prostu umieszczona
-w buforze na bierz±cym miejscu kursora w kolejno¶ci ich wpisywania, 
+w buforze na bie¿±cym miejscu kursora w kolejno¶ci ich wpisywania, 
 chocia¿ niektóre znaki zostaj± traktowane specjalnie.
 W szczególno¶ci nastêpuj±ce znaki odpowiadaj± obecnym ustawieniom tty'a
 (patrz \fIstty\fP(1)) i zachowuj± ich normalne znaczenia
@@ -3356,12 +3335,12 @@ afB lw(4.5i).
 kasuje poprzedni znak
 T}
 ^V	T{
-bazpo¶renio nastêpny: nastêpny naci¶niêty znak nie zostaje traktowany 
+bezpo¶renio nastêpny: nastêpny naci¶niêty znak nie zostaje traktowany 
 specjalnie (mo¿na tego u¿yæ do wprowadzenia opisywanych tu znaków)
 T}
 ^J ^M	T{
-koniec wiersza: bierz±cy wiersz zostaje wczytany, rozpoznany i wykonany
-przez otoczkê
+koniec wiersza: bie¿±cy wiersz zostaje wczytany, rozpoznany i wykonany
+przez pow³okê
 T}
 <esc>	T{
 wprowadza edytor w tryb komend (patrz poni¿ej)
@@ -3398,11 +3377,11 @@ Wiersz jest przwijany poziomo w razie potrzeby.
 W trybie komend, ka¿dy znak zostaje interpretowany jako komenda.
 Znaki którym nie odpowiada ¿adna komenda, które s± niedopuszczaln± 
 komend± lub s± komendami niedowykonania, wszystkie wyzwalaj± dzwonek.
-W nastêpuj±cych opisach komend, \fIn\fP wskazuje ¿e komedê mo¿na
+W nastêpuj±cych opisach komend, \fIn\fP wskazuje, ¿e komendê mo¿na
 poprzedziæ numerem (\fItzn.\fP, \fB10l\fP przesuwa w prawo o 10
 znaków); gdy brak przedrostka numerowego, to zak³ada siê, ¿e \fIn\fP 
 jest równe 1, chyba ¿e powiemy inaczej.
-Zwrot `bierz±ca pozycja' odnosi siê do pozycji pomiêdzy cursorem
+Zwrot `bie¿±ca pozycja' odnosi siê do pozycji pomiêdzy cursorem
 a znakiem przed nim.
 `S³owo' to ci±g liter, cyfr lub podkre¶leñ
 albo ci±g nie nie-liter, nie-cyfr, nie-podkre¶leñ, niebia³ych-znaków
@@ -3410,43 +3389,43 @@ albo ci±g nie nie-liter, nie-cyfr, nie-podkre¶leñ, niebia³ych-znaków
 niebia³ych znaków.
 .\"{{{  Special ksh vi commands
 .IP "Specjalne ksh komendy vi"
-Nastêpuj±cych komend brak, lub s± one odmienne od tych w normalnym
+Nastêpuj±cych komend brak lub s± one odmienne od tych w normalnym
 edytorze plików vi:
 .RS
 .IP "\fIn\fP\fB_\fP"
 wprowad¼ przerwê z nastêpstwem \fIn\fP-tego du¿ego s³owa
-z ostatniej komendy w historii na bierz±cej pozycji i wejd¼ w tryb
+z ostatniej komendy w historii na bie¿±cej pozycji i wejd¼ w tryb
 wprowadzania; je¶li nie podano \fIn\fP to domy¶lnie zostaje wprowadzone
 ostatnie s³owo.
 .IP "\fB#\fP"
-wprowad¼ znak komenta¿a (\fB#\fP) na pocz±tku bierz±cego wiersza
-i przeka¿ ten wiersz do otoczki (taksoamo jak \fBI#^J\fP).
+wprowad¼ znak komenta¿a (\fB#\fP) na pocz±tku bie¿±cego wiersza
+i przeka¿ ten wiersz do pow³oki (taksoamo jak \fBI#^J\fP).
 .IP "\fIn\fP\fBg\fP"
 tak jak \fBG\fP, z tym ¿e, je¶li nie podano \fIn\fP 
 to dotyczy to ostatnio zapamiêtanego wiersza.
 .IP "\fIn\fP\fBv\fP"
 edytuj wiersze \fIn\fP stosuj±c edytor vi; 
-je¶li nie podano \fIn\fP, to edytuje bierz±cy wiersz.
+je¶li nie podano \fIn\fP, to edytuje bie¿±cy wiersz.
 W³a¶ciw± wykonywan± komend± jest
 `\fBfc \-e ${VISUAL:-${EDITOR:-vi}}\fP \fIn\fP'.
 .IP "\fB*\fP i \fB^X\fP"
 dope³nianie komendy lub nazwy pliku zostaje zastosowane do obecnego du¿ego
 s³owa (po dodaniu *, je¶li to s³owo nie zawiera ¿adnych znaków dope³niania
 nazw plików) - du¿e s³owo zostaje zast±pione s³owami wynikowymi.
-Je¶li bierz±ce du¿e s³owo jest pierwszym w wierszu (lub wystêpuke po
+Je¶li bie¿±ce du¿e s³owo jest pierwszym w wierszu (lub wystêpuke po
 jednym z nastêpuj±cych znaków: \fB;\fP, \fB|\fP, \fB&\fP, \fB(\fP, \fB)\fP)
-i nie zawiera pochy³ka (\fB/\fP) to rozwijanie komendy zostaje wykonane,
-w przeciwnym razie zostaje wyknoane rozwijanie nazwy plików.
+i nie zawiera uko¶nika (\fB/\fP) to rozwijanie komendy zostaje wykonane,
+w przeciwnym razie zostaje wykonane rozwijanie nazwy plików.
 Rozwijanie komend podpasowuje du¿e s³owo pod wszelkie aliasy, funkcje
 i wbudowane komendy jak i równie¿ wszelkie wykonywalne pliki odnajdywane
 przeszukuj±c katalogi wymienione w parametrze \fBPATH\fP.
-Rozwijanie nazw plików dopasowywuje du¿e s³owo do nazw plików w bierz±cym
+Rozwijanie nazw plików dopasowywuje du¿e s³owo do nazw plików w bie¿±cym
 katalogu.
 Po rozwiniêciu, kursor zostaje umieszczony tu¿ po
 ostatnim s³owie na koñcu i edytor jest w trybie wprowadzania.
 .IP "\fIn\fP\fB\e\fP, \fIn\fP\fB^F\fP, \fIn\fP\fB<tab>\fP and \fIn\fP\fB<esc>\fP"
 dope³nianie nazw komend/plików: 
-zastêpuje bierz±ce du¿e s³owo najd³u¿szym, jednoznacznym
+zastêpuje bie¿±ce du¿e s³owo najd³u¿szym, jednoznacznym
 dopasowaniem otrzymanym przez rozwiniêcie nazwy komendy/pliku.
 \fB<tab>\fP zostaje jedynie rozpoznane je¶li zosta³a w³±czona opcja 
 \fBvi-tabcomplete\fP, podczas gdy \fB<esc>\fP zostaje jedynie rozpoznane
@@ -3495,7 +3474,7 @@ przesuñ siê na przód o \fIn\fP du¿ych s³ów.
 odnajd¼ wzór: edytor szuka do przodu najbli¿szego nawiasu
 zamykaj±cego (okr±g³ego, prostok±tnego lub klamrowego),
 a nastêpnie przesuwa siê miêdzy nim a odpowiadaj±cym mu
-nawiasem otwier±jcym.
+nawiasem otwieraj±cym.
 .IP "\fIn\fP\fBf\fP\fIc\fP"
 przesuñ siê w przód do \fIn\fP-tego wyst±pienia znaku \fIc\fP.
 .IP "\fIn\fP\fBF\fP\fIc\fP"
@@ -3520,9 +3499,9 @@ przejd¼ do \fIn\fP-tego nastêpnego wiersza w historii.
 przejd¼ do \fIn\fP-tego poprzedniego wiersza w historii.
 .IP "\fIn\fP\fBG\fP"
 przejd¼ do wiersza \fIn\fP w historii; je¶li brak \fIn\fP, to przenosi
-siê do pierwszego zapamietanego wiersza w historii.
+siê do pierwszego zapamiêtanego wiersza w historii.
 .IP "\fIn\fP\fBg\fP"
-tak jak \fBG\fP, tylko, ¿e je¶li nie podan \fIn\fP to idzie do
+tak jak \fBG\fP, tylko, ¿e je¶li nie podaon \fIn\fP to idzie do
 ostatnio zapamiêtanego wiersza.
 .IP "\fIn\fP\fB/\fP\fIci±g\fP"
 szukaj wstecz w historii \fIn\fP-tego wiersza zawieraj±cego
@@ -3543,18 +3522,18 @@ przeciwny do kierunku ostatniego szukania.
 .RS
 .IP "\fIn\fP\fBa\fP"
 dodaj tekst \fIn\fP-krotnie: przechodzi w tryb wprowadzania tu¿ po
-bierz±cej pozycji.
+bie¿±cej pozycji.
 Dodanie zostaje jedynie wykonane, je¶li zostanie ponownie uruchomiony
 tryb komendy (\fItzn.\fP, je¶li <esc> zostanie u¿yte).
 .IP "\fIn\fP\fBA\fP"
-tak jak \fBa\fP, z t± ró¿nic± ¿e dodaje do koñca wiersza.
+tak jak \fBa\fP, z t± ró¿nic±, ¿e dodaje do koñca wiersza.
 .IP "\fIn\fP\fBi\fP"
-dodaj tekst \fIn\fP-krotnie: przechodzi w tryb wprowadzania na bierz±cej
+dodaj tekst \fIn\fP-krotnie: przechodzi w tryb wprowadzania na bie¿±cej
 pozycji.
 Dodanie zostaje jedynie wykonane, je¶li zostanie ponownie uruchomiony
 tryb komendy (\fItzn.\fP, je¶li <esc> zostanie u¿yte).
 .IP "\fIn\fP\fBI\fP"
-tak jak \fBi\fP, z t± ró¿nic± ¿e dodaje do tu¿ przed pierwszym niebia³ym
+tak jak \fBi\fP, z t± ró¿nic±, ¿e dodaje do tu¿ przed pierwszym niebia³ym
 znakiem.
 .IP "\fIn\fP\fBs\fP"
 zamieñ nastêpnych \fIn\fP znaków (\fItzn.\fP, skasuj te znaki i przejd¼
@@ -3564,7 +3543,7 @@ zast±p ca³y wiersz: wszystkie znaki od pierwszego niebia³ego znaku
 do koñca wiersza zostaj± skasowane i zostaje uruchomiony tryb
 wprowadzania.
 .IP "\fIn\fP\fBc\fP\fIkomenda-przemieszczenia\fP"
-przejd¼ z bierz±cej pozycji do pozycji wynikajacej z \fIn\fP
+przejd¼ z bie¿±cej pozycji do pozycji wynikajacej z \fIn\fP
 \fIkomend-przemieszczenia\fPs (\fItj.\fP, skasuj wskazany region i wej¼ w tryb
 wprowadzania);
 je¶li \fIkomend±-przemieszczenia\fP jest \fBc\fP, to wiersz
@@ -3582,7 +3561,7 @@ skasuj do koñca wiersza.
 skasuj od obecnej pozycji do pozycji wynikajacej z \fIn\fP krotnego
 \fImove-cmd\fP;
 \fImove-cmd\fP mo¿e byæ komend± przemieszczania (patrz powy¿ej) lub \fBd\fP,
-co powoduje skasowanie bierz±cego wiersza.
+co powoduje skasowanie bie¿±cego wiersza.
 .IP "\fIn\fP\fBr\fP\fIc\fP"
 zamieñ nastêpnych \fIn\fP znaków na znak \fIc\fP.
 .IP "\fIn\fP\fBR\fP"
@@ -3594,31 +3573,31 @@ zmieñ wielko¶æ nastêpnych \fIn\fP znaków.
 .IP "\fIn\fP\fBy\fP\fImove-cmd\fP"
 wytnij od obecnej pozycji po pozycjê wynikaj±c± z \fIn\fP krotnego
 \fImove-cmd\fP do bufora wycinania; je¶li \fImove-cmd\fP jest \fBy\fP, to
-ca³y wierz zostaje wyciêty.
+ca³y wiersz zostaje wyciêty.
 .IP "\fBY\fP"
-wytnij od obecnej pozycji do koñca wiesza.
+wytnij od obecnej pozycji do koñca wiersza.
 .IP "\fIn\fP\fBp\fP"
-wklej zawarto¶æ bufora wycinania tu¿ po bierz±cej pozycji,
+wklej zawarto¶æ bufora wycinania tu¿ po bie¿±cej pozycji,
 \fIn\fP krotnie.
 .IP "\fIn\fP\fBP\fP"
-tak jak \fBp\fP, tylko ¿e bufor zostaje wklejony na bierz±cej pozycji.
+tak jak \fBp\fP, tylko ¿e bufor zostaje wklejony na bie¿±cej pozycji.
 .RE
 .\"}}}
 .\"{{{  Miscellaneous vi commands
 .IP "Ró¿ne komendy vi"
 .RS
 .IP "\fB^J\fP and \fB^M\fP"
-bierz±cy wiersz zostaje wczytany, rozpoznany i wykonany przez otoczkê.
+bie¿±cy wiersz zostaje wczytany, rozpoznany i wykonany przez pow³okê.
 .IP "\fB^L\fP and \fB^R\fP"
-odrysuj bierz±cy wiersz.
+odrysuj bie¿±cy wiersz.
 .IP "\fIn\fP\fB.\fP"
-wyknoaj ponownie ostatni± komendê edycji \fIn\fP razy.
+wykonaj ponownie ostatni± komendê edycji \fIn\fP razy.
 .IP "\fBu\fP"
 odwróæ ostatni± komendê edycji.
 .IP "\fBU\fP"
 odwróæ wszelkie zmiany dokonane w danym wierszu.
 .IP "\fIintr\fP and \fIquit\fP"
-znaki terminala przerwy i zakoñczenia powoduj± skasowania bierz±cego
+znaki terminala przerwy i zakoñczenia powoduj± skasowania bie¿±cego
 wiersza i wy¶wietlenie nowej zachêty.
 .RE
 .\"Has all vi commands except:
@@ -3647,7 +3626,7 @@ wiersza i wy¶wietlenie nowej zachêty.
 Wszelkie b³êdy w pdksh nale¿y zg³aszaæ pod adres pdksh@cs.mun.ca.  
 Proszê podaæ wersjê pdksh (echo $KSH_VERSION), maszynê,
 system operacyjny i stosowany kompilator oraz opis jak powtórzyæ dany b³±d
-(najlepiej ma³y skrypt otoczki demonstruj±cy dany b³±d).  
+(najlepiej ma³y skrypt pow³oki demonstruj±cy dany b³±d).  
 Nastêpuj±ce mo¿e byæ równie¿ pomocne, je¶li ma znaczenie 
 (je¶li nie jeste¶ pewny to podaj to równie¿): 
 stosowane opcje (zarówno z opcje options.h jak i ustawione
@@ -3657,8 +3636,8 @@ ftp://ftp.cs.mun.ca/pub/pdksh/.
 .\"}}}
 .\"{{{  Authors
 .SH AUTORZY
-Ta otoczka powsta³a z publicznego klona 7-mego wydania otoczki
-Bourne-a wykonwnego przez Charlesa Forsytha i z czê¶ci otoczki
+Ta pow³oka powsta³a z publicznego klona 7-mego wydania pow³oki
+Bourne-a wykonwnego przez Charlesa Forsytha i z czê¶ci pow³oki
 BRL autorstwa Doug A.\& Gwyn, Doug Kingston,
 Ron Natalie, Arnold Robbins, Lou Salkind i innych.  Pierwsze wydanie
 pdksh stworzy³ Eric Gisin, a nastêpnie troszczyli siê ni± kolejno
@@ -3666,7 +3645,7 @@ John R.\& MacMillan (chance!john@sq.sq.com), i
 Simon J.\& Gerraty (sjg@zen.void.oz.au).  Obecnym opiekunem jest
 Michael Rendell (michael@cs.mun.ca).
 Plik CONTRIBUTORS w dystrybucji ¼róde³ zawiera bardziej kompletn±
-listê ludzi i ich wk³adu do rozwoju tej otoczki.
+listê ludzi i ich wk³adu do rozwoju tej pow³oki.
 .PP
 T³umaczenie tego podrêcznika na jêzyk Polski wykona³ Marcin Dalecki 
 <dalecki@cs.net.pl>.
