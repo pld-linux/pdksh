@@ -1,0 +1,45 @@
+--- pdksh-5.2.14/ksh.Man.orig	Tue Apr 30 00:30:46 2002
++++ pdksh-5.2.14/ksh.Man	Tue Apr 30 00:33:58 2002
+@@ -42,7 +42,7 @@
+ .sh(
+ \fBsh\fP
+ .sh)
+-[\fB\(+-abCefhikmnprsuvxX\fP] [\fB\(+-o\fP \fIoption\fP] [ [ \fB\-c\fP \fIcommand-string\fP [\fIcommand-name\fP] | \fB\-s\fP | \fIfile\fP ] [\fIargument\fP ...] ]
++[\fB+-abCefhikmnprsuvxX\fP] [\fB+-o\fP \fIoption\fP] [ [ \fB\-c\fP \fIcommand-string\fP [\fIcommand-name\fP] | \fB\-s\fP | \fIfile\fP ] [\fIargument\fP ...] ]
+ .ad b
+ .\"}}}
+ .\"{{{  Description
+@@ -1639,7 +1639,7 @@
+ Exit status is set to zero.
+ .\"}}}
+ .\"{{{  alias [ -d | +-t [ -r ] ] [+-px] [+-] [name1[=value1] ...]
+-.IP "\fBalias\fP [ \fB\-d\fP | \fB\(+-t\fP [\fB\-r\fP] ] [\fB\(+-px\fP] [\fB\(+-\fP] [\fIname1\fP[\fB=\fP\fIvalue1\fP] ...]"
++.IP "\fBalias\fP [ \fB\-d\fP | \fB+-t\fP [\fB\-r\fP] ] [\fB+-px\fP] [\fB+-\fP] [\fIname1\fP[\fB=\fP\fIvalue1\fP] ...]"
+ Without arguments, \fBalias\fP lists all aliases.
+ For any name without a value, the existing alias is listed.
+ Any name with a value defines an alias (see Aliases above).
+@@ -2003,12 +2003,12 @@
+ while the original Korn shell only treats profiles as \fB.\fP scripts.
+ .\"}}}
+ .\"{{{  set [+-abCefhkmnpsuvxX] [+-o [option]] [+-A name] [--] [arg ...]
+-.IP "\fBset\fP [\fB\(+-abCefhkmnpsuvxX\fP] [\fB\(+-o\fP [\fIoption\fP]] [\fB\(+-A\fP \fIname\fP] [\fB\-\-\fP] [\fIarg\fP ...]"
++.IP "\fBset\fP [\fB+-abCefhkmnpsuvxX\fP] [\fB+-o\fP [\fIoption\fP]] [\fB+-A\fP \fIname\fP] [\fB\-\-\fP] [\fIarg\fP ...]"
+ The set command can be used to set (\fB\-\fP) or clear (\fB+\fP) shell options,
+ set the positional parameters, or set an array parameter.
+-Options can be changed using the \fB\(+-o\fP \fIoption\fP syntax,
++Options can be changed using the \fB+-o\fP \fIoption\fP syntax,
+ where \fIoption\fP is the long name of an option, or using
+-the \fB\(+-\fP\fIletter\fP syntax, where \fIletter\fP is the
++the \fB+-\fP\fIletter\fP syntax, where \fIletter\fP is the
+ option's single letter name (not all options have a single letter name).
+ The following table lists both option letters (if they exist) and long names
+ along with a description of what the option does.
+@@ -2445,7 +2445,7 @@
+ A command that exits with a zero value.
+ .\"}}}
+ .\"{{{  typeset [[+-Ulprtux] [-L[n]] [-R[n]] [-Z[n]] [-i[n]] | -f [-tux]] [name[=value] ...]
+-.IP "\fBtypeset\fP [[\(+-Ulprtux] [\fB\-L\fP[\fIn\fP]] [\fB\-R\fP[\fIn\fP]] [\fB\-Z\fP[\fIn\fP]] [\fB\-i\fP[\fIn\fP]] | \fB\-f\fP [\fB\-tux\fP]] [\fIname\fP[\fB=\fP\fIvalue\fP] ...]"
++.IP "\fBtypeset\fP [[+-Ulprtux] [\fB\-L\fP[\fIn\fP]] [\fB\-R\fP[\fIn\fP]] [\fB\-Z\fP[\fIn\fP]] [\fB\-i\fP[\fIn\fP]] | \fB\-f\fP [\fB\-tux\fP]] [\fIname\fP[\fB=\fP\fIvalue\fP] ...]"
+ Display or set parameter attributes.
+ With no \fIname\fP arguments, parameter attributes are displayed: if no options
+ arg used, the current attributes of all parameters are printed as typeset
