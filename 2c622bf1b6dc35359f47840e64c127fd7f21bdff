@@ -1,0 +1,1 @@
+- allow build without static package (define _without_static for it)
