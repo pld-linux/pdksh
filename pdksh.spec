@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	11
+Release:	12
 License:	Public Domain
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
@@ -103,37 +103,49 @@ ln -s ksh $RPM_BUILD_ROOT/bin/sh
 gzip -9nf README NEWS BUG-REPORTS
 
 %post
-[ -x /bin/grep ] || exit 0
 if [ ! -f /etc/shells ]; then
 	echo "/bin/ksh" > /etc/shells
 	echo "/bin/sh" >> /etc/shells
 else
-	if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
-		echo "/bin/ksh" >> /etc/shells
-	fi
-	if ! grep '^/bin/sh$' /etc/shells > /dev/null; then
-		echo "/bin/sh" >> /etc/shells
-	fi
+	while read SHNAME; do
+        	if [ "$SHNAME" = "/bin/ksh" ]; then
+                	HAS_KSH=1
+	        elif [ "$SHNAME" = "/bin/sh" ]; then
+        	        HAS_SH=1
+	        fi
+	done < /etc/shells
+	[ -n "$HAS_KSH" ] || echo "/bin/ksh" >> /etc/shells
+	[ -n "$HAS_SH" ] || echo "/bin/sh" >> /etc/shells
 fi
 
 %post static
 if [ ! -f /etc/shells ]; then
 	echo "/bin/ksh.static" > /etc/shells
 else
-	if ! grep '^/bin/ksh.static$' /etc/shells > /dev/null; then
-		echo "/bin/ksh.static" >> /etc/shells
-	fi
+	while read SHNAME; do
+        	if [ "$SHNAME" = "/bin/ksh.static" ]; then
+                	HAS_KSH_STATIC=1
+	        fi
+	done < /etc/shells
+	[ -n "$HAS_KSH_STATIC" ] || echo "/bin/ksh.static" >> /etc/shells
 fi
 
 %postun
 if [ "$1" = "0" ]; then
-	grep -v /bin/ksh /etc/shells | grep -v /bin/sh > /etc/shells.new
+	while read SHNAME; do
+		[ "$SHNAME" = "/bin/ksh" ] ||\
+		[ "$SHNAME" = "/bin/sh" ] ||\
+		echo "$SHNAME"
+	done < /etc/shells > /etc/shells.new
 	mv -f /etc/shells.new /etc/shells
 fi
 
 %postun static
 if [ "$1" = "0" ]; then
-	grep -v /bin/ksh.static /etc/shells > /etc/shells.new
+	while read SHNAME; do
+		[ "$SHNAME" = "/bin/ksh.static" ] ||\
+		echo "$SHNAME"
+	done
 	mv -f /etc/shells.new /etc/shells
 fi
 
