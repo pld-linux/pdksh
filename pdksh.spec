@@ -14,6 +14,7 @@ Source1:	ksh.1.pl
 Patch0:		pdksh-static.patch
 Patch1:		pdksh-alloc.patch
 Patch2:		pdksh-allocfix.patch
+Patch3:		pdksh-quote.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 Buildroot:	/tmp/%{name}-%{version}-root
 
@@ -68,6 +69,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch0 -p0
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 autoconf
