@@ -5,7 +5,7 @@ Summary(pl):	Shell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	15
+Release:	16
 License:	Public Domain
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
