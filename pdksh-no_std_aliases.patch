@@ -1,0 +1,34 @@
+--- pdksh-5.2.14/main.c~	Sat Feb 16 18:58:44 2002
++++ pdksh-5.2.14/main.c	Sat Feb 16 18:58:44 2002
+@@ -42,31 +42,6 @@
+ #ifdef KSH
+ 	"eval", "typeset -i RANDOM MAILCHECK=\"${MAILCHECK-600}\" SECONDS=\"${SECONDS-0}\" TMOUT=\"${TMOUT-0}\"", NULL,
+ #endif /* KSH */
+-	"alias",
+-	 /* Standard ksh aliases */
+-	  "hash=alias -t",	/* not "alias -t --": hash -r needs to work */
+-	  "type=whence -v",
+-#ifdef JOBS
+-	  "stop=kill -STOP",
+-	  "suspend=kill -STOP $$",
+-#endif
+-#ifdef KSH
+-	  "autoload=typeset -fu",
+-	  "functions=typeset -f",
+-# ifdef HISTORY
+-	  "history=fc -l",
+-# endif /* HISTORY */
+-	  "integer=typeset -i",
+-	  "nohup=nohup ",
+-	  "local=typeset",
+-	  "r=fc -e -",
+-#endif /* KSH */
+-#ifdef KSH
+-	 /* Aliases that are builtin commands in at&t */
+-	  "login=exec login",
+-	  "newgrp=exec newgrp",
+-#endif /* KSH */
+-	  NULL,
+ 	/* this is what at&t ksh seems to track, with the addition of emacs */
+ 	"alias", "-tU",
+ 	  "cat", "cc", "chmod", "cp", "date", "ed", "emacs", "grep", "ls",
