@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	13
+Release:	14
 License:	Public Domain
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
@@ -152,7 +152,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc {README,NEWS,BUG-REPORTS}.gz
+%doc *.gz
 
 %attr(755,root,root) /bin/ksh
 /bin/sh
