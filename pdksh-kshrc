@@ -37,4 +37,10 @@ case $TERM in
 		;;
 esac
 
+# SYSTEM WIDE ALIASES ETC.
+for i in /etc/shrc.d/*.sh; do
+	. $i
+done
+unset i
+
 # vi:syntax=sh
