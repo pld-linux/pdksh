@@ -13,6 +13,7 @@ Release:	27
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
+# Source0-md5:	871106b3bd937e1afba9f2ef7c43aef3
 Source1:	ksh.1.pl
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-history.patch
