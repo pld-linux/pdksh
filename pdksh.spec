@@ -5,7 +5,7 @@ Summary(pl):	Shell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	22
+Release:	23
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
@@ -22,6 +22,7 @@ Patch6:		%{name}-EDITMODE.patch
 Patch7:		%{name}-rlimit_locks.patch
 Patch8:		%{name}-eval-segv.patch
 Patch9:		%{name}-awful-free-bug.patch
+Patch10:	%{name}-history0.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -85,10 +86,11 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
+%patch10 -p1
 
 %build
-autoconf
-%configure \
+#autoconf
+%configure2_13 \
 	--enable-emacs \
 	--enable-vi
 %{__make}
