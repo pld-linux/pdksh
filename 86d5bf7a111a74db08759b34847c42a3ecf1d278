@@ -1,0 +1,5 @@
+- history0 patch: don't segfault when running in interactive mode
+  if .history contains \0
+- %configure2_13 (ac2.50 requires some fixes)
+  (removed running autoconf - seems to be unnecessary)
+- release 23
