@@ -17,6 +17,7 @@ Patch1:		%{name}-alloc.patch
 Patch2:		%{name}-quote.patch
 Patch3:		%{name}-history.patch
 Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
+Patch5:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -74,6 +75,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch2 -p1
 %patch3 -p1
 %patch4 -p2
+%patch5 -p0
 
 %build
 autoconf
