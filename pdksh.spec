@@ -28,6 +28,7 @@ Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?_without_static:#}BuildRequires:        glibc-static
+Requires(preun):	fileutils
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_exec_prefix		/
@@ -82,6 +83,7 @@ pdksh, в╕льна реал╕зац╕я ksh, - це командний процесор, розрахований як
 Summary:	Statically linked Public Domain Korn Shell
 Summary(pl):	Statycznie zlinkowany shell Korna
 Group:		Applications/Shells
+Requires(preun):	fileutils
 Requires:	%{name}
 
 %description static
@@ -140,6 +142,7 @@ ln -sf ksh $RPM_BUILD_ROOT/bin/sh
 rm -rf $RPM_BUILD_ROOT
 
 %post
+umask 022
 if [ ! -f /etc/shells ]; then
 	echo "/bin/ksh" > /etc/shells
 	echo "/bin/sh" >> /etc/shells
@@ -156,6 +159,7 @@ else
 fi
 
 %post static
+umask 022
 if [ ! -f /etc/shells ]; then
 	echo "/bin/ksh.static" > /etc/shells
 else
@@ -168,6 +172,7 @@ else
 fi
 
 %preun
+umask 022
 if [ "$1" = "0" ]; then
 	while read SHNAME; do
 		[ "$SHNAME" = "/bin/ksh" ] ||\
@@ -178,6 +183,7 @@ if [ "$1" = "0" ]; then
 fi
 
 %preun static
+umask 022
 if [ "$1" = "0" ]; then
 	while read SHNAME; do
 		[ "$SHNAME" = "/bin/ksh.static" ] ||\
