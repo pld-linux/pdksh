@@ -194,7 +194,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc README NEWS BUG-REPORTS
+%doc README NEWS BUG-REPORTS LEGAL
 
 %attr(755,root,root) /bin/ksh
 %attr(755,root,root) /bin/sh
