@@ -2,7 +2,7 @@ Summary:	Public Domain Korn Shell
 Summary(de):	Korn-Shell aus dem Public Domain
 Summary(es):	Shell Korn de dominio público
 Summary(fr):	Korn Shell du domaine public
-Summary(pl):	Shell Korna z Public Domain
+Summary(pl):	Pow³oka Korna z Public Domain
 Summary(pt_BR):	Shell Korn de domínio público
 Summary(ru):	ó×ÏÂÏÄÎÁÑ ÒÅÁÌÉÚÁÃÉÑ ËÏÍÁÎÄÎÏÇÏ ĞÒÏÃÅÓÓÏÒÁ Korn shell (ksh)
 Summary(tr):	Serbest Korn kabuğu
@@ -56,8 +56,8 @@ scripts. Son langage de commande est un ensemble de commande du
 langage shell de sh(1).
 
 %description -l pl
-Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z
-komendami shella sh(1).
+Pdksh jest implementacj± pow³oki ksh. Komendy pdksh s± zgodne z
+komendami pow³oki sh(1).
 
 %description -l pt_BR
 Pdksh, uma reimplementação de ksh, é um interpretador de comandos
@@ -82,7 +82,7 @@ pdksh, ×¦ÌØÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ksh, - ÃÅ ËÏÍÁÎÄÎÉÊ ĞÒÏÃÅÓÏÒ, ÒÏÚÒÁÈÏ×ÁÎÉÊ ÑË
 
 %package static
 Summary:	Statically linked Public Domain Korn Shell
-Summary(pl):	Statycznie zlinkowany shell Korna
+Summary(pl):	Skonsolidowana statycznie pow³oka Korna
 Group:		Applications/Shells
 Requires(preun):	fileutils
 Requires:	%{name}
@@ -95,10 +95,10 @@ language is a superset of the sh(1) shell language.
 This packege contains statically linked version of pdksh.
 
 %description static -l pl
-Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z
-komendami shella sh(1).
+Pdksh jest implementacj± pow³oki ksh. Komendy pdksh s± zgodne z
+komendami pow³oki sh(1).
 
-W tym pakiecie jest statycznie zlinkowany pdksh.
+W tym pakiecie jest pdksh skonsolidowany statycznie.
 
 %prep
 %setup  -q
