@@ -112,6 +112,8 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch3 -p0
 %patch4 -p1
 # we use OpenBSD allocation code in -debian.patch
+# (note that debian patch has incomplete fixes from this patch, in case
+#  of switching back to pdksh's allocator)
 #%patch5 -p1
 %patch6 -p1
 %patch7 -p1
