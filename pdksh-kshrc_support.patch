@@ -1,0 +1,18 @@
+--- pdksh-5.2.14/main.c.orig	2004-04-21 02:37:22.000000000 +0200
++++ pdksh-5.2.14/main.c	2004-04-21 02:41:33.475916752 +0200
+@@ -529,7 +529,14 @@
+ 	volatile int attempts = 13;
+ 	volatile int interactive = Flag(FTALKING) && toplevel;
+ 	int i;
+-
++	
++	/*
++	 * Support for rcfiles
++	 */
++	if (interactive) {
++		include(substitute("/etc/kshrc", 0), 0, (char **) 0, 1);
++		include(substitute("$HOME/.kshrc", 0), 0, (char **) 0, 1);
++	}	
+ 	newenv(E_PARSE);
+ 	if (interactive)
+ 		really_exit = 0;
