@@ -1,0 +1,50 @@
+diff -Naur pdksh-5.2.14/table.h pdksh-5.2.14-mod/table.h
+--- pdksh-5.2.14/table.h	Fri Apr 16 19:58:12 1999
++++ pdksh-5.2.14-mod/table.h	Wed Apr 11 06:49:05 2001
+@@ -168,6 +168,7 @@
+ #define V_TMOUT			15
+ #define V_TMPDIR		16
+ #define V_LINENO		17
++#define V_EDITMODE		18
+ 
+ /* values for set_prompt() */
+ #define PS1	0		/* command */
+diff -Naur pdksh-5.2.14/var.c pdksh-5.2.14-mod/var.c
+--- pdksh-5.2.14/var.c	Wed Apr 11 06:52:07 2001
++++ pdksh-5.2.14-mod/var.c	Wed Apr 11 06:51:38 2001
+@@ -94,6 +94,7 @@
+ #endif /* HISTORY */
+ #ifdef EDIT
+ 			{ "EDITOR",		V_EDITOR },
++			{ "EDITMODE",		V_EDITMODE },
+ 			{ "VISUAL",		V_VISUAL },
+ #endif /* EDIT */
+ #ifdef KSH
+@@ -110,7 +111,7 @@
+ 	int i;
+ 	struct tbl *tp;
+ 
+-	tinit(&specials, APERM, 32); /* must be 2^n (currently 17 specials) */
++	tinit(&specials, APERM, 32); /* must be 2^n (currently 18 specials) */
+ 	for (i = 0; names[i].name; i++) {
+ 		tp = tenter(&specials, names[i].name, hash(names[i].name));
+ 		tp->flag = DEFINED|ISSET;
+@@ -1015,11 +1016,15 @@
+ #endif /* HISTORY */
+ #ifdef EDIT
+ 	  case V_VISUAL:
+-		set_editmode(str_val(vp));
++		if (!(global("EDITMODE")->flag & ISSET))
++			set_editmode(str_val(vp));
+ 		break;
+ 	  case V_EDITOR:
+-		if (!(global("VISUAL")->flag & ISSET))
+-			set_editmode(str_val(vp));
++		if (!(global("EDITMODE")->flag & ISSET))
++			if(!(global("VISUAL")->flag & ISSET))
++				set_editmode(str_val(vp));
++	  case V_EDITMODE:
++		set_editmode(str_val(vp));
+ 		break;
+ 	  case V_COLUMNS:
+ 		if ((x_cols = intval(vp)) <= MIN_COLS)
