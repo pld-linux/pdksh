@@ -5,11 +5,12 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.13.9
-Release:	1
+Release:	2
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
-Source:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-unstable-%{version}.tar.gz
+Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-unstable-%{version}.tar.gz
+Source1:	ksh.1.pl
 Patch0:		pdksh-8bit.patch
 Patch1:		pdksh-alloc.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
@@ -58,6 +59,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_mandir}/pl/man1
 
 make install \
 	prefix=$RPM_BUILD_ROOT/ \
@@ -66,9 +68,13 @@ make install \
 echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
 echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
 
+install %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
+echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
+echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
+
 ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man1/* \
+gzip -9nf $RPM_BUILD_ROOT%{_mandir}/{man1/*,pl/man1/*} \
 	README NEWS BUG-REPORTS
 
 %post
@@ -102,6 +108,11 @@ fi
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sat May 29 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [5.2.13.9-2]
+- more rpm macros,
+- added pl man page for ksh(1).
+
 * Sun May  9 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [5.2.13.9-1]
 - now package is FHS 2.0 compliant.
