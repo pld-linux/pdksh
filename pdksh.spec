@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_without	static	# don't build static version of (pd)ksh
+#
 Summary:	Public Domain Korn Shell
 Summary(de):	Korn-Shell aus dem Public Domain
 Summary(es):	Shell Korn de dominio público
@@ -9,7 +13,7 @@ Summary(tr):	Serbest Korn kabuðu
 Summary(uk):	÷¦ÌÂÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ËÏÍÁÎÄÎÏÇÏ ÐÒÏÃÅÓÏÒÁ Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	30
+Release:	31
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -28,7 +32,7 @@ Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
-%{?_without_static:#}BuildRequires:	glibc-static
+%{?with_static:BuildRequires:	glibc-static}
 Requires(preun):	fileutils
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -102,7 +106,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 
 %prep
 %setup  -q
-%{?_without_static:#}%patch0 -p0
+%{?with_static:%patch0 -p0}
 %patch1 -p1
 %patch2 -p2
 %patch3 -p0
@@ -116,7 +120,6 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch11 -p1
 
 %build
-#%%{__autoconf}
 %configure2_13 \
 	--enable-emacs \
 	--enable-vi
@@ -159,6 +162,17 @@ else
 	[ -n "$HAS_SH" ] || echo "/bin/sh" >> /etc/shells
 fi
 
+%preun
+umask 022
+if [ "$1" = "0" ]; then
+	while read SHNAME; do
+		[ "$SHNAME" = "/bin/ksh" ] ||\
+		[ "$SHNAME" = "/bin/sh" ] ||\
+		echo "$SHNAME"
+	done < /etc/shells > /etc/shells.new
+	mv -f /etc/shells.new /etc/shells
+fi
+
 %post static
 umask 022
 if [ ! -f /etc/shells ]; then
@@ -172,24 +186,13 @@ else
 	[ -n "$HAS_KSH_STATIC" ] || echo "/bin/ksh.static" >> /etc/shells
 fi
 
-%preun
-umask 022
-if [ "$1" = "0" ]; then
-	while read SHNAME; do
-		[ "$SHNAME" = "/bin/ksh" ] ||\
-		[ "$SHNAME" = "/bin/sh" ] ||\
-		echo "$SHNAME"
-	done < /etc/shells > /etc/shells.new
-	mv -f /etc/shells.new /etc/shells
-fi
-
 %preun static
 umask 022
 if [ "$1" = "0" ]; then
 	while read SHNAME; do
 		[ "$SHNAME" = "/bin/ksh.static" ] ||\
 		echo "$SHNAME"
-	done
+	done < /etc/shells > /etc/shells.new
 	mv -f /etc/shells.new /etc/shells
 fi
 
@@ -203,6 +206,8 @@ fi
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
 
-%{?_without_static:#}%files static
-%{?_without_static:#}%defattr(644,root,root,755)
-%{?_without_static:#}%attr(755,root,root) /bin/ksh.static
+%if %{with static}
+%files static
+%defattr(644,root,root,755)
+%attr(755,root,root) /bin/ksh.static
+%endif
