@@ -69,7 +69,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 
 %prep
 %setup  -q
-%patch0 -p0
+%{?bcond_off_static:#}%patch0 -p0
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
@@ -158,9 +158,9 @@ fi
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
 
-%files static
-%defattr(644,root,root,755)
-%attr(755,root,root) /bin/ksh.static
+%{?bcond_off_static:#}%files static
+%{?bcond_off_static:#}%defattr(644,root,root,755)
+%{?bcond_off_static:#}%attr(755,root,root) /bin/ksh.static
 
 %clean
 rm -rf $RPM_BUILD_ROOT
