@@ -27,7 +27,7 @@ diff -Nru pdksh-5.2.14/alloc.c pdksh-5.2.14.new/alloc.c
  		aerror(ap, "allocate bad size");
  	/* New size (in cells) */
 -	cells = (unsigned)(size - 1) / sizeof(Cell) + 1;
-+	cells = ((unsigned)(size - 1) / sizeof(Cell))  + 2;
++	cells = (unsigned)(size / sizeof(Cell)) + 2;
  
  	/* Is this a large object?  If so, let malloc deal with it
  	 * directly (unless we are crossing the ICELLS border, in
