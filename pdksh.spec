@@ -9,7 +9,7 @@ Summary(tr):	Serbest Korn kabuПu
 Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	28
+Release:	29
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -25,6 +25,7 @@ Patch7:		%{name}-eval-segv.patch
 Patch8:		%{name}-awful-free-bug.patch
 Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
+Patch11:	%{name}-circumflex.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?_without_static:#}BuildRequires:        glibc-static
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -109,6 +110,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
+%patch11 -p1
 
 %build
 #%{__autoconf}
