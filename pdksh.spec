@@ -103,7 +103,7 @@ language is a superset of the sh(1) shell language.
 
 This packege contains statically linked version of pdksh.
 
-%description -l pl static
+%description static -l pl
 Pdksh jest implementacj± pow³oki ksh. Komendy pdksh s± zgodne z
 komendami pow³oki sh(1).
 
