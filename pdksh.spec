@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	2
+Release:	3
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
