@@ -121,7 +121,6 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch11 -p1
 
 %build
-CPPFLAGS="-DDEBIAN=1"
 %configure2_13 \
 	--enable-emacs \
 	--enable-vi
