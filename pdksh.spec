@@ -13,7 +13,7 @@ Summary(tr):	Serbest Korn kabuğu
 Summary(uk):	÷¦ÌÂÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ËÏÍÁÎÄÎÏÇÏ ĞÒÏÃÅÓÏÒÁ Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	31
+Release:	32
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -32,6 +32,7 @@ Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
 Patch12:	%{name}-siglist-sort.patch
+Patch13:	%{name}-hex.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 Requires(preun):	fileutils
@@ -99,7 +100,7 @@ language is a superset of the sh(1) shell language.
 
 This packege contains statically linked version of pdksh.
 
-%description static -l pl
+%description -l pl static
 Pdksh jest implementacj± pow³oki ksh. Komendy pdksh s± zgodne z
 komendami pow³oki sh(1).
 
@@ -120,6 +121,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch10 -p1
 %patch11 -p1
 %patch12 -p0
+%patch13 -p1
 
 %build
 %configure2_13 \
