@@ -96,7 +96,6 @@ echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
 install	%{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
-install etc/ksh.* $RPM_BUILD_ROOT%{_sysconfdir}
 
 ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
@@ -155,7 +154,6 @@ fi
 
 %attr(755,root,root) /bin/ksh
 /bin/sh
-%{_sysconfdir}/*
 
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
