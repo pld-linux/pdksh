@@ -13,24 +13,28 @@ Summary(tr):	Serbest Korn kabuПu
 Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	36
+Release:	38
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 # Source0-md5:	871106b3bd937e1afba9f2ef7c43aef3
 Source1:	ksh.1.pl
+Source2:	%{name}-kshrc
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-history.patch
 Patch2:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
 Patch3:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
-Patch4:		%{name}-EDITMODE.patch
-Patch5:		%{name}-awful-free-bug.patch
-Patch6:		%{name}-no_stop_alias.patch
-Patch7:		%{name}-man_no_plusminus.patch
-Patch8:		%{name}-circumflex.patch
-Patch9:		%{name}-siglist-sort.patch
-Patch10:	%{name}-hex.patch
-Patch11:	%{name}-debian.patch
+Patch4:		%{name}-debian.patch
+Patch5:		%{name}-EDITMODE.patch
+Patch6:		%{name}-rlimit_locks.patch
+Patch7:		%{name}-eval-segv.patch
+Patch8:		%{name}-awful-free-bug.patch
+Patch9:		%{name}-no_stop_alias.patch
+Patch10:	%{name}-man_no_plusminus.patch
+Patch11:	%{name}-circumflex.patch
+Patch12:	%{name}-siglist-sort.patch
+Patch13:	%{name}-hex.patch
+Patch14:	%{name}-kshrc_support.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 Requires(preun):	fileutils
@@ -111,16 +115,16 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch2 -p2
 %patch3 -p0
 %patch4 -p1
-# we use OpenBSD allocation code in -debian.patch
-# (note that debian patch has incomplete fixes from this patch, in case
-#  of switching back to pdksh's allocator)
-#%patch5 -p1
+%patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p0
+%patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p0
+%patch13 -p1
+%patch14 -p1
 
 %build
 %configure2_13 \
@@ -130,11 +134,12 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,%{_sysconfdir}}
 
 %{__make} install \
 	exec_prefix=$RPM_BUILD_ROOT/ \
 	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
+
+install -d $RPM_BUILD_ROOT{/etc,%{_mandir}/pl/man1}
 
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
@@ -144,6 +149,8 @@ echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 
 ln -sf ksh $RPM_BUILD_ROOT/bin/sh
+
+install	%{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -202,10 +209,9 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc README NEWS BUG-REPORTS LEGAL
-
+%config(noreplace,missingok) %verify(not md5 size mtime) /etc/kshrc
 %attr(755,root,root) /bin/ksh
 %attr(755,root,root) /bin/sh
-
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
 
