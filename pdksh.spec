@@ -6,7 +6,7 @@ Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
 Release:	19
-License:	Public Domain
+License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
 Group(pl):	Aplikacje/Pow³oki
