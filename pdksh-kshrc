@@ -38,7 +38,7 @@ case $TERM in
 esac
 
 # SYSTEM WIDE ALIASES ETC.
-for i in /etc/shrc.d/*.sh; do
+for i in `find /etc/shrc.d -name '*.sh'` ; do
 	. $i
 done
 unset i
