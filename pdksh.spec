@@ -19,6 +19,7 @@ Patch3:		%{name}-history.patch
 Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
 Patch5:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
 Patch6:		%{name}-debian.patch
+Patch7:		%{name}-EDITMODE.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -78,6 +79,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch4 -p2
 %patch5 -p0
 %patch6 -p1
+%patch7 -p1
 
 %build
 autoconf
