@@ -115,7 +115,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch11 -p1
 
 %build
-#%{__autoconf}
+#%%{__autoconf}
 %configure2_13 \
 	--enable-emacs \
 	--enable-vi
