@@ -13,7 +13,7 @@ Summary(tr):	Serbest Korn kabuПu
 Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	33
+Release:	34
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -23,16 +23,14 @@ Patch0:		%{name}-static.patch
 Patch1:		%{name}-history.patch
 Patch2:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
 Patch3:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
-Patch4:		%{name}-debian.patch
-Patch5:		%{name}-EDITMODE.patch
-Patch6:		%{name}-rlimit_locks.patch
-Patch7:		%{name}-eval-segv.patch
-Patch8:		%{name}-awful-free-bug.patch
-Patch9:		%{name}-no_stop_alias.patch
-Patch10:	%{name}-man_no_plusminus.patch
-Patch11:	%{name}-circumflex.patch
-Patch12:	%{name}-siglist-sort.patch
-Patch13:	%{name}-hex.patch
+Patch4:		%{name}-EDITMODE.patch
+Patch5:		%{name}-awful-free-bug.patch
+Patch6:		%{name}-no_stop_alias.patch
+Patch7:		%{name}-man_no_plusminus.patch
+Patch8:		%{name}-circumflex.patch
+Patch9:		%{name}-siglist-sort.patch
+Patch10:	%{name}-hex.patch
+Patch11:	%{name}-debian.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 Requires(preun):	fileutils
@@ -113,17 +111,17 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch2 -p2
 %patch3 -p0
 %patch4 -p1
-%patch5 -p1
+# we use OpenBSD allocation code in -debian.patch
+#%patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
-%patch9 -p1
+%patch9 -p0
 %patch10 -p1
 %patch11 -p1
-%patch12 -p0
-%patch13 -p1
 
 %build
+CPPFLAGS="-DDEBIAN=1"
 %configure2_13 \
 	--enable-emacs \
 	--enable-vi
