@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	10
+Release:	11
 License:	Public Domain
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
@@ -17,7 +17,6 @@ Patch1:		%{name}-alloc.patch
 Patch2:		%{name}-quote.patch
 Patch3:		%{name}-history.patch
 Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
-Prereq:		grep
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -104,6 +103,7 @@ ln -s ksh $RPM_BUILD_ROOT/bin/sh
 gzip -9nf README NEWS BUG-REPORTS
 
 %post
+[ -x /bin/grep ] || exit 0
 if [ ! -f /etc/shells ]; then
 	echo "/bin/ksh" > /etc/shells
 	echo "/bin/sh" >> /etc/shells
