@@ -119,7 +119,7 @@ rm -rf $RPM_BUILD_ROOT
 - removed man group from man pages,
 - added --enable-emacs, --enable-vi to configure parameters,
 - added LDFLAGS="-s" to configure enviroment,
-- removed /usr/bin/* symlinks,
+- removed %{_bindir}/* symlinks,
 - added gzipping man pages,
 - added bzipping2 %doc,
 - added URL,
