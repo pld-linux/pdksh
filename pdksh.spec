@@ -13,7 +13,7 @@ Summary(tr):	Serbest Korn kabuПu
 Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	35
+Release:	36
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
