@@ -1,0 +1,2 @@
+- Added simple patch for add EDITMODE special var which is checked before EDITOR/VISUAL
+  for allow to have EDITOR=VISUAL=vim and EDITMODE=emacs (just because that switch on readline)
