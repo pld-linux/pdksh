@@ -129,7 +129,7 @@ fi
 
 %postun static
 if [ $1 = 0 ]; then
-	grep -v /bin/ksh.static /etc/shells | grep -v /bin/sh > /etc/shells.new
+	grep -v /bin/ksh.static /etc/shells > /etc/shells.new
 	mv /etc/shells.new /etc/shells
 fi
 
