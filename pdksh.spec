@@ -77,7 +77,7 @@ pdksh, a remimplementation of ksh, is a command interpreter that is
 intended for both interactive and shell script use. Its command
 language is a superset of the sh(1) shell language.
 
-This packege contains staticly linked version of pdksh.
+This packege contains statically linked version of pdksh.
 
 %description static -l pl
 Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z
