@@ -1,0 +1,58 @@
+diff -urN pdksh-unstable-5.2.13.9/alloc.c pdksh-unstable-5.2.13.9-new/alloc.c
+--- pdksh-unstable-5.2.13.9/alloc.c	Tue Jan 12 15:50:14 1999
++++ pdksh-unstable-5.2.13.9-new/alloc.c	Fri Apr 30 22:40:08 1999
+@@ -89,7 +89,7 @@
+ #  define ACHECK(ap)
+ # endif /* DEBUG_ALLOC */
+ 
+-#define	ICELLS	200		/* number of Cells in small Block */
++#define	ICELLS	200	/* number of Cells in small Block */
+ 
+ typedef union Cell Cell;
+ typedef struct Block Block;
+@@ -162,14 +162,20 @@
+ 	size_t size;
+ 	register Area *ap;
+ {
+-	int cells, acells;
++	unsigned cells, acells;
+ 	Block *bp = 0;
+ 	Cell *fp = 0, *fpp = 0;
+ 
+ 	ACHECK(ap);
++
+ 	if (size <= 0)
+ 		aerror(ap, "allocate bad size");
+-	cells = (unsigned)(size - 1) / sizeof(Cell) + 1;
++
++	/*  Fri Apr 30 22:38:03 CEST 1999 Marcin Dalecki <dalecki@cs.net.pl>
++	 *
++	 *  Fixed serious problem with arithmetics.
++	 */
++	cells = (unsigned)(size / sizeof(Cell)) + 1;
+ 
+ 	/* allocate at least this many cells */
+ 	acells = cells + NOBJECT_FIELDS;
+@@ -270,10 +276,11 @@
+ 	int oldcells = dp ? (dp-1)->size : 0;
+ 
+ 	ACHECK(ap);
++
+ 	if (size <= 0)
+ 		aerror(ap, "allocate bad size");
+ 	/* New size (in cells) */
+-	cells = (unsigned)(size - 1) / sizeof(Cell) + 1;
++	cells = ((unsigned)(size - 1) / sizeof(Cell))  + 1;
+ 
+ 	/* Is this a large object?  If so, let malloc deal with it
+ 	 * directly (unless we are crossing the ICELLS border, in
+@@ -407,6 +414,7 @@
+ 	ACHECK(ap);
+ 	if (ptr == 0)
+ 		aerror(ap, "freeing null pointer");
++
+ 	bp = (dp-2)->block;
+ 
+ 	/* If this is a large object, just free it up... */
+Binary files pdksh-unstable-5.2.13.9/emacs.o and pdksh-unstable-5.2.13.9-new/emacs.o differ
+Binary files pdksh-unstable-5.2.13.9/eval.o and pdksh-unstable-5.2.13.9-new/eval.o differ
