@@ -5,7 +5,7 @@ Summary(pl):	Shell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	19
+Release:	20
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
@@ -53,6 +53,7 @@ kabuk dilinin bir kümesidir.
 
 %package static
 Summary:	Staticly linked Public Domain Korn Shell
+Summary(pl):	Statycznie zlinkowany shell Korna
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
 Group(pl):	Aplikacje/Pow³oki
@@ -105,7 +106,7 @@ install	%{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 
-ln -s ksh $RPM_BUILD_ROOT/bin/sh
+ln -sf ksh $RPM_BUILD_ROOT/bin/sh
 
 gzip -9nf README NEWS BUG-REPORTS
 

@@ -8,7 +8,7 @@ diff -ur pdksh-5.2.14.orig/history.c pdksh-5.2.14/history.c
 +	int l;
  
 +	/* don't save if command is the same as last one */
-+	if (*hp != NULL) {
++	if (hp >= history && *hp != NULL) {
 +		l = strlen(cmd);
 +		if (strcmp(*hp, cmd) == 0)
 +			return;
