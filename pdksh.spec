@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	4
+Release:	5
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
@@ -124,13 +124,13 @@ else
 fi
 
 %postun
-if [ $1 = 0 ]; then
+if [ "$1" = "0" ]; then
 	grep -v /bin/ksh /etc/shells | grep -v /bin/sh > /etc/shells.new
 	mv /etc/shells.new /etc/shells
 fi
 
 %postun static
-if [ $1 = 0 ]; then
+if [ "$1" = "0" ]; then
 	grep -v /bin/ksh.static /etc/shells > /etc/shells.new
 	mv /etc/shells.new /etc/shells
 fi
