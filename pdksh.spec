@@ -62,8 +62,8 @@ make install \
 
 echo .so ksh.1 > $RPM_BUILD_ROOT/usr/man/man1/pdksh.1
 
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/*
-bzip2 -9 {README,NEWS,BUG-REPORTS}
+gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/* \
+	README NEWS BUG-REPORTS
 
 %post
 (cat /etc/shells; echo "/bin/ksh" ) | sort -u > /etc/shells
@@ -82,7 +82,7 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc {README,NEWS,BUG-REPORTS}.bz2
+%doc {README,NEWS,BUG-REPORTS}.gz
 
 %attr(755,root,root) /bin/*
 
