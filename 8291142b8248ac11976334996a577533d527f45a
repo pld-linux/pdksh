@@ -1,0 +1,3 @@
+- remove no_std_aliases patch and added no_stop_alias patrch (remove only stop alias),
+- use new %doc,
+- merge translations from KSI.
