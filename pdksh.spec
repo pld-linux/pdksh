@@ -1,7 +1,7 @@
 Summary:	Public Domain Korn Shell
 Summary(de):	Korn-Shell aus dem Public Domain
 Summary(fr):	Korn Shell du domaine public
-Summary(pl):	Sell Korna z Public Domain
+Summary(pl):	Shell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
