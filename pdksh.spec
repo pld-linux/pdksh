@@ -47,7 +47,7 @@ dilinin bir kümesidir.
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
-./configure \
+./configure %{_target} \
 	--prefix=/ \
 	--mandir=/usr/man/man1 \
 	--enable-emacs \
