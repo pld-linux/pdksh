@@ -7,7 +7,7 @@ Summary(pt_BR):	Shell Korn de domínio público
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	25
+Release:	26
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -23,6 +23,7 @@ Patch7:		%{name}-rlimit_locks.patch
 Patch8:		%{name}-eval-segv.patch
 Patch9:		%{name}-awful-free-bug.patch
 Patch10:	%{name}-no_std_aliases.patch
+Patch11:	%{name}-man_no_plusminus.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %{?_without_static:#}BuildRequires:        glibc-static
@@ -96,6 +97,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch8 -p1
 %patch9 -p1
 #%patch10 -p1
+%patch11 -p1
 
 %build
 #autoconf
