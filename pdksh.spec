@@ -46,10 +46,11 @@ dilinin bir kümesidir.
 %patch1 -p1
 
 %build
+autoconf
 CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
 ./configure %{_target} \
 	--prefix=/ \
-	--mandir=/usr/man/man1 \
+	--mandir=/usr/share/man/man1 \
 	--enable-emacs \
 	--enable-vi
 
@@ -60,14 +61,14 @@ rm -rf $RPM_BUILD_ROOT
 
 make install \
 	prefix=$RPM_BUILD_ROOT/ \
-	mandir=$RPM_BUILD_ROOT/usr/man/man1
+	mandir=$RPM_BUILD_ROOT/usr/share/man/man1
 
-echo .so ksh.1 > $RPM_BUILD_ROOT/usr/man/man1/pdksh.1
-echo .so ksh.1 > $RPM_BUILD_ROOT/usr/man/man1/sh.1
+echo .so ksh.1 > $RPM_BUILD_ROOT/usr/share/man/man1/pdksh.1
+echo .so ksh.1 > $RPM_BUILD_ROOT/usr/share/man/man1/sh.1
 
 ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
-gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/* \
+gzip -9nf $RPM_BUILD_ROOT/usr/share/man/man1/* \
 	README NEWS BUG-REPORTS
 
 %post
@@ -95,12 +96,16 @@ fi
 
 %attr(755,root,root) /bin/*
 
-/usr/man/man1/*
+/usr/share/man/man1/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sun May  9 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [5.2.13.9-1]
+- now package is FHS 2.0 compiliat.
+
 * Sun May  2 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [5.2.13.8-1]
 - fixed memory allocation bug by Marcin Danecki (pdksh-alloc.patch).
