@@ -13,7 +13,7 @@ Summary(tr):	Serbest Korn kabuðu
 Summary(uk):	÷¦ÌÂÎÁ ÒÅÁÌ¦ÚÁÃ¦Ñ ËÏÍÁÎÄÎÏÇÏ ÐÒÏÃÅÓÏÒÁ Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	40
+Release:	41
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -38,7 +38,6 @@ Patch14:	%{name}-kshrc_support.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 Requires(preun):	fileutils
-Requires:	findutils
 Requires:	setup >= 2.4.6-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -95,7 +94,7 @@ Summary:	Statically linked Public Domain Korn Shell
 Summary(pl):	Skonsolidowana statycznie pow³oka Korna
 Group:		Applications/Shells
 Requires(preun):	fileutils
-Requires:	%{name}
+Requires:	%{name} = %{version}-%{release}
 
 %description static
 pdksh, a remimplementation of ksh, is a command interpreter that is
