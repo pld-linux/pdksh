@@ -1,7 +1,9 @@
 Summary:	Public Domain Korn Shell
 Summary(de):	Korn-Shell aus dem Public Domain
+Summary(es):	Shell Korn de dominio público
 Summary(fr):	Korn Shell du domaine public
 Summary(pl):	Shell Korna z Public Domain
+Summary(pt_BR):	Shell Korn de domínio público
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
@@ -37,6 +39,11 @@ pdksh, eine Neuimplementierung von ksh, ist ein Befehlsinterpreter für
 interaktiven und Shell-Script-Betrieb. Die Befehlssprache ist eine
 Übermenge der Shell-Sprache sh(1).
 
+%description -l es
+Pdksh, una ampliación más de ksh, es un interpretador de comandos
+destinado tanto al uso interactivo como en shell scripts. Su lenguaje
+de comandos es un superconjunto del lenguaje sh(1) shell.
+
 %description -l fr
 pdksh, un remplacement de ksh, est un interpréteur de commande qui est
 à destiné à la fois à l'utilisation interactive et a l'utilisation de
@@ -46,6 +53,11 @@ langage shell de sh(1).
 %description -l pl
 Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z
 komendami shella sh(1).
+
+%description -l pt_BR
+Pdksh, uma reimplementação de ksh, é um interpretador de comandos
+destinado tanto para uso interativo como em shell scripts. Sua
+linguagem de comandos é um superconjunto da linguagem sh(1) shell.
 
 %description -l tr
 pdksh, hem etkileþimli hem de kabuk programcýklarýnýn kullanýmý için
