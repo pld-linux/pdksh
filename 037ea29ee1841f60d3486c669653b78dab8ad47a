@@ -1,0 +1,3 @@
+- fixed history patch (SEGV in some cases)
+- release 20
+  NOTE: still there's something wrong with memory management!
