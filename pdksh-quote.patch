@@ -1,0 +1,33 @@
+diff -ur pdksh-5.2.14/edit.c pdksh-5.2.14-quote/edit.c
+--- pdksh-5.2.14/edit.c	Thu May 13 19:04:33 1999
++++ pdksh-5.2.14-quote/edit.c	Mon Nov 15 20:45:44 1999
+@@ -579,8 +579,27 @@
+ 	XPput(w, NULL);
+ 	words = (char **) XPclose(w);
+ 
+-	for (nwords = 0; words[nwords]; nwords++)
+-		;
++	/* Mon Nov 15 20:39:41 CET 1999 Marcin Dalecki <dalecki@cs.net.pl>:
++	 *
++	 * Count the matches and use this pass to quoteout matches containing
++	 * white spaces or actual input field separators.
++	 */
++	for (nwords = 0; words[nwords]; nwords++) {
++		char *tmp;
++		for (tmp = words[nwords]; *tmp; ++tmp)
++			if (ctype(*tmp, C_IFSWS))
++				break;
++		if(*tmp) {
++			int len = strlen(words[nwords]);
++			tmp = alloc(len + 3, ATEMP);
++			tmp[0] = '"';
++			memcpy(tmp + 1, words[nwords], len);
++			tmp[len + 1] = '"';
++			tmp[len + 2] = '\0';
++			afree(words[nwords], ATEMP);
++			words[nwords] = tmp;
++		}
++	}
+ 	if (nwords == 1) {
+ 		struct stat statb;
+ 
