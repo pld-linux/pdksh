@@ -11,11 +11,11 @@ Group:		Shells
 Group(pl):	Pow³oki
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 Source1:	ksh.1.pl
-Patch0:		pdksh-static.patch
-Patch1:		pdksh-alloc.patch
-Patch2:		pdksh-allocfix.patch
-Patch3:		pdksh-quote.patch
-Patch4:		pdksh-history-nl.patch
+Patch0:		%{name}-static.patch
+Patch1:		%{name}-alloc.patch
+Patch2:		%{name}-allocfix.patch
+Patch3:		%{name}-quote.patch
+Patch4:		%{name}-history-nl.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -127,13 +127,13 @@ fi
 %postun
 if [ "$1" = "0" ]; then
 	grep -v /bin/ksh /etc/shells | grep -v /bin/sh > /etc/shells.new
-	mv /etc/shells.new /etc/shells
+	mv -f /etc/shells.new /etc/shells
 fi
 
 %postun static
 if [ "$1" = "0" ]; then
 	grep -v /bin/ksh.static /etc/shells > /etc/shells.new
-	mv /etc/shells.new /etc/shells
+	mv -f /etc/shells.new /etc/shells
 fi
 
 %files
