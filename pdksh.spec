@@ -130,7 +130,7 @@ else
 	[ -n "$HAS_KSH_STATIC" ] || echo "/bin/ksh.static" >> /etc/shells
 fi
 
-%postun
+%preun
 if [ "$1" = "0" ]; then
 	while read SHNAME; do
 		[ "$SHNAME" = "/bin/ksh" ] ||\
@@ -140,7 +140,7 @@ if [ "$1" = "0" ]; then
 	mv -f /etc/shells.new /etc/shells
 fi
 
-%postun static
+%preun static
 if [ "$1" = "0" ]; then
 	while read SHNAME; do
 		[ "$SHNAME" = "/bin/ksh.static" ] ||\
