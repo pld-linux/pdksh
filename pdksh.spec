@@ -65,7 +65,7 @@ tasarlanmýþ bir komut yorumlayýcýsýdýr. pdksh'ýn komut dili sh(1)
 kabuk dilinin bir kümesidir.
 
 %package static
-Summary:	Staticly linked Public Domain Korn Shell
+Summary:	Statically linked Public Domain Korn Shell
 Summary(pl):	Statycznie zlinkowany shell Korna
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
