@@ -4,7 +4,7 @@ Summary(fr):	Korn Shell du domaine public.
 Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
-Version:	5.2.13.8
+Version:	5.2.13.9
 Release:	1
 Copyright:	Public Domain
 Group:		Shells
