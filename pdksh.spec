@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.13.9
-Release:	3
+Release:	4
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
@@ -13,6 +13,7 @@ Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-unstable-%{version}.tar.gz
 Source1:	ksh.1.pl
 Patch0:		pdksh-8bit.patch
 Patch1:		pdksh-alloc.patch
+Patch2:		pdksh-static.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 Buildroot:	/tmp/%{name}-%{version}-root
 
@@ -41,10 +42,30 @@ pdksh, hem etkileþimli hem de kabuk programcýklarýnýn kullanýmý için
 tasarlanmýþ bir komut yorumlayýcýsýdýr. pdksh'ýn komut dili sh(1) kabuk
 dilinin bir kümesidir.
 
+%package static
+Summary:	Staticly linked Public Domain Korn Shell
+Group:		Shells
+Group(pl):	Pow³oki
+Requires:	%{name}
+
+%description static
+pdksh, a remimplementation of ksh, is a command interpreter that is
+intended for both interactive and shell script use.  Its command
+language is a superset of the sh(1) shell language.
+
+This packege contains staticly linked version of pdksh.
+
+%description static -l pl
+Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z komendami
+shella sh(1).
+
+W tym pakiecie jest statycznie zlinkowany pdksh.
+
 %prep
 %setup -q -n %{name}-unstable-%{version}
 %patch0 -p1
 %patch1 -p1
+%patch2 -p0
 
 %build
 autoconf
@@ -84,10 +105,19 @@ if [ ! -f /etc/shells ]; then
 	echo "/bin/sh" >> /etc/shells
 else
 	if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
-		echo "/bin/sh" >> /etc/shells
+		echo "/bin/ksh" >> /etc/shells
 	fi
 	if ! grep '^/bin/sh$' /etc/shells > /dev/null; then
 		echo "/bin/sh" >> /etc/shells
+	fi
+fi
+
+%post static
+if [ ! -f /etc/shells ]; then
+	echo "/bin/ksh.static" > /etc/shells
+else
+	if ! grep '^/bin/ksh.static$' /etc/shells > /dev/null; then
+		echo "/bin/ksh.static" >> /etc/shells
 	fi
 fi
 
@@ -97,20 +127,35 @@ if [ $1 = 0 ]; then
 	mv /etc/shells.new /etc/shells
 fi
 
+%postun static
+if [ $1 = 0 ]; then
+	grep -v /bin/ksh.static /etc/shells | grep -v /bin/sh > /etc/shells.new
+	mv /etc/shells.new /etc/shells
+fi
+
 %files
 %defattr(644,root,root,755)
 %doc {README,NEWS,BUG-REPORTS}.gz
 
-%attr(755,root,root) /bin/*
+%attr(755,root,root) /bin/ksh
+/bin/sh
 /etc/*
 
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
 
+%files static
+%defattr(644,root,root,755)
+%attr(755,root,root) /bin/ksh.static
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sat Jun  5 1999 Jan Rêkorajski <baggins@pld.org.pl>
+  [5.2.13.9-4]
+- added static subpackage
+
 * Sat May 29 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [5.2.13.9-2]
 - more rpm macros,
