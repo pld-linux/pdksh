@@ -1,21 +1,22 @@
 Summary:	Public Domain Korn Shell
 Summary(de):	Korn-Shell aus dem Public Domain
-Summary(fr):	Korn Shell du domaine public.
+Summary(fr):	Korn Shell du domaine public
 Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabu繠
 Name:		pdksh
 Version:	5.2.14
-Release:	7
-Copyright:	Public Domain
-Group:		Shells
-Group(pl):	Pow這ki
+Release:	9
+License:	Public Domain
+Group:		Applications/Shells
+Group(de):	Applikationen/Shells
+Group(pl):	Aplikacje/Pow這ki
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 Source1:	ksh.1.pl
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-alloc.patch
-Patch2:		%{name}-allocfix.patch
-Patch3:		%{name}-quote.patch
-Patch4:		%{name}-history.patch
+Patch2:		%{name}-quote.patch
+Patch3:		%{name}-history.patch
+Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -48,8 +49,9 @@ kabuk dilinin bir k�mesidir.
 
 %package static
 Summary:	Staticly linked Public Domain Korn Shell
-Group:		Shells
-Group(pl):	Pow這ki
+Group:		Applications/Shells
+Group(de):	Applikationen/Shells
+Group(pl):	Aplikacje/Pow這ki
 Requires:	%{name}
 
 %description static
@@ -71,11 +73,10 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-%patch4 -p1
+%patch4 -p2
 
 %build
 autoconf
-LDFLAGS="-s"; export LDFLAGS
 %configure \
 	--enable-emacs \
 	--enable-vi
@@ -89,18 +90,17 @@ install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,%{_sysconfdir}}
 	exec_prefix=$RPM_BUILD_ROOT/ \
 	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
-echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
-echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
+echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
+echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
 
-install	%{SOURCE1}		$RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
-echo	.so ksh.1	>	$RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
-echo	.so ksh.1	>	$RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
+install	%{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
+echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
+echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 install etc/ksh.* $RPM_BUILD_ROOT%{_sysconfdir}
 
 ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
-gzip -9nf $RPM_BUILD_ROOT%{_mandir}/{man1/*,pl/man1/*} \
-	README NEWS BUG-REPORTS
+gzip -9nf README NEWS BUG-REPORTS
 
 %post
 if [ ! -f /etc/shells ]; then
