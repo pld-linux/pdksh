@@ -1,11 +1,134 @@
+diff -urN pdksh-5.2.14.org/eval.c pdksh-5.2.14/eval.c
+--- pdksh-5.2.14.org/eval.c	2004-04-06 19:24:49.693634088 +0200
++++ pdksh-5.2.14/eval.c	2004-04-06 19:27:17.876106928 +0200
+@@ -259,7 +259,7 @@
+ 					struct tbl v;
+ 					char *p;
+ 
+-					v.flag = DEFINED|ISSET|INTEGER;
++					v.flag = DEFINED|ISSET|INTEGER|INTEGER_EXPRSUB;
+ 					v.type = 10; /* not default */
+ 					v.name[0] = '\0';
+ 					v_evaluate(&v, substitute(sp, 0),
+diff -urN pdksh-5.2.14.org/expr.c pdksh-5.2.14/expr.c
+--- pdksh-5.2.14.org/expr.c	2004-04-06 19:24:49.693634088 +0200
++++ pdksh-5.2.14/expr.c	2004-04-06 20:58:04.213137848 +0200
+@@ -129,7 +129,7 @@
+ static void        evalerr  ARGS((Expr_state *es, enum error_type type,
+ 				  const char *str)) GCC_FUNC_ATTR(noreturn);
+ static struct tbl *evalexpr ARGS((Expr_state *es, enum prec prec));
+-static void        token    ARGS((Expr_state *es));
++static void        token    ARGS((Expr_state *es, struct tbl *vp));
+ static struct tbl *do_ppmm  ARGS((Expr_state *es, enum token op,
+ 				  struct tbl *vasn, bool_t is_prefix));
+ static void	   assign_check ARGS((Expr_state *es, enum token op,
+@@ -191,7 +191,7 @@
+ 		/*NOTREACHED*/
+ 	}
+ 
+-	token(es);
++	token(es, vp);
+ #if 1 /* ifdef-out to disallow empty expressions to be treated as 0 */
+ 	if (es->tok == END) {
+ 		es->tok = LIT;
+@@ -287,7 +287,7 @@
+ 		if (op == O_BNOT || op == O_LNOT || op == O_MINUS
+ 		    || op == O_PLUS)
+ 		{
+-			token(es);
++			token(es, NULL);
+ 			vl = intvar(es, evalexpr(es, P_PRIMARY));
+ 			if (op == O_BNOT)
+ 				vl->val.i = ~vl->val.i;
+@@ -297,25 +297,25 @@
+ 				vl->val.i = -vl->val.i;
+ 			/* op == O_PLUS is a no-op */
+ 		} else if (op == OPEN_PAREN) {
+-			token(es);
++			token(es, NULL);
+ 			vl = evalexpr(es, MAX_PREC);
+ 			if (es->tok != CLOSE_PAREN)
+ 				evalerr(es, ET_STR, "missing )");
+-			token(es);
++			token(es, NULL);
+ 		} else if (op == O_PLUSPLUS || op == O_MINUSMINUS) {
+-			token(es);
++			token(es, NULL);
+ 			vl = do_ppmm(es, op, es->val, TRUE);
+-			token(es);
++			token(es, NULL);
+ 		} else if (op == VAR || op == LIT) {
+ 			vl = es->val;
+-			token(es);
++			token(es, NULL);
+ 		} else {
+ 			evalerr(es, ET_UNEXPECTED, (char *) 0);
+ 			/*NOTREACHED*/
+ 		}
+ 		if (es->tok == O_PLUSPLUS || es->tok == O_MINUSMINUS) {
+ 			vl = do_ppmm(es, es->tok, vl, FALSE);
+-			token(es);
++			token(es, NULL);
+ 		}
+ 		return vl;
+ 	}
+@@ -323,7 +323,7 @@
+ 	for (op = es->tok; IS_BINOP(op) && opinfo[(int) op].prec == prec;
+ 		op = es->tok)
+ 	{
+-		token(es);
++		token(es, NULL);
+ 		vasn = vl;
+ 		if (op != O_ASN) /* vl may not have a value yet */
+ 			vl = intvar(es, vl);
+@@ -425,7 +425,7 @@
+ 					es->noassign--;
+ 				if (es->tok != CTERN)
+ 					evalerr(es, ET_STR, "missing :");
+-				token(es);
++				token(es, NULL);
+ 				if (e)
+ 					es->noassign++;
+ 				vr = evalexpr(es, P_TERN);
+@@ -455,8 +455,9 @@
+ }
+ 
+ static void
+-token(es)
++token(es, vp)
+ 	Expr_state *es;
++	struct tbl *vp;
+ {
+ 	const char *cp;
+ 	int c;
+@@ -504,6 +505,8 @@
+ 		tvar = str_nsave(es->tokp, --cp - es->tokp, ATEMP);
+ 		es->val = tempvar();
+ 		es->val->flag &= ~INTEGER;
++		if (vp && vp->flag & INTEGER_EXPRSUB)
++		    es->val->flag |= INTEGER_EXPRSUB;
+ 		es->val->type = 0;
+ 		es->val->val.s = tvar;
+ 		if (setint_v(es->val, es->val) == NULL)
+diff -urN pdksh-5.2.14.org/table.h pdksh-5.2.14/table.h
+--- pdksh-5.2.14.org/table.h	2004-04-06 19:24:49.768622688 +0200
++++ pdksh-5.2.14/table.h	2004-04-06 21:01:04.941662936 +0200
+@@ -57,6 +57,7 @@
+ #define LOCAL_COPY	BIT(22)	/* with LOCAL - copy attrs from existing var */
+ #define EXPRINEVAL	BIT(23)	/* contents currently being evaluated */
+ #define EXPRLVALUE	BIT(24)	/* useable as lvalue (temp flag) */
++#define INTEGER_EXPRSUB BIT(25) /* flag for marking $((expression))
+ /* flag bits used for taliases/builtins/aliases/keywords/functions */
+ #define KEEPASN		BIT(8)	/* keep command assignments (eg, var=x cmd) */
+ #define FINUSE		BIT(9)	/* function being executed */
 diff -urN pdksh-5.2.14.org/var.c pdksh-5.2.14/var.c
---- pdksh-5.2.14.org/var.c	2004-04-02 14:55:10.447974032 +0200
-+++ pdksh-5.2.14/var.c	2004-04-02 14:57:59.620255936 +0200
+--- pdksh-5.2.14.org/var.c	2004-04-06 19:24:49.761623752 +0200
++++ pdksh-5.2.14/var.c	2004-04-06 19:32:10.292652856 +0200
 @@ -439,6 +439,15 @@
  	base = 10;
  	num = 0;
  	neg = 0;
-+	if (*s == '0' && *(s+1)) {
++	if ((vp->flag&INTEGER_EXPRSUB) && *s == '0' && *(s+1)) {
 +	    s++;
 +	    if (*s == 'x' || *s == 'X') {
 +		s++;
