@@ -20,7 +20,7 @@ diff -ur pdksh-5.2.14.orig/history.c pdksh-5.2.14/history.c
  	if (++hp >= history + histsize) { /* remove oldest command */
  		afree((void*)history[0], APERM);
  		memmove(history, history + 1,
-@@ -700,9 +711,10 @@
+@@ -700,9 +711,13 @@
  				nread = fread(hline, 1, LINE, fh);
  				if (nread <= 0)
  					break;
@@ -28,8 +28,11 @@ diff -ur pdksh-5.2.14.orig/history.c pdksh-5.2.14/history.c
 +				hline[nread] = '\n';
  			}
 -			end = strchr(hline + pos, 0); /* will always succeed */
-+			end = strchr(hline + pos, '\n'); /* will always succeed */
-+			*end = '\0';
++			end = strchr(hline + pos, '\n'); /* will always succeed - 0, but not \n!!! */
++			if(end != NULL) /* in case sth put \0 in .history...) */
++				*end = '\0';
++			else
++				end = strchr(hline + pos, '\0'); /* THIS will always succeed */
  			if (contin)
  				histappend(hline + pos, 0);
  			else {
