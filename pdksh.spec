@@ -5,7 +5,7 @@ Summary(pl):	Shell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	21
+Release:	22
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
@@ -13,15 +13,15 @@ Group(pl):	Aplikacje/Pow³oki
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 Source1:	ksh.1.pl
 Patch0:		%{name}-static.patch
-Patch1:		%{name}-alloc.patch
-Patch2:		%{name}-quote.patch
-Patch3:		%{name}-history.patch
-Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
-Patch5:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
-Patch6:		%{name}-debian.patch
-Patch7:		%{name}-EDITMODE.patch
-Patch8:		%{name}-rlimit_locks.patch
-Patch9:		%{name}-eval-segv.patch
+Patch1:		%{name}-quote.patch
+Patch2:		%{name}-history.patch
+Patch3:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
+Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
+Patch5:		%{name}-debian.patch
+Patch6:		%{name}-EDITMODE.patch
+Patch7:		%{name}-rlimit_locks.patch
+Patch8:		%{name}-eval-segv.patch
+Patch9:		%{name}-awful-free-bug.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -78,9 +78,9 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %{?_without_static:#}%patch0 -p0
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
-%patch4 -p2
-%patch5 -p0
+%patch3 -p2
+%patch4 -p0
+%patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
