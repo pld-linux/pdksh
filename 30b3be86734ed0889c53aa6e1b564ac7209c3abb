@@ -1,0 +1,3 @@
+- updated to stable 5.2.14,
+- removed 8bit and alloc patches (integrated in current version),
+- added using %congigure macro.
