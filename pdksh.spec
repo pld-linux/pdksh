@@ -13,7 +13,7 @@ Release:	29
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
-# Source0-md5: 871106b3bd937e1afba9f2ef7c43aef3
+# Source0-md5:	871106b3bd937e1afba9f2ef7c43aef3
 Source1:	ksh.1.pl
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-history.patch
@@ -28,7 +28,7 @@ Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
-%{?_without_static:#}BuildRequires:        glibc-static
+%{?_without_static:#}BuildRequires:	glibc-static
 Requires(preun):	fileutils
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
