@@ -4,18 +4,18 @@ Summary(fr):	Korn Shell du domaine public.
 Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
-Version:	5.2.13.9
-Release:	4
+Version:	5.2.14
+Release:	1
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
-Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-unstable-%{version}.tar.gz
+Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 Source1:	ksh.1.pl
-Patch0:		pdksh-8bit.patch
-Patch1:		pdksh-alloc.patch
-Patch2:		pdksh-static.patch
+Patch0:		pdksh-static.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 Buildroot:	/tmp/%{name}-%{version}-root
+
+%define		_exec_prefix		/
 
 %description
 pdksh, a remimplementation of ksh, is a command interpreter that is
@@ -62,28 +62,23 @@ shella sh(1).
 W tym pakiecie jest statycznie zlinkowany pdksh.
 
 %prep
-%setup -q -n %{name}-unstable-%{version}
-%patch0 -p1
-%patch1 -p1
-%patch2 -p0
+%setup  -q
+%patch0 -p0
 
 %build
 autoconf
-CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
-    ./configure \
-	--prefix=/ \
-	--mandir=%{_mandir}/man1 \
+LDFLAGS="-s"; export LDFLAGS
+%configure \
 	--enable-emacs \
-	--enable-vi %{_target_platform}
+	--enable-vi
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_mandir}/pl/man1
-install -d $RPM_BUILD_ROOT/etc
+install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,/etc}
 
 make install \
-	prefix=$RPM_BUILD_ROOT/ \
+	exec_prefix=$RPM_BUILD_ROOT/ \
 	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
 echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
