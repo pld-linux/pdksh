@@ -10,7 +10,8 @@ Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
 Source:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-unstable-%{version}.tar.gz
-Patch:		pdksh-8bit.patch
+Patch0:		pdksh-8bit.patch
+Patch1:		pdksh-alloc.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 Buildroot:	/tmp/%{name}-%{version}-root
 
@@ -41,7 +42,8 @@ dilinin bir kümesidir.
 
 %prep
 %setup -q -n %{name}-unstable-%{version}
-%patch -p1
+%patch0 -p1
+%patch1 -p1
 
 %build
 CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
@@ -71,12 +73,12 @@ gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/* \
 %post
 umask 022
 (cat /etc/shells; echo "/bin/ksh"; echo "/bin/sh" ) | sort -u > /etc/shells.new
-mv /etc/shells.new /etc/shells
+mv -f /etc/shells.new /etc/shells
 
 %postun
 umask 022
 cat /etc/shells | grep -v "/bin/ksh"  > /etc/shells.new
-mv /etc/shells.new /etc/shells
+mv -f /etc/shells.new /etc/shells
 
 %verifyscript
 echo -n "Looking for ksh in /etc/shells... "
@@ -99,6 +101,10 @@ fi
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Sun May  2 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [5.2.13.8-1]
+- fixed memory allocation bug by Marcin Danecki (pdksh-alloc.patch).
+
 * Fri Mar  5 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [5.2.13.7-2]
 - added symlink ksh -> /bin/sh.
