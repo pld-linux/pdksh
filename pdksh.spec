@@ -25,6 +25,7 @@ Patch9:		%{name}-awful-free-bug.patch
 Patch10:	%{name}-no_std_aliases.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+%{?_without_static:#}BuildRequires:        glibc-static
 
 %define		_exec_prefix		/
 
