@@ -50,7 +50,7 @@ autoconf
 CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
 ./configure %{_target} \
 	--prefix=/ \
-	--mandir=/usr/share/man/man1 \
+	--mandir=%{_mandir}/man1 \
 	--enable-emacs \
 	--enable-vi
 
@@ -61,14 +61,14 @@ rm -rf $RPM_BUILD_ROOT
 
 make install \
 	prefix=$RPM_BUILD_ROOT/ \
-	mandir=$RPM_BUILD_ROOT/usr/share/man/man1
+	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
-echo .so ksh.1 > $RPM_BUILD_ROOT/usr/share/man/man1/pdksh.1
-echo .so ksh.1 > $RPM_BUILD_ROOT/usr/share/man/man1/sh.1
+echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
+echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
 
 ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
-gzip -9nf $RPM_BUILD_ROOT/usr/share/man/man1/* \
+gzip -9nf $RPM_BUILD_ROOT%{_mandir}/man1/* \
 	README NEWS BUG-REPORTS
 
 %post
@@ -96,7 +96,7 @@ fi
 
 %attr(755,root,root) /bin/*
 
-/usr/share/man/man1/*
+%{_mandir}/man1/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
