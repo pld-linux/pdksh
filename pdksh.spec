@@ -33,6 +33,7 @@ Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
 Patch12:	%{name}-siglist-sort.patch
 Patch13:	%{name}-hex.patch
+Patch14:	%{name}-kshrc_support.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 Requires(preun):	fileutils
@@ -122,6 +123,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch11 -p1
 %patch12 -p0
 %patch13 -p1
+%patch14 -p1
 
 %build
 %configure2_13 \
