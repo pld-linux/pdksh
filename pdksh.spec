@@ -9,26 +9,25 @@ Summary(tr):	Serbest Korn kabuПu
 Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	26
+Release:	27
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 Source1:	ksh.1.pl
 Patch0:		%{name}-static.patch
-Patch1:		%{name}-quote.patch
-Patch2:		%{name}-history.patch
-Patch3:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
-Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
-Patch5:		%{name}-debian.patch
-Patch6:		%{name}-EDITMODE.patch
-Patch7:		%{name}-rlimit_locks.patch
-Patch8:		%{name}-eval-segv.patch
-Patch9:		%{name}-awful-free-bug.patch
-Patch10:	%{name}-no_stop_alias.patch
-Patch11:	%{name}-man_no_plusminus.patch
+Patch1:		%{name}-history.patch
+Patch2:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
+Patch3:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
+Patch4:		%{name}-debian.patch
+Patch5:		%{name}-EDITMODE.patch
+Patch6:		%{name}-rlimit_locks.patch
+Patch7:		%{name}-eval-segv.patch
+Patch8:		%{name}-awful-free-bug.patch
+Patch9:		%{name}-no_stop_alias.patch
+Patch10:	%{name}-man_no_plusminus.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %{?_without_static:#}BuildRequires:        glibc-static
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_exec_prefix		/
 
@@ -101,16 +100,15 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %setup  -q
 %{?_without_static:#}%patch0 -p0
 %patch1 -p1
-%patch2 -p1
-%patch3 -p2
-%patch4 -p0
+%patch2 -p2
+%patch3 -p0
+%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
 %patch10 -p1
-%patch11 -p1
 
 %build
 #%{__autoconf}
