@@ -1,0 +1,70 @@
+diff -urN pdksh-5.2.14.org/eval.c pdksh-5.2.14/eval.c
+--- pdksh-5.2.14.org/eval.c	2004-04-08 02:08:08.183779408 +0200
++++ pdksh-5.2.14/eval.c	2004-04-08 02:08:18.122268528 +0200
+@@ -53,6 +53,8 @@
+ 				 char *end, int fdo));
+ #endif
+ 
++int expression_evaluation = 0;
++
+ /* compile and expand word */
+ char *
+ substitute(cp, f)
+@@ -246,6 +248,7 @@
+ 				}
+ 				continue;
+ 			  case EXPRSUB:
++				expression_evaluation++;
+ 				word = IFS_WORD;
+ 				tilde_ok = 0;
+ 				if (f & DONTRUNCOMMAND) {
+@@ -270,6 +273,7 @@
+ 						*dp++ = *p++;
+ 					}
+ 				}
++				expression_evaluation = 0;
+ 				continue;
+ 			  case OSUBST: /* ${{#}var{:}[=+-?#%]word} */
+ 			  /* format is:
+diff -urN pdksh-5.2.14.org/expr.c pdksh-5.2.14/expr.c
+--- pdksh-5.2.14.org/expr.c	2004-04-08 02:08:08.184779256 +0200
++++ pdksh-5.2.14/expr.c	2004-04-08 02:08:48.283683296 +0200
+@@ -223,6 +223,7 @@
+ 	char tbuf[2];
+ 	const char *s;
+ 
++	expression_evaluation = 0;
+ 	switch (type) {
+ 	case ET_UNEXPECTED:
+ 		switch (es->tok) {
+diff -urN pdksh-5.2.14.org/sh.h pdksh-5.2.14/sh.h
+--- pdksh-5.2.14.org/sh.h	2004-04-08 02:08:08.189778496 +0200
++++ pdksh-5.2.14/sh.h	2004-04-08 02:08:18.124268224 +0200
+@@ -376,6 +376,8 @@
+ EXTERN	int	subst_exstat;	/* exit status of last $(..)/`..` */
+ EXTERN	const char *safe_prompt; /* safe prompt if PS1 substitution fails */
+ 
++/* pld hack */
++EXTERN	int	expression_evaluation;	/* 1 if $(( )) expression is evaluated */
+ 
+ /*
+  * Area-based allocation built on malloc/free
+diff -urN pdksh-5.2.14.org/var.c pdksh-5.2.14/var.c
+--- pdksh-5.2.14.org/var.c	2004-04-08 02:08:08.187778800 +0200
++++ pdksh-5.2.14/var.c	2004-04-08 02:08:18.126267920 +0200
+@@ -439,6 +439,15 @@
+ 	base = 10;
+ 	num = 0;
+ 	neg = 0;
++	if (expression_evaluation && *s == '0' && *(s+1)) {
++	    	s++;
++		if (*s == 'x' || *s == 'X') {
++		    	s++;
++			base = 16;
++		} else
++		    	base = 8;
++		have_base++;
++	}
+ 	for (c = *s++; c ; c = *s++) {
+ 		if (c == '-') {
+ 			neg++;
