@@ -94,7 +94,6 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Wed Feb 24 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [5.2.13.7-1]
-- added gzipping man pages,
 - removed man group from man pages,
 - added --enable-emacs, --enable-vi to configure parameters,
 - added LDFLAGS="-s" to configure enviroment,
