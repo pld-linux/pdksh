@@ -16,7 +16,7 @@ Patch1:		pdksh-alloc.patch
 Patch2:		pdksh-allocfix.patch
 Patch3:		pdksh-quote.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
-Buildroot:	/tmp/%{name}-%{version}-root
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_exec_prefix		/
 
