@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.13.9
-Release:	2
+Release:	3
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
@@ -49,17 +49,17 @@ dilinin bir kümesidir.
 %build
 autoconf
 CFLAGS="$RPM_OPT_FLAGS" LDFLAGS="-s" \
-./configure %{_target} \
+    ./configure \
 	--prefix=/ \
 	--mandir=%{_mandir}/man1 \
 	--enable-emacs \
-	--enable-vi
-
+	--enable-vi %{_target_platform}
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_mandir}/pl/man1
+install -d $RPM_BUILD_ROOT/etc
 
 make install \
 	prefix=$RPM_BUILD_ROOT/ \
@@ -68,9 +68,10 @@ make install \
 echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
 echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
 
-install %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
-echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
-echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
+install	%{SOURCE1}		$RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
+echo	.so ksh.1	>	$RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
+echo	.so ksh.1	>	$RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
+install etc/ksh.*		$RPM_BUILD_ROOT/etc
 
 ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
@@ -78,22 +79,22 @@ gzip -9nf $RPM_BUILD_ROOT%{_mandir}/{man1/*,pl/man1/*} \
 	README NEWS BUG-REPORTS
 
 %post
-umask 022
-(cat /etc/shells; echo "/bin/ksh"; echo "/bin/sh" ) | sort -u > /etc/shells.new
-mv -f /etc/shells.new /etc/shells
+if [ ! -f /etc/shells ]; then
+	echo "/bin/ksh" > /etc/shells
+	echo "/bin/sh" >> /etc/shells
+else
+	if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
+		echo "/bin/sh" >> /etc/shells
+	fi
+	if ! grep '^/bin/sh$' /etc/shells > /dev/null; then
+		echo "/bin/sh" >> /etc/shells
+	fi
+fi
 
 %postun
-umask 022
-cat /etc/shells | grep -v "/bin/ksh"  > /etc/shells.new
-mv -f /etc/shells.new /etc/shells
-
-%verifyscript
-echo -n "Looking for ksh in /etc/shells... "
-if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
-	echo "missing"
-	echo "ksh missing from /etc/shells" >&2
-else
-	echo "found"
+if [ $1 = 0 ]; then
+	grep -v /bin/ksh /etc/shells | grep -v /bin/sh > /etc/shells.new
+	mv /etc/shells.new /etc/shells
 fi
 
 %files
@@ -101,6 +102,7 @@ fi
 %doc {README,NEWS,BUG-REPORTS}.gz
 
 %attr(755,root,root) /bin/*
+/etc/*
 
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
@@ -147,13 +149,5 @@ rm -rf $RPM_BUILD_ROOT
 
 * Thu Jul 23 1998 Wojtek ¦lusarczyk <wojtek@shadow.eu.org>
   [5.2.12-3]
-- build agains glibc-2.1.
-
-* Mon Apr 27 1998 Prospector System <bugs@redhat.com>
-- translations modified for de, fr, tr
-
-* Wed Oct 21 1997 Cristian Gafton <gafton@redhat.com>
-- fixed the spec file
-
-* Fri Jul 18 1997 Erik Troan <ewt@redhat.com>
-- built against glibc
+- build agains glibc-2.1,
+- start at RH spec file.
