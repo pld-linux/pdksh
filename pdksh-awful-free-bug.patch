@@ -6,7 +6,7 @@
  	 */
 -	if (oldcells > ICELLS && cells > ICELLS) {
 +	if (oldcells > ICELLS && cells > ICELLS 
-+	    && ((dp-2)->block->last == dp+oldcells) /* don't destroy blocks which have grown! */
++	    && ((dp-2)->block->last == dp+oldcells) && (((Cell*)((dp-2)->block+1))+NOBJECT_FIELDS == dp) /* don't destroy blocks which have grown! */
 +	   ) {
  		Block *bp = (dp-2)->block;
  		Block *nbp;
@@ -35,7 +35,7 @@
  	/* Release object... */
 -	if ((dp-1)->size > ICELLS) {
 +	if ((dp-1)->size > ICELLS
-+	    && (bp->last == dp + (dp-1)->size) /* don't free non-free blocks which have grown! */
++	    && (bp->last == dp + (dp-1)->size) && (((Cell*)(bp+1))+NOBJECT_FIELDS == dp) /* don't free non-free blocks which have grown! */
 +	   ) {
  		ablockfree(bp, ap);
  		ACHECK(ap);
