@@ -4,12 +4,12 @@ Summary(fr):	Korn Shell du domaine public.
 Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
-Version:	5.2.13.7
+Version:	5.2.13.8
 Release:	1
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
-Source:		ftp://ftp.cs.mun.ca:/pub/%{name}/%{name}-unstable-%{version}.tar.gz
+Source:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-unstable-%{version}.tar.gz
 Patch:		pdksh-8bit.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 Buildroot:	/tmp/%{name}-%{version}-root
@@ -61,23 +61,30 @@ make install \
 	mandir=$RPM_BUILD_ROOT/usr/man/man1
 
 echo .so ksh.1 > $RPM_BUILD_ROOT/usr/man/man1/pdksh.1
+echo .so ksh.1 > $RPM_BUILD_ROOT/usr/man/man1/sh.1
+
+ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
 gzip -9nf $RPM_BUILD_ROOT/usr/man/man1/* \
 	README NEWS BUG-REPORTS
 
 %post
-(cat /etc/shells; echo "/bin/ksh" ) | sort -u > /etc/shells
+umask 022
+(cat /etc/shells; echo "/bin/ksh"; echo "/bin/sh" ) | sort -u > /etc/shells.new
+mv /etc/shells.new /etc/shells
 
 %postun
+umask 022
 cat /etc/shells | grep -v "/bin/ksh"  > /etc/shells.new
+mv /etc/shells.new /etc/shells
 
 %verifyscript
 echo -n "Looking for ksh in /etc/shells... "
 if ! grep '^/bin/ksh$' /etc/shells > /dev/null; then
-    echo "missing"
-    echo "ksh missing from /etc/shells" >&2
+	echo "missing"
+	echo "ksh missing from /etc/shells" >&2
 else
-    echo "found"
+	echo "found"
 fi
 
 %files
@@ -92,6 +99,10 @@ fi
 rm -rf $RPM_BUILD_ROOT
 
 %changelog
+* Fri Mar  5 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
+  [5.2.13.7-2]
+- added symlink ksh -> /bin/sh.
+
 * Wed Feb 24 1999 Tomasz K³oczko <kloczek@rudy.mif.pg.gda.pl>
   [5.2.13.7-1]
 - removed man group from man pages,
