@@ -103,6 +103,7 @@ fi
 %attr(755,root,root) /bin/*
 
 %{_mandir}/man1/*
+%lang(pl) %{_mandir}/pl/man1/*
 
 %clean
 rm -rf $RPM_BUILD_ROOT
