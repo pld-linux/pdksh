@@ -22,7 +22,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 pdksh, a remimplementation of ksh, is a command interpreter that is
-intended for both interactive and shell script use.  Its command
+intended for both interactive and shell script use. Its command
 language is a superset of the sh(1) shell language.
 
 %description -l de
@@ -33,17 +33,17 @@ interaktiven und Shell-Script-Betrieb. Die Befehlssprache ist eine
 %description -l fr
 pdksh, un remplacement de ksh, est un interpréteur de commande qui est
 à destiné à la fois à l'utilisation interactive et a l'utilisation de
-scripts. Son langage de commande est un ensemble de commande du langage
-shell de sh(1).
+scripts. Son langage de commande est un ensemble de commande du
+langage shell de sh(1).
 
 %description -l pl
-Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z komendami
-shella sh(1).
+Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z
+komendami shella sh(1).
 
 %description -l tr
 pdksh, hem etkileþimli hem de kabuk programcýklarýnýn kullanýmý için
-tasarlanmýþ bir komut yorumlayýcýsýdýr. pdksh'ýn komut dili sh(1) kabuk
-dilinin bir kümesidir.
+tasarlanmýþ bir komut yorumlayýcýsýdýr. pdksh'ýn komut dili sh(1)
+kabuk dilinin bir kümesidir.
 
 %package static
 Summary:	Staticly linked Public Domain Korn Shell
@@ -53,14 +53,14 @@ Requires:	%{name}
 
 %description static
 pdksh, a remimplementation of ksh, is a command interpreter that is
-intended for both interactive and shell script use.  Its command
+intended for both interactive and shell script use. Its command
 language is a superset of the sh(1) shell language.
 
 This packege contains staticly linked version of pdksh.
 
 %description static -l pl
-Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z komendami
-shella sh(1).
+Pdksh jest implementacj± shella ksh. Komendy pdksh s± zgodne z
+komendami shella sh(1).
 
 W tym pakiecie jest statycznie zlinkowany pdksh.
 
@@ -81,7 +81,7 @@ make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,/etc}
+install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,%{_sysconfdir}}
 
 make install \
 	exec_prefix=$RPM_BUILD_ROOT/ \
@@ -93,7 +93,7 @@ echo .so ksh.1 > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
 install	%{SOURCE1}		$RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
 echo	.so ksh.1	>	$RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
 echo	.so ksh.1	>	$RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
-install etc/ksh.*		$RPM_BUILD_ROOT/etc
+install etc/ksh.* $RPM_BUILD_ROOT%{_sysconfdir}
 
 ln -s ksh $RPM_BUILD_ROOT/bin/sh
 
@@ -140,7 +140,7 @@ fi
 
 %attr(755,root,root) /bin/ksh
 /bin/sh
-/etc/*
+%{_sysconfdir}/*
 
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
