@@ -1,6 +1,6 @@
 diff -urN pdksh-5.2.14.org/eval.c pdksh-5.2.14/eval.c
---- pdksh-5.2.14.org/eval.c	2004-04-06 19:24:49.693634088 +0200
-+++ pdksh-5.2.14/eval.c	2004-04-06 23:40:11.000000000 +0200
+--- pdksh-5.2.14.org/eval.c	2004-04-08 02:08:08.183779408 +0200
++++ pdksh-5.2.14/eval.c	2004-04-08 02:08:18.122268528 +0200
 @@ -53,6 +53,8 @@
  				 char *end, int fdo));
  #endif
@@ -26,10 +26,21 @@ diff -urN pdksh-5.2.14.org/eval.c pdksh-5.2.14/eval.c
  				continue;
  			  case OSUBST: /* ${{#}var{:}[=+-?#%]word} */
  			  /* format is:
+diff -urN pdksh-5.2.14.org/expr.c pdksh-5.2.14/expr.c
+--- pdksh-5.2.14.org/expr.c	2004-04-08 02:08:08.184779256 +0200
++++ pdksh-5.2.14/expr.c	2004-04-08 02:08:48.283683296 +0200
+@@ -223,6 +223,7 @@
+ 	char tbuf[2];
+ 	const char *s;
+ 
++	expression_evaluation = 0;
+ 	switch (type) {
+ 	case ET_UNEXPECTED:
+ 		switch (es->tok) {
 diff -urN pdksh-5.2.14.org/sh.h pdksh-5.2.14/sh.h
---- pdksh-5.2.14.org/sh.h	2004-04-06 19:24:49.767622840 +0200
-+++ pdksh-5.2.14/sh.h	2004-04-06 23:41:37.000000000 +0200
-@@ -376,8 +376,10 @@
+--- pdksh-5.2.14.org/sh.h	2004-04-08 02:08:08.189778496 +0200
++++ pdksh-5.2.14/sh.h	2004-04-08 02:08:18.124268224 +0200
+@@ -376,6 +376,8 @@
  EXTERN	int	subst_exstat;	/* exit status of last $(..)/`..` */
  EXTERN	const char *safe_prompt; /* safe prompt if PS1 substitution fails */
  
@@ -38,13 +49,10 @@ diff -urN pdksh-5.2.14.org/sh.h pdksh-5.2.14/sh.h
  
  /*
   * Area-based allocation built on malloc/free
-  */
- 
- typedef struct Area {
 diff -urN pdksh-5.2.14.org/var.c pdksh-5.2.14/var.c
---- pdksh-5.2.14.org/var.c	2004-04-06 19:24:49.761623752 +0200
-+++ pdksh-5.2.14/var.c	2004-04-06 23:41:24.000000000 +0200
-@@ -439,6 +441,15 @@
+--- pdksh-5.2.14.org/var.c	2004-04-08 02:08:08.187778800 +0200
++++ pdksh-5.2.14/var.c	2004-04-08 02:08:18.126267920 +0200
+@@ -439,6 +439,15 @@
  	base = 10;
  	num = 0;
  	neg = 0;
