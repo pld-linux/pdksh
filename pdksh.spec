@@ -83,7 +83,7 @@ make
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,%{_sysconfdir}}
 
-make install \
+%{__make} install \
 	exec_prefix=$RPM_BUILD_ROOT/ \
 	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
