@@ -5,7 +5,7 @@ Summary(pl):	Shell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	16
+Release:	17
 License:	Public Domain
 Group:		Applications/Shells
 Group(de):	Applikationen/Shells
@@ -20,6 +20,7 @@ Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
 Patch5:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
 Patch6:		%{name}-debian.patch
 Patch7:		%{name}-EDITMODE.patch
+Patch8:		%{name}-rlimit_locks.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -80,6 +81,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch5 -p0
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 %build
 autoconf
