@@ -39,7 +39,7 @@ esac
 
 # SYSTEM WIDE ALIASES ETC.
 for i in /etc/shrc.d/*.sh; do
-	[ -r $i ] && . $i
+	. $i
 done
 unset i
 
