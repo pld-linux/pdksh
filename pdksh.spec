@@ -5,7 +5,7 @@ Summary(pl):	Sell Korna z Public Domain
 Summary(tr):	Serbest Korn kabuðu
 Name:		pdksh
 Version:	5.2.14
-Release:	5
+Release:	6
 Copyright:	Public Domain
 Group:		Shells
 Group(pl):	Pow³oki
@@ -15,6 +15,7 @@ Patch0:		pdksh-static.patch
 Patch1:		pdksh-alloc.patch
 Patch2:		pdksh-allocfix.patch
 Patch3:		pdksh-quote.patch
+Patch4:		pdksh-history-nl.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -70,6 +71,7 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+%patch4 -p1
 
 %build
 autoconf
