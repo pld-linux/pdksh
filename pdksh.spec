@@ -19,6 +19,7 @@ Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 # Source0-md5:	871106b3bd937e1afba9f2ef7c43aef3
 Source1:	ksh.1.pl
+Source2:	%{name}-kshrc
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-history.patch
 Patch2:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
@@ -133,11 +134,12 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,%{_sysconfdir}}
 
 %{__make} install \
 	exec_prefix=$RPM_BUILD_ROOT/ \
 	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
+
+install -d $RPM_BUILD_ROOT{/etc,%{_mandir}/pl/man1}
 
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
@@ -147,6 +149,8 @@ echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 
 ln -sf ksh $RPM_BUILD_ROOT/bin/sh
+
+install	%{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -205,10 +209,9 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc README NEWS BUG-REPORTS LEGAL
-
+%config(noreplace,missingok) %verify(not md5 size mtime) /etc/kshrc
 %attr(755,root,root) /bin/ksh
 %attr(755,root,root) /bin/sh
-
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
 
