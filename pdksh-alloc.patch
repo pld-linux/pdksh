@@ -1,0 +1,33 @@
+diff -Nru pdksh-5.2.14/alloc.c pdksh-5.2.14.new/alloc.c
+--- pdksh-5.2.14/alloc.c	Tue May 18 16:45:09 1999
++++ pdksh-5.2.14.new/alloc.c	Mon Jul 19 14:01:46 1999
+@@ -162,14 +162,18 @@
+ 	size_t size;
+ 	register Area *ap;
+ {
+-	int cells, acells;
++	unsigned cells, acells;
+ 	Block *bp = 0;
+ 	Cell *fp = 0, *fpp = 0;
+ 
+ 	ACHECK(ap);
+ 	if (size <= 0)
+ 		aerror(ap, "allocate bad size");
+-	cells = (unsigned)(size + sizeof(Cell) - 1) / sizeof(Cell);
++	cells = (unsigned)(size / sizeof(Cell)) + 2;
++	/*  Fri Apr 30 22:38:03 CEST 1999 Marcin Dalecki <dalecki@cs.net.pl>
++	 *
++	 *  Fixed serious problem with arithmetics.
++	*/
+ 
+ 	/* allocate at least this many cells */
+ 	acells = cells + NOBJECT_FIELDS;
+@@ -273,7 +277,7 @@
+ 	if (size <= 0)
+ 		aerror(ap, "allocate bad size");
+ 	/* New size (in cells) */
+-	cells = (unsigned)(size - 1) / sizeof(Cell) + 1;
++	cells = (unsigned)(size / sizeof(Cell)) + 2;
+ 
+ 	/* Is this a large object?  If so, let malloc deal with it
+ 	 * directly (unless we are crossing the ICELLS border, in

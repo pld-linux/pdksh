@@ -4,29 +4,30 @@ Summary(es):	Shell Korn de dominio pЗblico
 Summary(fr):	Korn Shell du domaine public
 Summary(pl):	Shell Korna z Public Domain
 Summary(pt_BR):	Shell Korn de domМnio pЗblico
+Summary(ru):	Свободная реализация командного процессора Korn shell (ksh)
 Summary(tr):	Serbest Korn kabuПu
+Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	26
+Release:	27
 License:	mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
 Source1:	ksh.1.pl
 Patch0:		%{name}-static.patch
-Patch1:		%{name}-quote.patch
-Patch2:		%{name}-history.patch
-Patch3:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
-Patch4:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
-Patch5:		%{name}-debian.patch
-Patch6:		%{name}-EDITMODE.patch
-Patch7:		%{name}-rlimit_locks.patch
-Patch8:		%{name}-eval-segv.patch
-Patch9:		%{name}-awful-free-bug.patch
-Patch10:	%{name}-no_std_aliases.patch
-Patch11:	%{name}-man_no_plusminus.patch
+Patch1:		%{name}-history.patch
+Patch2:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.1
+Patch3:		ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}-patches.2
+Patch4:		%{name}-debian.patch
+Patch5:		%{name}-EDITMODE.patch
+Patch6:		%{name}-rlimit_locks.patch
+Patch7:		%{name}-eval-segv.patch
+Patch8:		%{name}-awful-free-bug.patch
+Patch9:		%{name}-no_stop_alias.patch
+Patch10:	%{name}-man_no_plusminus.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
-BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %{?_without_static:#}BuildRequires:        glibc-static
+BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_exec_prefix		/
 
@@ -60,10 +61,21 @@ Pdksh, uma reimplementaГЦo de ksh, И um interpretador de comandos
 destinado tanto para uso interativo como em shell scripts. Sua
 linguagem de comandos И um superconjunto da linguagem sh(1) shell.
 
+%description -l ru
+pdksh, повторная реализация ksh, - это командный процессор,
+рассчитанный как на интерактивный режим, так и на использование в
+командных скриптах. Его командный язык представляет собой расширение
+языка sh(1).
+
 %description -l tr
 pdksh, hem etkileЧimli hem de kabuk programcЩklarЩnЩn kullanЩmЩ iГin
 tasarlanmЩЧ bir komut yorumlayЩcЩsЩdЩr. pdksh'Щn komut dili sh(1)
 kabuk dilinin bir kЭmesidir.
+
+%description -l uk
+pdksh, в╕льна реал╕зац╕я ksh, - це командний процесор, розрахований як
+на ╕нтерактивний режим, так ╕ на використання в командних скриптах.
+Його мова команд ╓ розширенням мови sh(1).
 
 %package static
 Summary:	Statically linked Public Domain Korn Shell
@@ -88,19 +100,18 @@ W tym pakiecie jest statycznie zlinkowany pdksh.
 %setup  -q
 %{?_without_static:#}%patch0 -p0
 %patch1 -p1
-%patch2 -p1
-%patch3 -p2
-%patch4 -p0
+%patch2 -p2
+%patch3 -p0
+%patch4 -p1
 %patch5 -p1
 %patch6 -p1
 %patch7 -p1
 %patch8 -p1
 %patch9 -p1
-#%patch10 -p1
-%patch11 -p1
+%patch10 -p1
 
 %build
-#autoconf
+#%{__autoconf}
 %configure2_13 \
 	--enable-emacs \
 	--enable-vi
@@ -122,8 +133,6 @@ echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 
 ln -sf ksh $RPM_BUILD_ROOT/bin/sh
-
-gzip -9nf README NEWS BUG-REPORTS
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -177,10 +186,10 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz
+%doc README NEWS BUG-REPORTS
 
 %attr(755,root,root) /bin/ksh
-/bin/sh
+%attr(755,root,root) /bin/sh
 
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
