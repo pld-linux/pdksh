@@ -31,6 +31,7 @@ Patch8:		%{name}-awful-free-bug.patch
 Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
+Patch12:	%{name}-siglist-sort.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 Requires(preun):	fileutils
@@ -118,6 +119,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch9 -p1
 %patch10 -p1
 %patch11 -p1
+%patch12 -p0
 
 %build
 %configure2_13 \
