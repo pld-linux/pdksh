@@ -5,7 +5,7 @@ diff -urN pdksh-5.2.14.org/var.c pdksh-5.2.14/var.c
  	base = 10;
  	num = 0;
  	neg = 0;
-+	if (*s == '0') {
++	if (*s == '0' && *(s+1)) {
 +	    s++;
 +	    if (*s == 'x' || *s == 'X') {
 +		s++;
