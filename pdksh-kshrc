@@ -20,6 +20,7 @@ else
 		echo ${PWD##*/};
 	fi`]$ '
 fi
+export PS1
 
 # EDITING FUNCTIONS
 set -o emacs
