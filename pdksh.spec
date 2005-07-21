@@ -43,6 +43,7 @@ Requires:	setup >= 2.4.6-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_exec_prefix		/
+%define		_bindir			/bin
 
 %description
 pdksh, a remimplementation of ksh, is a command interpreter that is
@@ -212,14 +213,14 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc README NEWS BUG-REPORTS LEGAL
-%config(noreplace,missingok) %verify(not md5 size mtime) /etc/kshrc
-%attr(755,root,root) /bin/ksh
-%attr(755,root,root) /bin/sh
+%config(noreplace,missingok) %verify(not md5 mtime size) /etc/kshrc
+%attr(755,root,root) %{_bindir}/ksh
+%attr(755,root,root) %{_bindir}/sh
 %{_mandir}/man1/*
 %lang(pl) %{_mandir}/pl/man1/*
 
 %if %{with static}
 %files static
 %defattr(644,root,root,755)
-%attr(755,root,root) /bin/ksh.static
+%attr(755,root,root) %{_bindir}/ksh.static
 %endif
