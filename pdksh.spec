@@ -13,7 +13,7 @@ Summary(tr):	Serbest Korn kabuПu
 Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	42
+Release:	42.62
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -38,7 +38,7 @@ Patch14:	%{name}-kshrc_support.patch
 Patch15:	%{name}-ulimit-vmem.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
-Requires(preun):	fileutils
+#Requires(preun):	/bin/mv
 Requires:	setup >= 2.4.6-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -95,7 +95,7 @@ pdksh, в╕льна реал╕зац╕я ksh, - це командний процесор, розрахований як
 Summary:	Statically linked Public Domain Korn Shell
 Summary(pl):	Skonsolidowana statycznie powЁoka Korna
 Group:		Applications/Shells
-Requires(preun):	fileutils
+#Requires(preun):	/bin/mv
 Requires:	%{name} = %{version}-%{release}
 
 %description static
