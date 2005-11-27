@@ -1,0 +1,3 @@
+- comment out fileutils preun dep, fixes install order with glibc, at
+  the cost of uninstall is possibly broken if coreutils is installed
+  before pdksh (why would you want to do that?)
