@@ -38,7 +38,7 @@ Patch14:	%{name}-kshrc_support.patch
 Patch15:	%{name}-ulimit-vmem.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
-Requires(preun):	/bin/mv
+#Requires(preun):	/bin/mv
 Requires:	setup >= 2.4.6-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -95,7 +95,7 @@ pdksh, в╕льна реал╕зац╕я ksh, - це командний процесор, розрахований як
 Summary:	Statically linked Public Domain Korn Shell
 Summary(pl):	Skonsolidowana statycznie powЁoka Korna
 Group:		Applications/Shells
-Requires(preun):	/bin/mv
+#Requires(preun):	/bin/mv
 Requires:	%{name} = %{version}-%{release}
 
 %description static
