@@ -13,7 +13,7 @@ Summary(tr):	Serbest Korn kabuПu
 Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	43
+Release:	43.1
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -38,7 +38,7 @@ Patch14:	%{name}-kshrc_support.patch
 Patch15:	%{name}-ulimit-vmem.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
-#Requires(preun):	/bin/mv
+Requires(preun):	sed >= 4.1.5-1.2
 Requires:	setup >= 2.4.6-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -95,7 +95,8 @@ pdksh, в╕льна реал╕зац╕я ksh, - це командний процесор, розрахований як
 Summary:	Statically linked Public Domain Korn Shell
 Summary(pl):	Skonsolidowana statycznie powЁoka Korna
 Group:		Applications/Shells
-#Requires(preun):	/bin/mv
+Requires(preun):	sed >= 4.1.5-1.2
+# requires base for /etc/kshrc?
 Requires:	%{name} = %{version}-%{release}
 
 %description static
@@ -141,10 +142,10 @@ CFLAGS="%{rpmcflags} -D_FILE_OFFSET_BITS=64"
 rm -rf $RPM_BUILD_ROOT
 
 %{__make} install \
-	exec_prefix=$RPM_BUILD_ROOT/ \
+	exec_prefix=$RPM_BUILD_ROOT \
 	mandir=$RPM_BUILD_ROOT%{_mandir}/man1
 
-install -d $RPM_BUILD_ROOT{/etc,%{_mandir}/pl/man1}
+install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,/etc}
 
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
@@ -161,54 +162,48 @@ install	%{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
 rm -rf $RPM_BUILD_ROOT
 
 %post
-umask 022
 if [ ! -f /etc/shells ]; then
+	umask 022
 	echo "/bin/ksh" > /etc/shells
 	echo "/bin/sh" >> /etc/shells
 else
 	while read SHNAME; do
-        	if [ "$SHNAME" = "/bin/ksh" ]; then
-                	HAS_KSH=1
-	        elif [ "$SHNAME" = "/bin/sh" ]; then
-        	        HAS_SH=1
-	        fi
+		if [ "$SHNAME" = "/bin/ksh" ]; then
+			HAS_KSH=1
+		elif [ "$SHNAME" = "/bin/sh" ]; then
+			HAS_SH=1
+		fi
 	done < /etc/shells
 	[ -n "$HAS_KSH" ] || echo "/bin/ksh" >> /etc/shells
 	[ -n "$HAS_SH" ] || echo "/bin/sh" >> /etc/shells
 fi
 
 %preun
-umask 022
 if [ "$1" = "0" ]; then
-	while read SHNAME; do
-		[ "$SHNAME" = "/bin/ksh" ] ||\
-		[ "$SHNAME" = "/bin/sh" ] ||\
-		echo "$SHNAME"
-	done < /etc/shells > /etc/shells.new
-	mv -f /etc/shells.new /etc/shells
+	%{__sed} -i -e '
+		/^\/bin\/ksh$/d
+		/^\/bin\/sh$/d
+	' /etc/shells
 fi
 
 %post static
-umask 022
 if [ ! -f /etc/shells ]; then
+	umask 022
 	echo "/bin/ksh.static" > /etc/shells
 else
 	while read SHNAME; do
-        	if [ "$SHNAME" = "/bin/ksh.static" ]; then
-                	HAS_KSH_STATIC=1
-	        fi
+	if [ "$SHNAME" = "/bin/ksh.static" ]; then
+		HAS_KSH_STATIC=1
+	fi
 	done < /etc/shells
 	[ -n "$HAS_KSH_STATIC" ] || echo "/bin/ksh.static" >> /etc/shells
 fi
 
 %preun static
-umask 022
 if [ "$1" = "0" ]; then
-	while read SHNAME; do
-		[ "$SHNAME" = "/bin/ksh.static" ] ||\
-		echo "$SHNAME"
-	done < /etc/shells > /etc/shells.new
-	mv -f /etc/shells.new /etc/shells
+	%{__sed} -i -e '
+		/^\/bin\/ksh\.static$/d
+	' /etc/shells
 fi
 
 %files
