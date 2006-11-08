@@ -1,19 +1,12 @@
-diff -urN pdksh-5.2.14.org/Makefile.in pdksh-5.2.14/Makefile.in
---- pdksh-5.2.14.org/Makefile.in	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/Makefile.in	Mon Feb 26 12:19:09 2001
-@@ -16,7 +16,7 @@
- LIBS = @LIBS@
- 
- CPPFLAGS = @CPPFLAGS@
--CFLAGS = @CFLAGS@
-+CFLAGS = @CFLAGS@ -DDEBIAN
- LDSTATIC = @LDSTATIC@
- LDFLAGS = @LDFLAGS@
- 
-diff -urN pdksh-5.2.14.org/alloc.c pdksh-5.2.14/alloc.c
---- pdksh-5.2.14.org/alloc.c	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/alloc.c	Mon Feb 26 12:17:11 2001
-@@ -110,6 +110,13 @@
+--- pdksh-5.2.14.orig/alloc.c
++++ pdksh-5.2.14/alloc.c
+@@ -1,3 +1,5 @@
++#ifndef DEBIAN
++
+ /*
+  * area-based allocation built on malloc/free
+  */
+@@ -110,6 +112,13 @@
  	Block  *block;
  	struct {int _;} junk;	/* alignment */
  	double djunk;		/* alignment */
@@ -27,10 +20,194 @@ diff -urN pdksh-5.2.14.org/alloc.c pdksh-5.2.14/alloc.c
  };
  
  struct Block {
-diff -urN pdksh-5.2.14.org/c_ksh.c pdksh-5.2.14/c_ksh.c
---- pdksh-5.2.14.org/c_ksh.c	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/c_ksh.c	Mon Feb 26 12:17:11 2001
-@@ -1208,6 +1208,7 @@
+@@ -282,7 +291,9 @@
+ 	 * working (as it assumes size < ICELLS means it is not
+ 	 * a `large object').
+ 	 */
+-	if (oldcells > ICELLS && cells > ICELLS) {
++	if (oldcells > ICELLS && cells > ICELLS 
++	    && ((dp-2)->block->last == dp+oldcells) /* don't destroy blocks which have grown! */
++	   ) {
+ 		Block *bp = (dp-2)->block;
+ 		Block *nbp;
+ 		/* Saved in case realloc fails.. */
+@@ -332,7 +343,7 @@
+ 	 * (need to check that cells < ICELLS so we don't make an
+ 	 * object a `large' - that would mess everything up).
+ 	 */
+-	if (dp && cells > oldcells && cells <= ICELLS) {
++	if (dp && cells > oldcells) {
+ 		Cell *fp, *fpp;
+ 		Block *bp = (dp-2)->block;
+ 		int need = cells - oldcells - NOBJECT_FIELDS;
+@@ -363,7 +374,7 @@
+ 	 * it to malloc...)
+ 	 * Note: this also handles cells == oldcells (a no-op).
+ 	 */
+-	if (dp && cells <= oldcells && oldcells <= ICELLS) {
++	if (dp && cells <= oldcells) {
+ 		int split;
+ 
+ 		split = oldcells - cells;
+@@ -411,7 +422,9 @@
+ 
+ 	/* If this is a large object, just free it up... */
+ 	/* Release object... */
+-	if ((dp-1)->size > ICELLS) {
++	if ((dp-1)->size > ICELLS
++	    && (bp->last == dp + (dp-1)->size) /* don't free non-free blocks which have grown! */
++	   ) {
+ 		ablockfree(bp, ap);
+ 		ACHECK(ap);
+ 		return;
+@@ -774,3 +787,127 @@
+ # endif /* TEST_ALLOC */
+ 
+ #endif /* MEM_DEBUG */
++
++#else /* DEBIAN */ /* patch from OpenBSD */
++
++/*	$OpenBSD: alloc.c,v 1.6 2003/08/05 20:52:27 millert Exp $	*/
++/*
++ * Copyright (c) 2002 Marc Espie.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions and the following disclaimer.
++ * 2. Redistributions in binary form must reproduce the above copyright
++ *    notice, this list of conditions and the following disclaimer in the
++ *    documentation and/or other materials provided with the distribution.
++ *
++ * THIS SOFTWARE IS PROVIDED BY THE OPENBSD PROJECT AND CONTRIBUTORS
++ * ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++ * A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OPENBSD
++ * PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ */
++
++/*
++ * area-based allocation built on malloc/free
++ */
++
++#include "sh.h"
++
++struct link {
++	struct link *prev;
++	struct link *next;
++};
++
++Area *
++ainit(Area *ap)
++{
++	ap->freelist = NULL;
++	return ap;
++}
++
++void
++afreeall(Area *ap)
++{
++	struct link *l, *l2;
++
++	for (l = ap->freelist; l != NULL; l = l2) {
++		l2 = l->next;
++		free(l);
++	}
++	ap->freelist = NULL;
++}
++
++#define L2P(l)	( (void *)(((char *)(l)) + sizeof(struct link)) )
++#define P2L(p)	( (struct link *)(((char *)(p)) - sizeof(struct link)) )
++
++void *
++alloc(size_t size, Area *ap)
++{
++	struct link *l;
++
++	l = malloc(size + sizeof(struct link));
++	if (l == NULL)
++		internal_errorf(1, "unable to allocate memory");
++	l->next = ap->freelist;
++	l->prev = NULL;
++	if (ap->freelist)
++		ap->freelist->prev = l;
++	ap->freelist = l;
++
++	return L2P(l);
++}
++
++void *
++aresize(void *ptr, size_t size, Area *ap)
++{
++	struct link *l, *l2, *lprev, *lnext;
++
++	if (ptr == NULL)
++		return alloc(size, ap);
++
++	l = P2L(ptr);
++	lprev = l->prev;
++	lnext = l->next;
++
++	l2 = realloc(l, size+sizeof(struct link));
++	if (l2 == NULL)
++		internal_errorf(1, "unable to allocate memory");
++	if (lprev)
++	    lprev->next = l2;
++	else
++	    ap->freelist = l2;
++	if (lnext)
++	    lnext->prev = l2;
++
++	return L2P(l2);
++}
++
++void
++afree(void *ptr, Area *ap)
++{
++	struct link *l;
++
++	if (!ptr)
++		return;
++
++	l = P2L(ptr);
++
++	if (l->prev)
++		l->prev->next = l->next;
++	else
++		ap->freelist = l->next;
++	if (l->next)
++		l->next->prev = l->prev;
++
++	free(l);
++}
++#endif /* DEBIAN */
+--- pdksh-5.2.14.orig/c_ksh.c
++++ pdksh-5.2.14/c_ksh.c
+@@ -1110,13 +1110,14 @@
+ 			return 1;
+ 		}
+ 	wp += builtin_opt.optind;
+-	if (!*wp)
++	if (!*wp) {
+ 		if (j_jobs((char *) 0, flag, nflag))
+ 			rv = 1;
+-	else
++	} else {
+ 		for (; *wp; wp++)
+ 			if (j_jobs(*wp, flag, nflag))
+ 				rv = 1;
++	}
+ 	return rv;
+ }
+ 
+@@ -1208,6 +1209,7 @@
  						builtin_opt.optarg);
  					return 1;
  				}
@@ -38,9 +215,218 @@ diff -urN pdksh-5.2.14.org/c_ksh.c pdksh-5.2.14/c_ksh.c
  			  case '?':
  				return 1;
  			}
-diff -urN pdksh-5.2.14.org/edit.c pdksh-5.2.14/edit.c
---- pdksh-5.2.14.org/edit.c	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/edit.c	Mon Feb 26 12:17:11 2001
+--- pdksh-5.2.14.orig/c_sh.c
++++ pdksh-5.2.14/c_sh.c
+@@ -422,7 +422,8 @@
+ c_eval(wp)
+ 	char **wp;
+ {
+-	register struct source *s;
++	register struct source *s,*olds=source;
++	int retval, errexitflagtmp;
+ 
+ 	if (ksh_getopt(wp, &builtin_opt, null) == '?')
+ 		return 1;
+@@ -455,8 +456,12 @@
+ 		 */
+ 		exstat = subst_exstat;
+ 	}
+-
+-	return shell(s, FALSE);
++	errexitflagtmp = Flag(FERREXIT);
++	Flag(FERREXIT) = 0;
++	retval=shell(s, FALSE);
++	Flag(FERREXIT) = errexitflagtmp;
++	source=olds;
++	return retval;
+ }
+ 
+ int
+@@ -643,6 +648,7 @@
+ 		for (wp = l->argv; (*wp++ = *owp++) != NULL; )
+ 			;
+ 	}
++#ifndef DEBIAN
+ 	/* POSIX says set exit status is 0, but old scripts that use
+ 	 * getopt(1), use the construct: set -- `getopt ab:c "$@"`
+ 	 * which assumes the exit value set will be that of the ``
+@@ -650,6 +656,12 @@
+ 	 * if there are no command substitutions).
+ 	 */
+ 	return Flag(FPOSIX) ? 0 : subst_exstat;
++#else 
++	/* On Debian we always want set to return 0 like ksh93 does.
++	 * See: Bug#118476.
++	 */ 
++	return 0;
++#endif /* DEBIAN */
+ }
+ 
+ int
+@@ -844,7 +856,7 @@
+ 			 * keeps them open).
+ 			 */
+ #ifdef KSH
+-			if (i > 2 && e->savefd[i])
++			if (!Flag(FSH) &&i > 2 && e->savefd[i])
+ 				fd_clexec(i);
+ #endif /* KSH */
+ 		}
+--- pdksh-5.2.14.orig/c_test.c
++++ pdksh-5.2.14/c_test.c
+@@ -124,10 +124,10 @@
+ 	te.pos.wp = wp + 1;
+ 	te.wp_end = wp + argc;
+ 
+-	/* 
++	/*
+ 	 * Handle the special cases from POSIX.2, section 4.62.4.
+-	 * Implementation of all the rules isn't necessary since 
+-	 * our parser does the right thing for the ommited steps.
++	 * Implementation of all the rules isn't necessary since
++	 * our parser does the right thing for the omitted steps.
+ 	 */
+ 	if (argc <= 5) {
+ 		char **owp = wp;
+@@ -238,7 +238,7 @@
+ 			if (not)
+ 				res = !res;
+ 		}
+-		return res; 
++		return res;
+ 	  case TO_FILRD: /* -r */
+ 		return test_eaccess(opnd1, R_OK) == 0;
+ 	  case TO_FILWR: /* -w */
+@@ -338,7 +338,7 @@
+ 	  case TO_FILUID: /* -O */
+ 		return test_stat(opnd1, &b1) == 0 && b1.st_uid == ksheuid;
+ 	  case TO_FILGID: /* -G */
+-		return test_stat(opnd1, &b1) == 0 && b1.st_gid == getegid();
++		return test_stat(opnd1, &b1) == 0 && b1.st_gid == kshegid;
+ 	/*
+ 	 * Binary Operators
+ 	 */
+@@ -456,10 +456,12 @@
+ 	}
+ #endif /* !HAVE_DEV_FD */
+ 
+-	/* On most (all?) unixes, access() says everything is executable for
++	res = eaccess(path, mode);
++	/*
++	 * On most (all?) unixes, access() says everything is executable for
+ 	 * root - avoid this on files by using stat().
+ 	 */
+-	if ((mode & X_OK) && ksheuid == 0) {
++	if (res == 0 && ksheuid == 0 && (mode & X_OK)) {
+ 		struct stat statb;
+ 
+ 		if (stat(path, &statb) < 0)
+@@ -469,13 +471,7 @@
+ 		else
+ 			res = (statb.st_mode & (S_IXUSR|S_IXGRP|S_IXOTH))
+ 				? 0 : -1;
+-		/* Need to check other permissions?  If so, use access() as
+-		 * this will deal with root on NFS.
+-		 */
+-		if (res == 0 && (mode & (R_OK|W_OK)))
+-			res = eaccess(path, mode);
+-	} else
+-		res = eaccess(path, mode);
++	}
+ 
+ 	return res;
+ }
+@@ -660,3 +656,36 @@
+ 	else
+ 		bi_errorf("%s", msg);
+ }
++
++
++#ifdef DEBIAN
++int eaccess(const char *pathname, int mode) {
++	int need_setreuid, need_setregid;
++	int result;
++	int _errno;
++	
++
++	
++	if (( need_setregid = ( kshgid != kshegid ) )) {
++		setregid( kshegid, kshgid );
++	}
++	
++	if (( need_setreuid = ( kshuid  != ksheuid ) )) {
++		setreuid( ksheuid, kshuid );
++	}
++
++	result = access( pathname, mode );
++	_errno = errno;
++
++	if ( need_setregid ) {
++		setregid( kshgid, kshegid );
++	}
++	
++	if ( need_setreuid ) {
++		setreuid( kshuid, ksheuid );
++	}
++
++	errno = _errno;
++	return result;
++}
++#endif	
+--- pdksh-5.2.14.orig/c_ulimit.c
++++ pdksh-5.2.14/c_ulimit.c
+@@ -111,6 +111,9 @@
+ #ifdef RLIMIT_SWAP
+ 		{ "swap(kbytes)", RLIMIT_SWAP, RLIMIT_SWAP, 1024, 'w' },
+ #endif
++#ifdef RLIMIT_LOCKS
++		{ "flocks", RLIMIT, RLIMIT_LOCKS, RLIMIT_LOCKS, -1, 'L' },
++#endif
+ 		{ (char *) 0 }
+ 	    };
+ 	static char	options[3 + NELEM(limits)];
+@@ -189,7 +192,18 @@
+ 		for (l = limits; l->name; l++) {
+ #ifdef HAVE_SETRLIMIT
+ 			if (l->which == RLIMIT) {
+-				getrlimit(l->gcmd, &limit);
++				int getreturn;
++
++				getreturn=getrlimit(l->gcmd, &limit);
++#ifdef RLIMIT_LOCKS				
++				if ( getreturn < 0 ) {
++					if ( ( errno == EINVAL ) &&
++					     ( l->gcmd == RLIMIT_LOCKS ) ) {
++						limit.rlim_cur = RLIM_INFINITY;
++						limit.rlim_max = RLIM_INFINITY;
++					}
++				}
++#endif				
+ 				if (how & SOFT)
+ 					val = limit.rlim_cur;
+ 				else if (how & HARD)
+@@ -225,11 +239,17 @@
+ 			if (how & HARD)
+ 				limit.rlim_max = val;
+ 			if (setrlimit(l->scmd, &limit) < 0) {
+-				if (errno == EPERM)
++				if (errno == EPERM) {
+ 					bi_errorf("exceeds allowable limit");
+-				else
++#ifdef RLIMIT_LOCKS					
++				} else if ( ( errno == EINVAL ) &&
++				     ( l->scmd == RLIMIT_LOCKS ) ) {
++					bi_errorf("unable to set it on the current kernel");
++#endif
++				} else {
+ 					bi_errorf("bad limit: %s",
+ 						strerror(errno));
++				}
+ 				return 1;
+ 			}
+ 		} else {
+--- pdksh-5.2.14.orig/edit.c
++++ pdksh-5.2.14/edit.c
 @@ -15,6 +15,9 @@
  # include <sys/stream.h>	/* needed for <sys/ptem.h> */
  # include <sys/ptem.h>		/* needed for struct winsize */
@@ -86,7 +472,20 @@ diff -urN pdksh-5.2.14.org/edit.c pdksh-5.2.14/edit.c
  	/*
  	 * Convert "foo*" (toglob) to an array of strings (words)
  	 */
-@@ -766,11 +789,23 @@
+@@ -722,7 +745,12 @@
+ 	return nwords;
+ }
+ 
++#ifndef DEBIAN
+ #define IS_WORDC(c)	!(ctype(c, C_LEX1) || (c) == '\'' || (c) == '"')
++#else /* patch from OpenBSD */
++#define IS_WORDC(c)	!( ctype(c, C_LEX1) || (c) == '\'' || (c) == '"'  \
++			    || (c) == '`' || (c) == '=' || (c) == ':' )
++#endif
+ 
+ static int
+ x_locate_word(buf, buflen, pos, startp, is_commandp)
+@@ -747,11 +775,23 @@
  	/* Keep going backwards to start of word (has effect of allowing
  	 * one blank after the end of a word)
  	 */
@@ -103,14 +502,60 @@ diff -urN pdksh-5.2.14.org/edit.c pdksh-5.2.14/edit.c
  		;
 +#else /* DEBIAN */ /* patch from OpenBSD */ 
 +	for (end = start; end < buflen && IS_WORDC(buf[end]); end++) {
-+		if (buf[end] == '\\' && (end+1) < buflen && buf[end+1] == ' ')
++		if (buf[end] == '\\' && (end+1) < buflen)
 +			end++;
 +	}
 +#endif /* DEBIAN */
  
  	if (is_commandp) {
  		int iscmd;
-@@ -1037,4 +1072,42 @@
+@@ -759,7 +799,11 @@
+ 		/* Figure out if this is a command */
+ 		for (p = start - 1; p >= 0 && isspace(buf[p]); p--)
+ 			;
++#ifndef DEBIAN
+ 		iscmd = p < 0 || strchr(";|&()", buf[p]);
++#else /* DEBIAN */ /* patch from OpenBSD */		
++		iscmd = p < 0 || strchr(";|&()`", buf[p]);
++#endif
+ 		if (iscmd) {
+ 			/* If command has a /, path, etc. is not searched;
+ 			 * only current directory is searched, which is just
+@@ -961,6 +1005,9 @@
+ {
+ 	const char *sp, *p;
+ 	char *xp;
++#ifdef DEBIAN /* patch from OpenBSD */
++	int staterr;
++#endif /* DEBIAN */	
+ 	int pathlen;
+ 	int patlen;
+ 	int oldsize, newsize, i, j;
+@@ -995,13 +1042,23 @@
+ 		memcpy(xp, pat, patlen);
+ 
+ 		oldsize = XPsize(*wp);
++#ifndef DEBIAN		
+ 		glob_str(Xstring(xs, xp), wp, 0);
++#else /* DEBIAN */ /* patch from OpenBSD */
++		glob_str(Xstring(xs, xp), wp, 1); /* mark dirs */
++#endif		
+ 		newsize = XPsize(*wp);
+ 
+ 		/* Check that each match is executable... */
+ 		words = (char **) XPptrv(*wp);
+ 		for (i = j = oldsize; i < newsize; i++) {
++#ifndef DEBIAN
+ 			if (search_access(words[i], X_OK, (int *) 0) >= 0) {
++#else /* DEBIAN */ /* patch from OpenBSD */
++			staterr = 0;
++			if ((search_access(words[i], X_OK, &staterr) >= 0)
++			    || (staterr == EISDIR)) {
++#endif				
+ 				words[j] = words[i];
+ 				if (!(flags & XCF_FULLPATH))
+ 					memmove(words[j], words[j] + pathlen,
+@@ -1018,4 +1075,42 @@
  	Xfree(xs, xp);
  }
  
@@ -131,7 +576,7 @@ diff -urN pdksh-5.2.14.org/edit.c pdksh-5.2.14/edit.c
 +	int rval=0;
 +
 +	for (add = 0, wlen = len; wlen - add > 0; add++) {
-+		if (strchr("\\$(){}*&;|<>\"'", s[add]) || strchr(ifs, s[add])) {
++		if (strchr("\\$(){}*&;#|<>\"'`", s[add]) || strchr(ifs, s[add])) {
 +			if (putbuf_func(s, add) != 0) {
 +				rval = -1;
 +				break;
@@ -153,9 +598,8 @@ diff -urN pdksh-5.2.14.org/edit.c pdksh-5.2.14/edit.c
 +}
 +#endif /* DEBIAN */
  #endif /* EDIT */
-diff -urN pdksh-5.2.14.org/edit.h pdksh-5.2.14/edit.h
---- pdksh-5.2.14.org/edit.h	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/edit.h	Mon Feb 26 12:17:11 2001
+--- pdksh-5.2.14.orig/edit.h
++++ pdksh-5.2.14/edit.h
 @@ -55,6 +55,9 @@
  int	x_longest_prefix ARGS((int nwords, char *const *words));
  int	x_basename ARGS((const char *s, const char *se));
@@ -166,9 +610,8 @@ diff -urN pdksh-5.2.14.org/edit.h pdksh-5.2.14/edit.h
  /* emacs.c */
  int 	x_emacs		ARGS((char *buf, size_t len));
  void 	x_init_emacs	ARGS((void));
-diff -urN pdksh-5.2.14.org/emacs.c pdksh-5.2.14/emacs.c
---- pdksh-5.2.14.org/emacs.c	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/emacs.c	Mon Feb 26 12:17:11 2001
+--- pdksh-5.2.14.orig/emacs.c
++++ pdksh-5.2.14/emacs.c
 @@ -138,6 +138,10 @@
  static int	x_e_getc    ARGS((void));
  static void	x_e_putc    ARGS((int c));
@@ -185,7 +628,7 @@ diff -urN pdksh-5.2.14.org/emacs.c pdksh-5.2.14/emacs.c
  #endif
  	{ XFUNC_complete,		1, CTRL('[') },
 +#ifdef DEBIAN /* patch from OpenBSD */ 
-+	{ XFUNC_complete,		0, CTRL('I') },
++	{ XFUNC_comp_list,		0, CTRL('I') },
 +#endif /* DEBIAN */
          { XFUNC_comp_list,		1,	'='  },
  	{ XFUNC_enumerate,		1,	'?'  },
@@ -224,6 +667,18 @@ diff -urN pdksh-5.2.14.org/emacs.c pdksh-5.2.14/emacs.c
  static int
  x_del_back(c)
  	int c;
+@@ -856,9 +883,9 @@
+ 	}
+ 	x_histp = hp;
+ 	oldsize = x_size_str(xbuf);
+-	(void)strcpy(xbuf, *hp);
++	(void)strncpy(xbuf, *hp, xend - xbuf - 1);
+ 	xbp = xbuf;
+-	xep = xcp = xbuf + strlen(*hp);
++	xep = xcp = xbuf + strlen(xbuf);
+ 	xlp_valid = FALSE;
+ 	if (xep > x_lastcp())
+ 	  x_goto(xep);
 @@ -1485,7 +1512,11 @@
  		for (j = 0; j < X_TABSZ; j++)
  			x_tab[i][j] = XFUNC_error;
@@ -236,7 +691,15 @@ diff -urN pdksh-5.2.14.org/emacs.c pdksh-5.2.14/emacs.c
  			= x_defbindings[i].xdb_func;
  
  	x_atab = (char *(*)[X_TABSZ]) alloc(sizeofN(*x_atab, X_NTABS), AEDIT);
-@@ -1828,8 +1859,13 @@
+@@ -1754,6 +1785,7 @@
+ 	int flags;	/* XCF_{COMMAND,FILE,COMMAND_FILE} */
+ 	Comp_type type;
+ {
++#ifndef DEBIAN
+ 	char **words;
+ 	int nwords = 0;
+ 	int start, end;
+@@ -1828,8 +1860,13 @@
  			if (nlen > 0) {
  				x_goto(xbuf + start);
  				x_delete(end - start, FALSE);
@@ -250,10 +713,382 @@ diff -urN pdksh-5.2.14.org/emacs.c pdksh-5.2.14/emacs.c
  				/* If single match is not a directory, add a
  				 * space to the end...
  				 */
-diff -urN pdksh-5.2.14.org/io.c pdksh-5.2.14/io.c
---- pdksh-5.2.14.org/io.c	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/io.c	Mon Feb 26 12:17:15 2001
-@@ -516,6 +516,14 @@
+@@ -1841,6 +1878,54 @@
+ 		}
+ 		break;
+ 	}
++#else /* patch from OpenBSD */
++	char **words;
++	int nwords;
++	int start, end, nlen, olen;
++	int is_command;
++	int completed = 0;
++
++	nwords = x_cf_glob(flags, xbuf, xep - xbuf, xcp - xbuf,
++			    &start, &end, &words, &is_command);
++	/* no match */
++	if (nwords == 0) {
++		x_e_putc(BEL);
++		return;
++	}
++
++	if (type == CT_LIST) {
++		x_print_expansions(nwords, words, is_command);
++		x_redraw(0);
++		x_free_words(nwords, words);
++		return;
++	}
++
++	olen = end - start;
++	nlen = x_longest_prefix(nwords, words);
++	/* complete */
++	if (nlen > olen) {
++		x_goto(xbuf + start);
++		x_delete(olen, FALSE);
++		x_escape(words[0], nlen, x_emacs_putbuf);
++		x_adjust();
++		completed = 1;
++	}
++	/* add space if single non-dir match */
++	if ((nwords == 1) && (!ISDIRSEP(words[0][nlen - 1]))) {
++		x_ins(space);
++		completed = 1;
++	}
++
++	if (type == CT_COMPLIST && !completed) {
++		x_print_expansions(nwords, words, is_command);
++		completed = 1;
++	}
++
++	if (completed)	
++		x_redraw(0);	
++
++	x_free_words(nwords, words);
++#endif	/* DEBIAN */
+ }
+ 
+ /* NAME:
+--- pdksh-5.2.14.orig/eval.c
++++ pdksh-5.2.14/eval.c
+@@ -627,7 +627,7 @@
+ #endif /* BRACE_EXPAND */
+ 				  case '=':
+ 					/* Note first unquoted = for ~ */
+-					if (!(f & DOTEMP_) && !saw_eq) {
++					if (!(f & DOTEMP_) && !saw_eq && (f & DOASNTILDE)) {
+ 						saw_eq = 1;
+ 						tilde_ok = 1;
+ 					}
+@@ -870,8 +870,11 @@
+ 		openpipe(pv);
+ 		shf = shf_fdopen(pv[0], SHF_RD, (struct shf *) 0);
+ 		ofd1 = savefd(1, 0);	/* fd 1 may be closed... */
+-		ksh_dup2(pv[1], 1, FALSE);
+-		close(pv[1]);
++		if (pv[1] != 1) {
++			ksh_dup2(pv[1], 1, FALSE);
++			close(pv[1]);
++		}
++		
+ 		execute(t, XFORK|XXCOM|XPIPEO);
+ 		restfd(1, ofd1);
+ 		startlast();
+--- pdksh-5.2.14.orig/exec.c
++++ pdksh-5.2.14/exec.c
+@@ -76,6 +76,7 @@
+ {
+ 	int i;
+ 	volatile int rv = 0;
++	volatile int rv_prop = 0; /* rv being propogated or newly generated? */
+ 	int pv[2];
+ 	char ** volatile ap;
+ 	char *s, *cp;
+@@ -157,6 +158,7 @@
+ 
+ 	  case TPAREN:
+ 		rv = execute(t->left, flags|XFORK);
++		rv_prop = 1;
+ 		break;
+ 
+ 	  case TPIPE:
+@@ -193,6 +195,17 @@
+ 			t = t->right;
+ 		}
+ 		rv = execute(t, flags & XERROK);
++#ifdef DEBIAN
++		/* 
++		 * set rv_prop here too to fix problem with scripts like this:
++		 * 	#!/bin/ksh
++		 * 	set -e
++		 * 	true ; false && true
++		 * 	echo 'OK'
++		 * robert@debian.org, Aug 26th, 2002
++		 */
++		rv_prop = 1;
++#endif
+ 		break;
+ 
+ #ifdef KSH
+@@ -228,8 +241,10 @@
+ 		e->savefd[1] = savefd(1, 0);
+ 
+ 		openpipe(pv);
+-		ksh_dup2(pv[0], 0, FALSE);
+-		close(pv[0]);
++		if (pv[0] != 0) {
++			ksh_dup2(pv[0], 0, FALSE);
++			close(pv[0]);
++		}
+ 		coproc.write = pv[1];
+ 		coproc.job = (void *) 0;
+ 
+@@ -275,6 +290,7 @@
+ 			rv = execute(t->right, flags & XERROK);
+ 		else
+ 			flags |= XERROK;
++		rv_prop = 1;
+ 		break;
+ 
+ 	  case TBANG:
+@@ -323,6 +339,7 @@
+ 			}
+ 		}
+ 		rv = 0; /* in case of a continue */
++		rv_prop = 1;
+ 		if (t->type == TFOR) {
+ 			while (*ap != NULL) {
+ 				setstr(global(t->str), *ap++, KSH_UNWIND_ERROR);
+@@ -334,6 +351,7 @@
+ 			for (;;) {
+ 				if (!(cp = do_selectargs(ap, is_first))) {
+ 					rv = 1;
++					rv_prop = 0;
+ 					break;
+ 				}
+ 				is_first = FALSE;
+@@ -365,6 +383,7 @@
+ 		rv = 0; /* in case of a continue */
+ 		while ((execute(t->left, XERROK) == 0) == (t->type == TWHILE))
+ 			rv = execute(t->right, flags & XERROK);
++		rv_prop = 1;
+ 		break;
+ 
+ 	  case TIF:
+@@ -374,6 +393,7 @@
+ 		rv = execute(t->left, XERROK) == 0 ?
+ 			execute(t->right->left, flags & XERROK) :
+ 			execute(t->right->right, flags & XERROK);
++		rv_prop = 1;
+ 		break;
+ 
+ 	  case TCASE:
+@@ -386,10 +406,12 @@
+ 		break;
+ 	  Found:
+ 		rv = execute(t->left, flags & XERROK);
++		rv_prop = 1;
+ 		break;
+ 
+ 	  case TBRACE:
+ 		rv = execute(t->left, flags & XERROK);
++		rv_prop = 1;
+ 		break;
+ 
+ 	  case TFUNCT:
+@@ -401,6 +423,7 @@
+ 		 * (allows "ls -l | time grep foo").
+ 		 */
+ 		rv = timex(t, flags & ~XEXEC);
++		rv_prop = 1;
+ 		break;
+ 
+ 	  case TEXEC:		/* an eval'd TCOM */
+@@ -428,7 +451,7 @@
+ 	quitenv();		/* restores IO */
+ 	if ((flags&XEXEC))
+ 		unwind(LEXIT);	/* exit child */
+-	if (rv != 0 && !(flags & XERROK)) {
++	if (rv != 0 && !rv_prop && !(flags & XERROK)) {
+ 		if (Flag(FERREXIT))
+ 			unwind(LERROR);
+ 		trapsig(SIGERR_);
+@@ -448,18 +471,19 @@
+ 	int volatile flags;
+ {
+ 	int i;
+-	int rv = 0;
++	volatile int rv = 0;
+ 	register char *cp;
+ 	register char **lastp;
+ 	static struct op texec; /* Must be static (XXX but why?) */
+ 	int type_flags;
+ 	int keepasn_ok;
+ 	int fcflags = FC_BI|FC_FUNC|FC_PATH;
++	int bourne_function_call = 0;
+ 
+ #ifdef KSH
+ 	/* snag the last argument for $_ XXX not the same as at&t ksh,
+ 	 * which only seems to set $_ after a newline (but not in
+-	 * functions/dot scripts, but in interactive and scipt) -
++	 * functions/dot scripts, but in interactive and script) -
+ 	 * perhaps save last arg here and set it in shell()?.
+ 	 */
+ 	if (Flag(FTALKING) && *(lastp = ap)) {
+@@ -544,9 +568,10 @@
+ 		newblock();
+ 		/* ksh functions don't keep assignments, POSIX functions do. */
+ 		if (keepasn_ok && tp && tp->type == CFUNC
+-		    && !(tp->flag & FKSH))
+-			type_flags = 0;
+-		else
++		    && !(tp->flag & FKSH)) {
++			bourne_function_call = 1;
++ 			type_flags = 0;
++		} else
+ 			type_flags = LOCAL|LOCAL_COPY|EXPORT;
+ 	}
+ 	if (Flag(FEXPORT))
+@@ -563,6 +588,8 @@
+ 				shf_flush(shl_out);
+ 		}
+ 		typeset(cp, type_flags, 0, 0, 0);
++		if (bourne_function_call && !(type_flags & EXPORT))
++			typeset(cp, LOCAL|LOCAL_COPY|EXPORT, 0, 0, 0);
+ 	}
+ 
+ 	if ((cp = *ap) == NULL) {
+@@ -710,10 +737,12 @@
+ 		}
+ 
+ #ifdef KSH
+-		/* set $_ to program's full path */
+-		/* setstr() can't fail here */
+-		setstr(typeset("_", LOCAL|EXPORT, 0, INTEGER, 0), tp->val.s,
+-		       KSH_RETURN_ERROR);
++		if (!Flag(FSH)) {
++			/* set $_ to program's full path */
++			/* setstr() can't fail here */
++			setstr(typeset("_", LOCAL|EXPORT, 0, INTEGER, 0), tp->val.s,
++			       KSH_RETURN_ERROR);
++		}
+ #endif /* KSH */
+ 
+ 		if (flags&XEXEC) {
+@@ -1351,6 +1380,8 @@
+ 				snptreef((char *) 0, 32, "%R", &iotmp), emsg);
+ 			return -1;
+ 		}
++		if (u == iop->unit)
++			return 0;		/* "dup from" == "dup to" */
+ 		break;
+ 	  }
+ 	}
+@@ -1375,13 +1406,20 @@
+ 		return -1;
+ 	}
+ 	/* Do not save if it has already been redirected (i.e. "cat >x >y"). */
+-	if (e->savefd[iop->unit] == 0)
+-		/* c_exec() assumes e->savefd[fd] set for any redirections.
+-		 * Ask savefd() not to close iop->unit - allows error messages
+-		 * to be seen if iop->unit is 2; also means we can't lose
+-		 * the fd (eg, both dup2 below and dup2 in restfd() failing).
+-		 */
+-		e->savefd[iop->unit] = savefd(iop->unit, 1);
++	if (e->savefd[iop->unit] == 0) {
++#ifdef DEBIAN /* patch from OpenBSD */
++		/* If these are the same, it means unit was previously closed */
++		if (u == iop->unit)
++			e->savefd[iop->unit] = -1;
++		else
++#endif			
++			/* c_exec() assumes e->savefd[fd] set for any redirections.
++			* Ask savefd() not to close iop->unit - allows error messages
++			* to be seen if iop->unit is 2; also means we can't lose
++			* the fd (eg, both dup2 below and dup2 in restfd() failing).
++			*/
++			e->savefd[iop->unit] = savefd(iop->unit, 1);
++	}
+ 
+ 	if (do_close)
+ 		close(iop->unit);
+--- pdksh-5.2.14.orig/history.c
++++ pdksh-5.2.14/history.c
+@@ -858,8 +858,8 @@
+ 		/*
+ 		 * check on its validity
+ 		 */
+-		if ((int)base == -1 || *base != HMAGIC1 || base[1] != HMAGIC2) {
+-			if ((int)base !=  -1)
++		if (base == MAP_FAILED || *base != HMAGIC1 || base[1] != HMAGIC2) {
++			if (base !=  MAP_FAILED)
+ 				munmap((caddr_t)base, hsize);
+ 			hist_finish();
+ 			unlink(hname);
+@@ -893,7 +893,7 @@
+ static int
+ hist_count_lines(base, bytes)
+ 	register unsigned char *base;
+-	register int bytes;
++	int bytes;
+ {
+ 	State state = shdr;
+ 	register lines = 0;
+@@ -1015,8 +1015,8 @@
+ 	register int bytes;
+ {
+ 	State state;
+-	int	lno;
+-	unsigned char	*line;
++	int	lno = -1;
++	unsigned char	*line = NULL;
+ 
+ 	for (state = shdr; bytes-- > 0; base++) {
+ 		switch (state) {
+@@ -1105,7 +1105,7 @@
+ 			/* someone has added some lines */
+ 			bytes = sizenow - hsize;
+ 			base = (unsigned char *)mmap(0, sizenow, PROT_READ, MAP_FLAGS, histfd, 0);
+-			if ((int)base == -1)
++			if (base == MAP_FAILED)
+ 				goto bad;
+ 			new = base + hsize;
+ 			if (*new != COMMAND) {
+--- pdksh-5.2.14.orig/io.c
++++ pdksh-5.2.14/io.c
+@@ -297,11 +297,12 @@
+ 
+ 	if (fd < FDBASE) {
+ 		nfd = ksh_dupbase(fd, FDBASE);
+-		if (nfd < 0)
++		if (nfd < 0) {
+ 			if (errno == EBADF)
+ 				return -1;
+ 			else
+ 				errorf("too many files open in shell");
++		}
+ 		if (!noclose)
+ 			close(fd);
+ 	} else
+@@ -318,7 +319,7 @@
+ 		shf_flush(&shf_iob[fd]);
+ 	if (ofd < 0)		/* original fd closed */
+ 		close(fd);
+-	else {
++	else if (fd != ofd) {
+ 		ksh_dup2(ofd, fd, TRUE); /* XXX: what to do if this fails? */
+ 		close(ofd);
+ 	}
+@@ -502,7 +503,9 @@
+ 	Temp_type type;
+ 	struct temp **tlist;
+ {
++#ifndef DEBIAN
+ 	static unsigned int inc;
++#endif	
+ 	struct temp *tp;
+ 	int len;
+ 	int fd;
+@@ -516,6 +519,14 @@
  	tp->name = path = (char *) &tp[1];
  	tp->shf = (struct shf *) 0;
  	tp->type = type;
@@ -268,7 +1103,7 @@ diff -urN pdksh-5.2.14.org/io.c pdksh-5.2.14/io.c
  	while (1) {
  		/* Note that temp files need to fit 8.3 DOS limits */
  		shf_snprintf(path, len, "%s/sh%05u.%03x",
-@@ -542,6 +550,7 @@
+@@ -542,6 +553,7 @@
  			break;
  	}
  	tp->next = NULL;
@@ -276,9 +1111,889 @@ diff -urN pdksh-5.2.14.org/io.c pdksh-5.2.14/io.c
  	tp->pid = procpid;
  
  	tp->next = *tlist;
-diff -urN pdksh-5.2.14.org/vi.c pdksh-5.2.14/vi.c
---- pdksh-5.2.14.org/vi.c	Mon Feb 26 12:16:47 2001
-+++ pdksh-5.2.14/vi.c	Mon Feb 26 12:17:19 2001
+--- pdksh-5.2.14.orig/jobs.c
++++ pdksh-5.2.14/jobs.c
+@@ -219,8 +219,7 @@
+ static void		check_job ARGS((Job *j));
+ static void		put_job ARGS((Job *j, int where));
+ static void		remove_job ARGS((Job *j, const char *where));
+-static void		kill_job ARGS((Job *j));
+-static void	 	fill_command ARGS((char *c, int len, struct op *t));
++static int		kill_job ARGS((Job *j, int sig));
+ 
+ /* initialize job control */
+ void
+@@ -294,10 +293,17 @@
+ 				    && procpid == kshpid)))))
+ 		{
+ 			killed = 1;
+-			killpg(j->pgrp, SIGHUP);
++			if (j->pgrp == 0)
++				kill_job(j, SIGHUP);
++			else
++				killpg(j->pgrp, SIGHUP);
+ #ifdef JOBS
+-			if (j->state == PSTOPPED)
+-				killpg(j->pgrp, SIGCONT);
++			if (j->state == PSTOPPED) {
++				if (j->pgrp == 0)
++					kill_job(j, SIGCONT);
++				else
++					killpg(j->pgrp, SIGCONT);
++			}
+ #endif /* JOBS */
+ 		}
+ 	}
+@@ -334,12 +340,17 @@
+ 	int i;
+ 
+ 	if (Flag(FMONITOR)) {
+-		/* Don't call get_tty() 'til we own the tty process group */
+-		tty_init(FALSE);
++		int use_tty;
++		if (Flag(FTALKING)) {
++			/* Don't call get_tty() 'til we own the tty process group */
++			use_tty = 1;
++			tty_init(FALSE);
++		} else
++			use_tty = 0;
+ 
+ # ifdef TTY_PGRP
+ 		/* no controlling tty, no SIGT* */
+-		ttypgrp_ok = tty_fd >= 0 && tty_devtty;
++               ttypgrp_ok = use_tty && tty_fd >= 0 && tty_devtty;
+ 
+ 		if (ttypgrp_ok && (our_pgrp = getpgID()) < 0) {
+ 			warningf(FALSE, "j_init: getpgrp() failed: %s",
+@@ -395,8 +406,10 @@
+ 					strerror(errno));
+ 		}
+ #  endif /* NTTYDISC && TIOCSETD */
+-		if (!ttypgrp_ok)
+-			warningf(FALSE, "warning: won't have full job control");
++		if (Flag(FTALKING)) {
++			if (!ttypgrp_ok)
++				warningf(FALSE, "warning: won't have full job control");
++		}
+ # endif /* TTY_PGRP */
+ 		if (tty_fd >= 0)
+ 			get_tty(tty_fd, &tty_state);
+@@ -497,7 +510,7 @@
+ 		put_job(j, PJ_PAST_STOPPED);
+ 	}
+ 
+-	fill_command(p->command, sizeof(p->command), t);
++	snptreef(p->command, sizeof(p->command), "%T", t);
+ 
+ 	/* create child process */
+ 	forksleep = 1;
+@@ -508,7 +521,7 @@
+ 		forksleep <<= 1;
+ 	}
+ 	if (i < 0) {
+-		kill_job(j);
++		kill_job(j, SIGKILL);
+ 		remove_job(j, "fork failed");
+ #ifdef NEED_PGRP_SYNC
+ 		if (j_sync_open) {
+@@ -621,8 +634,10 @@
+ 				SS_RESTORE_IGN|SS_FORCE);
+ 			if (!(flags & (XPIPEI | XCOPROC))) {
+ 				int fd = open("/dev/null", 0);
+-				(void) ksh_dup2(fd, 0, TRUE);
+-				close(fd);
++				if (fd != 0) {
++					(void) ksh_dup2(fd, 0, TRUE);
++					close(fd);
++				}
+ 			}
+ 		}
+ 		remove_job(j, "child");	/* in case of `jobs` command */
+@@ -805,7 +820,7 @@
+ 	int	sig;
+ {
+ 	Job	*j;
+-	Proc	*p;
++/*	Proc	*p; */ /* unused */
+ 	int	rv = 0;
+ 	int	ecode;
+ #ifdef JOB_SIGS
+@@ -823,11 +838,10 @@
+ 	}
+ 
+ 	if (j->pgrp == 0) {	/* started when !Flag(FMONITOR) */
+-		for (p=j->proc_list; p != (Proc *) 0; p = p->next)
+-			if (kill(p->pid, sig) < 0) {
+-				bi_errorf("%s: %s", cp, strerror(errno));
+-				rv = 1;
+-			}
++		if (kill_job(j, sig) < 0) {
++			bi_errorf("%s: %s", cp, strerror(errno));
++			rv = 1;
++		}
+ 	} else {
+ #ifdef JOBS
+ 		if (j->state == PSTOPPED && (sig == SIGTERM || sig == SIGHUP))
+@@ -1559,11 +1573,12 @@
+ 			break;
+ 		}
+ 
+-		if (how != JP_SHORT)
++		if (how != JP_SHORT) {
+ 			if (p == j->proc_list)
+ 				shf_fprintf(shf, "[%d] %c ", j->job, jobchar);
+ 			else
+ 				shf_fprintf(shf, "%s", filler);
++		}
+ 
+ 		if (how == JP_LONG)
+ 			shf_fprintf(shf, "%5d ", p->pid);
+@@ -1825,50 +1840,17 @@
+  *
+  * If jobs are compiled in then this routine expects sigchld to be blocked.
+  */
+-static void
+-kill_job(j)
++static int
++kill_job(j, sig)
+ 	Job	*j;
++	int	sig;
+ {
+ 	Proc	*p;
++	int	rval = 0;
+ 
+ 	for (p = j->proc_list; p != (Proc *) 0; p = p->next)
+ 		if (p->pid != 0)
+-			(void) kill(p->pid, SIGKILL);
+-}
+-
+-/* put a more useful name on a process than snptreef does (in certain cases) */
+-static void
+-fill_command(c, len, t)
+-	char		*c;
+-	int		len;
+-	struct op	*t;
+-{
+-	int		alen;
+-	char		**ap;
+-
+-	if (t->type == TEXEC || t->type == TCOM) {
+-		/* Causes problems when set -u is in effect, can also
+-		   cause problems when array indices evaluated (may have
+-		   side effects, eg, assignment, incr, etc.)
+-		if (t->type == TCOM)
+-			ap = eval(t->args, DOBLANK|DONTRUNCOMMAND);
+-		else
+-		*/
+-		ap = t->args;
+-		--len; /* save room for the null */
+-		while (len > 0 && *ap != (char *) 0) {
+-			alen = strlen(*ap);
+-			if (alen > len)
+-				alen = len;
+-			memcpy(c, *ap, alen);
+-			c += alen;
+-			len -= alen;
+-			if (len > 0) {
+-				*c++ = ' '; len--;
+-			}
+-			ap++;
+-		}
+-		*c = '\0';
+-	} else
+-		snptreef(c, len, "%T", t);
++			if (kill(p->pid, sig) < 0)
++				rval = -1;
++	return rval;
+ }
+--- pdksh-5.2.14.orig/ksh.Man
++++ pdksh-5.2.14/ksh.Man
+@@ -18,7 +18,7 @@
+ .\"}}}
+ .\"{{{  Title
+ .ksh(
+-.TH KSH 1 "August 19, 1996" "" "User commands"
++.TH PDKSH 1 "August 19, 1996" "" "User commands"
+ .ksh)
+ .sh(
+ .TH SH 1 "August 19, 1996" "" "User commands"
+@@ -27,7 +27,7 @@
+ .\"{{{  Name
+ .SH NAME
+ .ksh(
+-ksh \- Public domain Korn shell
++pdksh \- Public domain Korn shell
+ .ksh)
+ .sh(
+ sh \- Public domain Bourne shell
+@@ -37,12 +37,12 @@
+ .SH SYNOPSIS
+ .ad l
+ .ksh(
+-\fBksh\fP
++\fBpdksh\fP
+ .ksh)
+ .sh(
+ \fBsh\fP
+ .sh)
+-[\fB\(+-abCefhikmnprsuvxX\fP] [\fB\(+-o\fP \fIoption\fP] [ [ \fB\-c\fP \fIcommand-string\fP [\fIcommand-name\fP] | \fB\-s\fP | \fIfile\fP ] [\fIargument\fP ...] ]
++[\fB+\-abCefhikmnprsuvxX\fP] [\fB+\-o\fP \fIoption\fP] [ [ \fB\-c\fP \fIcommand-string\fP [\fIcommand-name\fP] | \fB\-s\fP | \fIfile\fP ] [\fIargument\fP ...] ]
+ .ad b
+ .\"}}}
+ .\"{{{  Description
+@@ -601,7 +601,7 @@
+ The later form can be treated as arrays by appending an array
+ index of the form: \fB[\fP\fIexpr\fP\fB]\fP where \fIexpr\fP is
+ an arithmetic expression.
+-Array indicies are currently limited to the range 0 through 1023, inclusive.
++Array indices are currently limited to the range 0 through 1023, inclusive.
+ Parameter substitutions take the form \fB$\fP\fIname\fP,
+ \fB${\fP\fIname\fP\fB}\fP or
+ \fB${\fP\fIname\fP\fB[\fP\fIexpr\fP\fB]}\fP, where \fIname\fP is a
+@@ -639,7 +639,7 @@
+ .\"{{{  environment
+ Parameters with the export attribute (set using the \fBexport\fP or
+ \fBtypeset \-x\fP commands, or by parameter assignments followed by simple
+-commands) are put in the environment (see \fIenviron\fP(5)) of commands
++commands) are put in the environment (see \fIenviron\fP(7)) of commands
+ run by the shell as \fIname\fP\fB=\fP\fIvalue\fP pairs.
+ The order in which parameters appear in the environment of a command
+ is unspecified.
+@@ -1118,12 +1118,12 @@
+ like \fB[\fP..\fB]\fP, except it matches any character not inside the brackets.
+ .ksh(
+ .IP "\fB*(\fP\fIpattern\fP\fB|\fP ... \fP|\fP\fIpattern\fP\fB)\fP"
+-matches any string of characters that matches zero or more occurances
++matches any string of characters that matches zero or more occurrences
+ of the specified patterns.
+ Example: the pattern \fB*(foo|bar)\fP matches the strings
+ `', `foo', `bar', `foobarfoo', \fIetc.\fP.
+ .IP "\fB+(\fP\fIpattern\fP\fB|\fP ... \fP|\fP\fIpattern\fP\fB)\fP"
+-matches any string of characters that matches one or more occurances
++matches any string of characters that matches one or more occurrences
+ of the specified patterns.
+ Example: the pattern \fB+(foo|bar)\fP matches the strings
+ `foo', `bar', `foobarfoo', \fIetc.\fP.
+@@ -1305,8 +1305,8 @@
+ When used as a prefix operator, the result is the incremented value of
+ the parameter, when used as a postfix operator, the result is the
+ original value of the parameter.
+-.IP "\fB++\fP"
+-similar to \fB++\fP, except the paramter is decremented by 1.
++.IP "\fB--\fP"
++similar to \fB++\fP, except the parameter is decremented by 1.
+ .IP "\fB,\fP"
+ separates two arithmetic expressions; the left hand side is evaluated first,
+ then the right.  The result is value of the expression on the right hand side.
+@@ -1382,7 +1382,7 @@
+ This can be avoided by redirecting the output to a numbered
+ file descriptor (as this also causes the shell to close its copy).
+ Note that this behaviour is slightly different from the original Korn shell
+-which closes its copy of the write portion of the co-processs output when the
++which closes its copy of the write portion of the co-process's output when the
+ most recently started co-process (instead of when all sharing co-processes)
+ exits.
+ .IP \ \ \(bu
+@@ -1449,7 +1449,7 @@
+ the \fB$0\fP parameter is set to the name of the function
+ (Bourne-style functions leave \fB$0\fP untouched).
+ .IP \ \ \(bu
+-parameter assignments preceeding function calls are not kept in
++parameter assignments preceding function calls are not kept in
+ the shell environment
+ (executing Bourne-style functions will keep assignments).
+ .IP \ \ \(bu
+@@ -1535,6 +1535,10 @@
+ For example, `\fBset \-\- `false`; echo $?\fP' prints 0 in posix mode,
+ 1 in non-posix mode.  This construct is used in most shell scripts that
+ use the old \fIgetopt\fP(1) command.
++.br
++(\fBDEBIAN NOTE\fP: This is no longer true on Debian systems. For compatibility
++with ksh93, \fBset\fP command always returns exit status set to 0, regardless
++of posix or non-posix mode.)
+ .IP \ \ \(bu
+ argument expansion of \fBalias\fP, \fBexport\fP, \fBreadonly\fP, and
+ \fBtypeset\fP commands: in posix mode, normal argument expansion done;
+@@ -1580,7 +1584,7 @@
+ Just to confuse things, if the posix option is turned off (see \fBset\fP
+ command below) some special commands are very special in that
+ no field splitting, file globing, brace expansion nor tilde expansion
+-is preformed on arguments that look like assignments.
++is performed on arguments that look like assignments.
+ Regular built-in commands are different only in that the \fBPATH\fP
+ parameter is not used to find them.
+ .PP
+@@ -1639,7 +1643,7 @@
+ Exit status is set to zero.
+ .\"}}}
+ .\"{{{  alias [ -d | +-t [ -r ] ] [+-px] [+-] [name1[=value1] ...]
+-.IP "\fBalias\fP [ \fB\-d\fP | \fB\(+-t\fP [\fB\-r\fP] ] [\fB\(+-px\fP] [\fB\(+-\fP] [\fIname1\fP[\fB=\fP\fIvalue1\fP] ...]"
++.IP "\fBalias\fP [ \fB\-d\fP | \fB+\-t\fP [\fB\-r\fP] ] [\fB+\-px\fP] [\fB+\-\fP] [\fIname1\fP[\fB=\fP\fIvalue1\fP] ...]"
+ Without arguments, \fBalias\fP lists all aliases.
+ For any name without a value, the existing alias is listed.
+ Any name with a value defines an alias (see Aliases above).
+@@ -1689,7 +1693,7 @@
+ .IP "\fBcd\fP [\fB\-LP\fP] [\fIdir\fP]"
+ Set the working directory to \fIdir\fP.  If the parameter \fBCDPATH\fP
+ is set, it lists directories to search in for \fIdir\fP.
+-\fIdir\fP.  An empty entry in the \fBCDPATH\fP entry means the current
++An empty entry in the \fBCDPATH\fP entry means the current
+ directory.
+ If a non-empty directory from \fBCDPATH\fP is used, the resulting full
+ path is printed to standard output.
+@@ -1783,6 +1787,9 @@
+ commands that are not built-in to the shell).
+ Note that the Bourne shell differs here: it does pass these
+ file descriptors on.
++.br
++(\fBDEBIAN NOTE\fP: when the shell is called as \fI/bin/sh\fP, it does pass 
++these file descriptors on, like the Bourne shell.)
+ .ksh)
+ .sh(
+ Any file descriptors which are opened or \fIdup\fP(2)-ed
+@@ -2003,12 +2010,12 @@
+ while the original Korn shell only treats profiles as \fB.\fP scripts.
+ .\"}}}
+ .\"{{{  set [+-abCefhkmnpsuvxX] [+-o [option]] [+-A name] [--] [arg ...]
+-.IP "\fBset\fP [\fB\(+-abCefhkmnpsuvxX\fP] [\fB\(+-o\fP [\fIoption\fP]] [\fB\(+-A\fP \fIname\fP] [\fB\-\-\fP] [\fIarg\fP ...]"
++.IP "\fBset\fP [\fB+\-abCefhkmnpsuvxX\fP] [\fB+\-o\fP [\fIoption\fP]] [\fB+\-A\fP \fIname\fP] [\fB\-\-\fP] [\fIarg\fP ...]"
+ The set command can be used to set (\fB\-\fP) or clear (\fB+\fP) shell options,
+ set the positional parameters, or set an array parameter.
+-Options can be changed using the \fB\(+-o\fP \fIoption\fP syntax,
++Options can be changed using the \fB+\-o\fP \fIoption\fP syntax,
+ where \fIoption\fP is the long name of an option, or using
+-the \fB\(+-\fP\fIletter\fP syntax, where \fIletter\fP is the
++the \fB+\-\fP\fIletter\fP syntax, where \fIletter\fP is the
+ option's single letter name (not all options have a single letter name).
+ The following table lists both option letters (if they exist) and long names
+ along with a description of what the option does.
+@@ -2139,7 +2146,7 @@
+ Causes the \fBcd\fP and \fBpwd\fP commands to use `physical'
+ (\fIi.e.\fP, the filesystem's) \fB..\fP directories instead of `logical'
+ directories (\fIi.e.\fP,  the shell handles \fB..\fP, which allows the user
+-to be obliveous of symlink links to directories).
++to be oblivious of symlink links to directories).
+ Clear by default.  Note that setting
+ this option does not effect the current value of the \fBPWD\fP parameter;
+ only the \fBcd\fP command changes \fBPWD\fP.
+@@ -2148,6 +2155,10 @@
+ 	posix	T{
+ Enable posix mode.  See POSIX Mode above.
+ T}
++	sh	T{
++This option is set only when ksh was called as a standard \fI/bin/sh\fP shell.
++(Note: This option is a Debian and OpenBSD addition).
++T}
+ 	vi	T{
+ Enable vi-like command line editing (interactive shells only).
+ T}
+@@ -2414,7 +2425,7 @@
+ are received.
+ \fBHandler\fP is either a null string, indicating the signals are to
+ be ignored, a minus (\fB\-\fP), indicating that the default action is to
+-be taken for the signals (see signal(2 or 3)), or a string containing shell
++be taken for the signals (see signal(2)), or a string containing shell
+ commands to be evaluated and executed at the first opportunity (\fIi.e.\fP,
+ when the current command completes, or before printing the next \fBPS1\fP
+ prompt) after receipt of one of the signals.
+@@ -2445,7 +2456,7 @@
+ A command that exits with a zero value.
+ .\"}}}
+ .\"{{{  typeset [[+-Ulprtux] [-L[n]] [-R[n]] [-Z[n]] [-i[n]] | -f [-tux]] [name[=value] ...]
+-.IP "\fBtypeset\fP [[\(+-Ulprtux] [\fB\-L\fP[\fIn\fP]] [\fB\-R\fP[\fIn\fP]] [\fB\-Z\fP[\fIn\fP]] [\fB\-i\fP[\fIn\fP]] | \fB\-f\fP [\fB\-tux\fP]] [\fIname\fP[\fB=\fP\fIvalue\fP] ...]"
++.IP "\fBtypeset\fP [[+\-Ulprtux] [\fB\-L\fP[\fIn\fP]] [\fB\-R\fP[\fIn\fP]] [\fB\-Z\fP[\fIn\fP]] [\fB\-i\fP[\fIn\fP]] | \fB\-f\fP [\fB\-tux\fP]] [\fIname\fP[\fB=\fP\fIvalue\fP] ...]"
+ Display or set parameter attributes.
+ With no \fIname\fP arguments, parameter attributes are displayed: if no options
+ arg used, the current attributes of all parameters are printed as typeset
+@@ -2512,7 +2523,7 @@
+ \-p	T{
+ Print complete typeset commands that can be used to re-create the
+ attributes (but not the values) of parameters.
+-This is the default action (option exists for ksh93 compatability).
++This is the default action (option exists for ksh93 compatibility).
+ T}
+ \-r	T{
+ Readonly attribute: parameters with the this attribute may not be assigned to
+@@ -2541,8 +2552,8 @@
+ T}
+ .TE
+ .\"}}}
+-.\"{{{  ulimit [-acdfHlmnpsStvw] [value]
+-.IP "\fBulimit\fP [\fB\-acdfHlmnpsStvw\fP] [\fIvalue\fP]"
++.\"{{{  ulimit [-acdfHlmnpsStvwL] [value]
++.IP "\fBulimit\fP [\fB\-acdfHlmnpsStvwL\fP] [\fIvalue\fP]"
+ Display or set process limits.
+ If no options are used, the file size limit (\fB\-f\fP) is assumed.
+ \fBvalue\fP, if specified, may be either be an arithmetic expression or the
+@@ -2587,6 +2598,8 @@
+ not kbytes).
+ .IP \fB\-w\fP
+ Impose a limit of \fIn\fP kbytes on the amount of swap space used.
++.IP \fB\-L\fP
++Impose a limit of \fIn\fP locks that can be held on files.
+ .PP
+ As far as \fBulimit\fP is concerned, a block is 512 bytes.
+ .RE
+@@ -3086,12 +3099,12 @@
+ .\"}}}
+ .\"{{{  search-character-backward n ^[^]
+ .IP "\fBsearch-character-backward\fP \fIn\fP \fB^[^]\fP"
+-Search backward in the current line for the \fIn\fPth occurance of the
++Search backward in the current line for the \fIn\fPth occurrence of the
+ next character typed.
+ .\"}}}
+ .\"{{{  search-character-forward n ^]
+ .IP "\fBsearch-character-forward\fP \fIn\fP \fB^]\fP"
+-Search forward in the current line for the \fIn\fPth occurance of the
++Search forward in the current line for the \fIn\fPth occurrence of the
+ next character typed.
+ .\"}}}
+ .\"{{{  search-history ^R
+@@ -3518,7 +3531,7 @@
+ csh(1), ed(1), getconf(1), getopt(1), sed(1), stty(1), vi(1),
+ dup(2), execve(2), getgid(2), getuid(2), open(2), pipe(2), wait(2),
+ getopt(3), rand(3), signal(3), system(3),
+-environ(5)
++environ(7)
+ .PP
+ .IR "The KornShell Command and Programming Language" ,
+ Morris Bolsky and David Korn, 1989, ISBN 0-13-516972-0.
+@@ -3530,3 +3543,4 @@
+ .IR "IEEE Standard for information Technology \- Portable Operating System Interface (POSIX) \- Part 2: Shell and Utilities" ,
+ IEEE Inc, 1993, ISBN 1-55937-255-9.
+ .\"}}}
++.\" vim:ft=nroff
+--- pdksh-5.2.14.orig/lex.c
++++ pdksh-5.2.14/lex.c
+@@ -105,6 +105,7 @@
+ 	register char *wp;	/* output word pointer */
+ 	char *sp, *dp;
+ 	int c2;
++	int last_terminal_was_bracket; 
+ 
+ 
+   Again:
+@@ -645,11 +646,12 @@
+ 		if (c == c2 || (c == '<' && c2 == '>')) {
+ 			iop->flag = c == c2 ?
+ 				  (c == '>' ? IOCAT : IOHERE) : IORDWR;
+-			if (iop->flag == IOHERE)
++			if (iop->flag == IOHERE) {
+ 				if ((c2 = getsc()) == '-')
+ 					iop->flag |= IOSKIP;
+ 				else
+ 					ungetsc(c2);
++			}
+ 		} else if (c2 == '&')
+ 			iop->flag = IODUP | (c == '<' ? IORDUP : 0);
+ 		else {
+@@ -699,11 +701,13 @@
+ 
+ 		  case '(':  /*)*/
+ #ifdef KSH
+-			if ((c2 = getsc()) == '(') /*)*/
+-				/* XXX need to handle ((...); (...)) */
+-				c = MDPAREN;
+-			else
+-				ungetsc(c2);
++			if (!Flag(FSH)) {
++				if ((c2 = getsc()) == '(') /*)*/
++					/* XXX need to handle ((...); (...)) */
++					c = MDPAREN;
++				else
++					ungetsc(c2);
++			}				
+ #endif /* KSH */
+ 			return c;
+ 		  /*(*/
+@@ -720,6 +724,8 @@
+ #endif /* KSH */
+ 		)	/* ONEWORD? */
+ 		return LWORD;
++
++	last_terminal_was_bracket = c == '(';
+ 	ungetsc(c);		/* unget terminator */
+ 
+ 	/* copy word to unprefixed string ident */
+@@ -744,6 +750,15 @@
+ 		if ((cf & ALIAS) && (p = tsearch(&aliases, ident, h))
+ 		    && (p->flag & ISSET))
+ 		{
++			
++		   if (last_terminal_was_bracket) { 
++		   /* The token is probably part of function's definition,
++		    * and is should not be aliased. Moreover we remove the alias
++		    * so it won't clash with the function name
++		    * robert@debian.org, Feb 26th, 2005
++		    */
++			tdelete(p);
++		   } else {		
+ 			register Source *s;
+ 
+ 			for (s = source; s->type == SALIAS; s = s->next)
+@@ -757,6 +772,7 @@
+ 			source = s;
+ 			afree(yylval.cp, ATEMP);
+ 			goto Again;
++                    } 			
+ 		}
+ 	}
+ 
+@@ -1119,7 +1135,7 @@
+ 		 */
+ 		{
+ 			struct shf *shf;
+-			char *ps1;
++			char * volatile ps1;
+ 			Area *saved_atemp;
+ 
+ 			ps1 = str_val(global("PS1"));
+--- pdksh-5.2.14.orig/main.c
++++ pdksh-5.2.14/main.c
+@@ -201,7 +201,24 @@
+ 	change_flag(FPOSIX, OF_SPECIAL, 1);
+ #endif /* POSIXLY_CORRECT */
+ 
+-	/* import enviroment */
++#ifdef DEBIAN /* patch from OpenBSD */
++	/* Check to see if we're /bin/sh. */
++	if (!strcmp(&kshname[strlen(kshname) - 3], "/sh")
++	    || !strcmp(kshname, "sh") || !strcmp(kshname, "-sh"))
++		Flag(FSH) = 1;
++
++	/* Set edit mode to emacs by default, may be overridden
++	* by the environment or the user.  Also, we want tab completion
++	* on in vi by default. */
++#if defined(EDIT) && defined(EMACS)
++	change_flag(FEMACS, OF_SPECIAL, 1);
++#endif /* EDIT && EMACS */
++	#if defined(EDIT) && defined(VI)
++	Flag(FVITABCOMPLETE) = 1;
++#endif /* EDIT && VI */
++#endif /* DEBIAN */
++		
++	/* import environment */
+ 	if (environ != NULL)
+ 		for (wp = environ; *wp != NULL; wp++)
+ 			typeset(*wp, IMPORT|EXPORT, 0, 0, 0);
+@@ -252,6 +269,9 @@
+ 
+ 
+ 	ksheuid = geteuid();
++	kshuid  = getuid();
++	kshgid  = getgid();
++	kshegid = getegid();
+ 	safe_prompt = ksheuid ? "$ " : "# ";
+ 	{
+ 		struct tbl *vp = global("PS1");
+@@ -266,7 +286,7 @@
+ 	}
+ 
+ 	/* Set this before parsing arguments */
+-	Flag(FPRIVILEGED) = getuid() != ksheuid || getgid() != getegid();
++	Flag(FPRIVILEGED) = kshuid != ksheuid || kshgid != kshegid;
+ 
+ 	/* this to note if monitor is set on command line (see below) */
+ 	Flag(FMONITOR) = 127;
+@@ -576,11 +596,12 @@
+ 		if (trap)
+ 			runtraps(0);
+ 
+-		if (s->next == NULL)
++		if (s->next == NULL) {
+ 			if (Flag(FVERBOSE))
+ 				s->flags |= SF_ECHO;
+ 			else
+ 				s->flags &= ~SF_ECHO;
++		}
+ 
+ 		if (interactive) {
+ 			j_notify();
+--- pdksh-5.2.14.orig/misc.c
++++ pdksh-5.2.14/misc.c
+@@ -19,6 +19,7 @@
+ 			int isfile));
+ static const unsigned char *cclass ARGS((const unsigned char *p, int sub));
+ 
++
+ /*
+  * Fast character classes
+  */
+@@ -159,6 +160,7 @@
+ 	{ "posix",	  0,		OF_ANY }, /* non-standard */
+ 	{ "privileged",	'p',		OF_ANY },
+ 	{ "restricted",	'r',	    OF_CMDLINE },
++	{ "sh",		  0,		OF_ANY }, /* non-standard */ /* from OpenBSD */
+ 	{ "stdin",	's',	    OF_CMDLINE }, /* pseudo non-standard */
+ 	{ "trackall",	'h',		OF_ANY },
+ 	{ "verbose",	'v',		OF_ANY },
+@@ -309,8 +311,15 @@
+ #ifdef OS2
+ 		;
+ #else /* OS2 */
+-		setuid(ksheuid = getuid());
+-		setgid(getgid());
++#ifndef DEBIAN
++		setuid(ksheuid = kshuid = getuid());
++		setgid(kshegid = kshgid = getgid());
++#else /* patch from OpenBSD */
++		seteuid(ksheuid = kshuid = getuid());
++		setuid(ksheuid);
++		setegid(kshegid = kshgid = getgid());
++		setgid(kshegid);
++#endif /* DEBIAN */
+ #endif /* OS2 */
+ 	} else if (f == FPOSIX && newval) {
+ #ifdef BRACE_EXPAND
+@@ -471,6 +480,7 @@
+ 	const char *as;
+ 	int *ai;
+ {
++#ifndef DEBIAN
+ 	const char *s;
+ 	register int n;
+ 	int sawdigit = 0;
+@@ -484,6 +494,19 @@
+ 	if (*s || !sawdigit)
+ 		return 0;
+ 	return 1;
++#else /* patch from OpenBSD */
++	char *p;
++	long n;
++
++	n = strtol(as, &p, 10);
++
++	if (!*as || *p || INT_MIN >= n || n >= INT_MAX)
++		return 0;
++
++	*ai = (int)n;
++	return 1;
++#endif
++	
+ }
+ 
+ /* getn() that prints error */
+@@ -1343,3 +1366,4 @@
+ 	return b;
+ #endif /* HAVE_GETCWD */
+ }
++
+--- pdksh-5.2.14.orig/sh.h
++++ pdksh-5.2.14/sh.h
+@@ -353,8 +353,12 @@
+ #define	NUFILE	10		/* Number of user-accessible files */
+ #define	FDBASE	10		/* First file usable by Shell */
+ 
++#ifndef DEBIAN
+ /* you're not going to run setuid shell scripts, are you? */
+ #define	eaccess(path, mode)	access(path, mode)
++#else
++EXTERN int eaccess( const char * pathname, int mode );
++#endif
+ 
+ /* Make MAGIC a char that might be printed to make bugs more obvious, but
+  * not a char that is used often.  Also, can't use the high bit as it causes
+@@ -372,6 +376,9 @@
+ EXTERN	pid_t	kshpid;		/* $$, shell pid */
+ EXTERN	pid_t	procpid;	/* pid of executing process */
+ EXTERN	int	ksheuid;	/* effective uid of shell */
++EXTERN	int	kshegid;	/* effective gid of shell */
++EXTERN	int	kshuid;		/* real uid of shell */
++EXTERN	int	kshgid;		/* real gid of shell */
+ EXTERN	int	exstat;		/* exit status */
+ EXTERN	int	subst_exstat;	/* exit status of last $(..)/`..` */
+ EXTERN	const char *safe_prompt; /* safe prompt if PS1 substitution fails */
+@@ -382,7 +389,11 @@
+  */
+ 
+ typedef struct Area {
++#ifndef DEBIAN
+ 	struct Block *freelist;	/* free list */
++#else /* patch from OpenBSD */	
++	struct link *freelist;  /* free list */
++#endif
+ } Area;
+ 
+ EXTERN	Area	aperm;		/* permanent object space */
+@@ -501,6 +512,7 @@
+ 	FPOSIX,		/* -o posix: be posixly correct */
+ 	FPRIVILEGED,	/* -p: use suid_profile */
+ 	FRESTRICTED,	/* -r: restricted shell */
++	FSH,		/* -o sh: favor sh behavour */
+ 	FSTDIN,		/* -s: (invocation) parse stdin */
+ 	FTRACKALL,	/* -h: create tracked aliases for all commands */
+ 	FVERBOSE,	/* -v: echo input */
+--- pdksh-5.2.14.orig/shf.c
++++ pdksh-5.2.14/shf.c
+@@ -355,7 +355,6 @@
+ 		shf->rp = nbuf + (shf->rp - shf->buf);
+ 		shf->wp = nbuf + (shf->wp - shf->buf);
+ 		shf->rbsize += shf->wbsize;
+-		shf->wbsize += shf->wbsize;
+ 		shf->wnleft += shf->wbsize;
+ 		shf->wbsize *= 2;
+ 		shf->buf = nbuf;
+--- pdksh-5.2.14.orig/siglist.sh
++++ pdksh-5.2.14/siglist.sh
+@@ -16,14 +16,14 @@
+ CPP="${1-cc -E}"
+ 
+ # The trap here to make up for a bug in bash (1.14.3(1)) that calls the trap
+-(trap $trapsigs;
++(trap - $trapsigs;
+  echo '#include "sh.h"';
+  echo '	{ QwErTy SIGNALS , "DUMMY" , "hook for number of signals" },';
+  sed -e '/^[	 ]*#/d' -e 's/^[	 ]*\([^ 	][^ 	]*\)[	 ][	 ]*\(.*[^ 	]\)[ 	]*$/#ifdef SIG\1\
+ 	{ QwErTy SIG\1 , "\1", "\2" },\
+ #endif/') > $in
+ $CPP $in  > $out
+-sed -n 's/{ QwErTy/{/p' < $out | awk '{print NR, $0}' | sort +2n +0n |
++sed -n 's/{ QwErTy/{/p' < $out | awk '{print NR, $0}' | sort -k 3n -k 1n |
+     sed 's/^[0-9]* //' |
+     awk 'BEGIN { last=0; nsigs=0; }
+ 	{
+--- pdksh-5.2.14.orig/table.c
++++ pdksh-5.2.14/table.c
+@@ -53,7 +53,7 @@
+ 	if (otblp == NULL)
+ 		return;
+ 	for (i = 0; i < osize; i++)
+-		if ((tblp = otblp[i]) != NULL)
++		if ((tblp = otblp[i]) != NULL) {
+ 			if ((tblp->flag&DEFINED)) {
+ 				for (p = &ntblp[hash(tblp->name)
+ 					  & (tp->size-1)];
+@@ -65,6 +65,7 @@
+ 			} else if (!(tblp->flag & FINUSE)) {
+ 				afree((void*)tblp, tp->areap);
+ 			}
++		}
+ 	afree((void*)otblp, tp->areap);
+ }
+ 
+--- pdksh-5.2.14.orig/trap.c
++++ pdksh-5.2.14/trap.c
+@@ -68,6 +68,8 @@
+ alarm_catcher(sig)
+ 	int sig;
+ {
++	int errno_ = errno;
++	
+ 	if (ksh_tmout_state == TMOUT_READING) {
+ 		int left = alarm(0);
+ 
+@@ -77,6 +79,7 @@
+ 		} else
+ 			alarm(left);
+ 	}
++	errno = errno_;
+ 	return RETSIGVAL;
+ }
+ #endif /* KSH */
+@@ -111,6 +114,7 @@
+ 	int i;
+ {
+ 	Trap *p = &sigtraps[i];
++	int errno_ = errno;
+ 
+ 	trap = p->set = 1;
+ 	if (p->flags & TF_DFL_INTR)
+@@ -125,6 +129,7 @@
+ 	if (sigtraps[i].cursig == trapsig) /* this for SIGCHLD,SIGALRM */
+ 		sigaction(i, &Sigact_trap, (struct sigaction *) 0);
+ #endif /* V7_SIGNALS */
++	errno = errno_;
+ 	return RETSIGVAL;
+ }
+ 
+--- pdksh-5.2.14.orig/tree.c
++++ pdksh-5.2.14/tree.c
+@@ -506,7 +506,7 @@
+ 		for (tw = t->vars; *tw++ != NULL; )
+ 			;
+ 		rw = r->vars = (char **)
+-			alloc((int)(tw - t->vars) * sizeof(*tw), ap);
++			alloc((tw - t->vars + 1) * sizeof(*tw), ap);
+ 		for (tw = t->vars; *tw != NULL; )
+ 			*rw++ = wdcopy(*tw++, ap);
+ 		*rw = NULL;
+@@ -518,7 +518,7 @@
+ 		for (tw = t->args; *tw++ != NULL; )
+ 			;
+ 		rw = r->args = (char **)
+-			alloc((int)(tw - t->args) * sizeof(*tw), ap);
++			alloc((tw - t->args + 1) * sizeof(*tw), ap);
+ 		for (tw = t->args; *tw != NULL; )
+ 			*rw++ = wdcopy(*tw++, ap);
+ 		*rw = NULL;
+@@ -679,7 +679,7 @@
+ 
+ 	for (ior = iow; *ior++ != NULL; )
+ 		;
+-	ior = (struct ioword **) alloc((int)(ior - iow) * sizeof(*ior), ap);
++	ior = (struct ioword **) alloc((ior - iow + 1) * sizeof(*ior), ap);
+ 
+ 	for (i = 0; iow[i] != NULL; i++) {
+ 		register struct ioword *p, *q;
+--- pdksh-5.2.14.orig/var.c
++++ pdksh-5.2.14/var.c
+@@ -63,11 +63,12 @@
+ 
+ 	e->loc = l->next;	/* pop block */
+ 	for (i = l->vars.size; --i >= 0; )
+-		if ((vp = *vpp++) != NULL && (vp->flag&SPECIAL))
++		if ((vp = *vpp++) != NULL && (vp->flag&SPECIAL)) {
+ 			if ((vq = global(vp->name))->flag & ISSET)
+ 				setspec(vq);
+ 			else
+ 				unsetspec(vq);
++		}
+ 	if (l->flags & BF_DOGETOPTS)
+ 		user_opt = l->getopts_state;
+ 	afreeall(&l->area);
+@@ -217,11 +218,12 @@
+ 	}
+ 	for (l = e->loc; ; l = l->next) {
+ 		vp = tsearch(&l->vars, n, h);
+-		if (vp != NULL)
++		if (vp != NULL) {
+ 			if (array)
+ 				return arraysearch(vp, val);
+ 			else
+ 				return vp;
++		}
+ 		if (l->next == NULL)
+ 			break;
+ 	}
+@@ -353,7 +355,9 @@
+ 	const char *s;
+ 	int error_ok;
+ {
+-	if (vq->flag & RDONLY) {
++	int no_ro_check = error_ok & 0x4;
++	error_ok &= ~0x4;
++	if ((vq->flag & RDONLY) && !no_ro_check) {
+ 		warningf(TRUE, "%s: is read only", vq->name);
+ 		if (!error_ok)
+ 			errorf(null);
+@@ -715,13 +719,13 @@
+ 	if (val != NULL) {
+ 		if (vp->flag&INTEGER) {
+ 			/* do not zero base before assignment */
+-			setstr(vp, val, KSH_UNWIND_ERROR);
++			setstr(vp, val, KSH_UNWIND_ERROR | 0x4);
+ 			/* Done after assignment to override default */
+ 			if (base > 0)
+ 				vp->type = base;
+ 		} else
+ 			/* setstr can't fail (readonly check already done) */
+-			setstr(vp, val, KSH_RETURN_ERROR);
++			setstr(vp, val, KSH_RETURN_ERROR | 0x4);
+ 	}
+ 
+ 	/* only x[0] is ever exported, so use vpbase */
+--- pdksh-5.2.14.orig/vi.c
++++ pdksh-5.2.14/vi.c
 @@ -63,6 +63,9 @@
  static void	vi_pprompt ARGS((int full));
  static void	vi_error ARGS((void));
@@ -289,7 +2004,67 @@ diff -urN pdksh-5.2.14.org/vi.c pdksh-5.2.14/vi.c
  
  #define C_	0x1		/* a valid command that isn't a M_, E_, U_ */
  #define M_	0x2		/* movement command (h, l, etc.) */
-@@ -1470,6 +1473,19 @@
+@@ -235,7 +238,7 @@
+ 
+ 	x_putc('\r'); x_putc('\n'); x_flush();
+ 
+-	if (c == -1)
++	if (c == -1 || len <= es->linelen)
+ 		return -1;
+ 
+ 	if (es->cbuf != buf)
+@@ -459,15 +462,22 @@
+ 			else {
+ 				locpat[srchlen++] = ch;
+ 				if ((ch & 0x80) && Flag(FVISHOW8)) {
++					if (es->linelen + 2 > es->cbufsize)
++						vi_error();
+ 					es->cbuf[es->linelen++] = 'M';
+ 					es->cbuf[es->linelen++] = '-';
+ 					ch &= 0x7f;
+ 				}
+ 				if (ch < ' ' || ch == 0x7f) {
++					if (es->linelen + 2 > es->cbufsize)
++						vi_error();
+ 					es->cbuf[es->linelen++] = '^';
+ 					es->cbuf[es->linelen++] = ch ^ '@';
+-				} else
++				} else {
++					if (es->linelen >= es->cbufsize)
++						vi_error();
+ 					es->cbuf[es->linelen++] = ch;
++				}
+ 				es->cursor = es->linelen;
+ 				refresh(0);
+ 			}
+@@ -690,7 +700,7 @@
+ 	/* End nonstandard vi commands } */
+ 
+ 	default:
+-		if (es->linelen == es->cbufsize - 1)
++		if (es->linelen >= es->cbufsize - 1)
+ 			return -1;
+ 		ibuf[inslen++] = ch;
+ 		if (insert == INSERT) {
+@@ -1403,7 +1413,7 @@
+ 	new = (struct edstate *)alloc(sizeof(struct edstate), APERM);
+ 	new->cbuf = alloc(old->cbufsize, APERM);
+ 	new->cbufsize = old->cbufsize;
+-	strcpy(new->cbuf, old->cbuf);
++ 	memcpy(new->cbuf, old->cbuf, old->linelen);
+ 	new->linelen = old->linelen;
+ 	new->cursor = old->cursor;
+ 	new->winleft = old->winleft;
+@@ -1414,7 +1424,7 @@
+ restore_edstate(new, old)
+ 	struct edstate *old, *new;
+ {
+-	strncpy(new->cbuf, old->cbuf, old->linelen);
++	memcpy(new->cbuf, old->cbuf, old->linelen);
+ 	new->linelen = old->linelen;
+ 	new->cursor = old->cursor;
+ 	new->winleft = old->winleft;
+@@ -1470,6 +1480,19 @@
  	holdlen = 0;
  }
  
@@ -309,7 +2084,7 @@ diff -urN pdksh-5.2.14.org/vi.c pdksh-5.2.14/vi.c
  static int
  putbuf(buf, len, repl)
  	const char *buf;
-@@ -1965,7 +1981,11 @@
+@@ -1965,7 +1988,11 @@
  	del_range(start, end);
  	es->cursor = start;
  	for (i = 0; i < nwords; ) {
@@ -321,7 +2096,7 @@ diff -urN pdksh-5.2.14.org/vi.c pdksh-5.2.14/vi.c
  			rval = -1;
  			break;
  		}
-@@ -2068,9 +2088,18 @@
+@@ -2068,9 +2095,18 @@
  	buf = save_edstate(es);
  	del_range(start, end);
  	es->cursor = start;
@@ -340,3 +2115,654 @@ diff -urN pdksh-5.2.14.org/vi.c pdksh-5.2.14/vi.c
  		/* If exact match, don't undo.  Allows directory completions
  		 * to be used (ie, complete the next portion of the path).
  		 */
+--- pdksh-5.2.14.orig/debian/NEWS
++++ pdksh-5.2.14/debian/NEWS
+@@ -0,0 +1,8 @@
++pdksh (5.2.14-18) unstable; urgency=low
++
++  *  The ksh93 command is packaged and available in Debian now,
++     so /bin/ksh was renamed to /bin/pdksh and it's managed
++     through update-alternatives(8).
++
++ -- Robert Luberda <robert@debian.org>  Sun, 10 Apr 2005 17:11:12 +0200
++
+--- pdksh-5.2.14.orig/debian/changelog
++++ pdksh-5.2.14/debian/changelog
+@@ -0,0 +1,305 @@
++pdksh (5.2.14-20) unstable; urgency=low
++
++  * Depends on debianutils (>= 2.15) instead of passwd (closes: #334082).
++  * Standards-Version: 3.6.2 (no changes)
++
++ -- Robert Luberda <robert@debian.org>  Wed, 19 Oct 2005 20:34:06 +0200
++
++pdksh (5.2.14-19) unstable; urgency=low
++
++  * postinst,postrm: use add-shell and remove-shell commands to maintain /bin/pdksh
++    in /etc/shells.
++  * Declare dependency on passwd (>= 1:4.0.3-10) as described in README.shells
++    from the passwd package.
++  * c_ulimit.c: enclose all uses of RLIMIT_LOCKS with appropriate #ifdefs
++    (closes: #307323).
++
++ -- Robert Luberda <robert@debian.org>  Sat,  7 May 2005 10:53:52 +0200
++
++pdksh (5.2.14-18) unstable; urgency=low
++
++  * Rename /bin/ksh to /bin/pdksh and use the Debian alternatives mechanism
++    for manage /bin/ksh (closes: #294592).
++  * debian/{preinst,postinst}: update /bin/sh link if it pointed to /bin/ksh.
++  * Update debian/menu.
++  * Added NEWS.Debian.
++
++ -- Robert Luberda <robert@debian.org>  Sun, 10 Apr 2005 17:11:04 +0200
++
++pdksh (5.2.14-17) unstable; urgency=low
++
++  * Fix job control bug in non-interactive scripts (closes: #296446)
++    Many thanks to Paul Stroud <pstroud@gmail.com> for the patch.
++  * lex.c: Don't expand aliases if there's an opening bracket just after
++    the token. Fixes unreported problem with pdksh reporting syntax error
++    on the init scripts that define function named `stop' (clashing
++    with an built-in alias.)
++
++ -- Robert Luberda <robert@debian.org>  Sun, 27 Feb 2005 18:36:55 +0100
++
++pdksh (5.2.14-16) unstable; urgency=medium
++
++  * emacs.c: Fix segmentation fault bug when ksh used bash history file
++    (closes: #284358).
++
++ -- Robert Luberda <robert@debian.org>  Wed, 29 Dec 2004 00:43:04 +0100
++
++pdksh (5.2.14-15) unstable; urgency=low
++
++  * Fix typo in the ksh man page (closes: #281845).
++    Thanks to A Costa <agcosta@gis.net> for the patch.
++
++ -- Robert Luberda <robert@debian.org>  Fri, 19 Nov 2004 21:43:25 +0100
++
++pdksh (5.2.14-14) unstable; urgency=low
++
++  * siglist.sh: pass `-' to trap call, fixes FTBFS on sparc.
++
++ -- Robert Luberda <robert@debian.org>  Sun, 24 Oct 2004 12:41:25 +0200
++
++pdksh (5.2.14-13) unstable; urgency=low
++
++  * c_sh.c: Apply patch from the posh package to make `eval false || true'
++    not exit with -e (closes: #269067). 
++  * Add debian/watch file.
++
++ -- Robert Luberda <robert@debian.org>  Sun, 17 Oct 2004 14:48:20 +0200
++
++pdksh (5.2.14-12) unstable; urgency=low
++
++  * Wrote function eaccess (used to be a macro defined as `access'),
++    which swaps real uid and gid with the effective ones, calls access,
++    and reverts the uid/gid. This fixes the test builtin command not
++    working properly when shell is privileged (closes: #245213).
++
++ -- Robert Luberda <robert@debian.org>  Fri, 30 Apr 2004 00:22:42 +0200
++
++pdksh (5.2.14-11) unstable; urgency=low
++
++  * Compile with _FILE_OFFSET_BITS=64 to support files larger than 2GB
++    (closes: #237038).
++
++ -- Robert Luberda <robert@debian.org>  Thu, 25 Mar 2004 01:11:05 +0100
++
++pdksh (5.2.14-10) unstable; urgency=low
++
++  * More patches from OpenBSD:
++    + vi.c: Buffers are not strings so use memcpy(), not strlcpy() to copy
++      them. Also add some further bounds checks in the name of paranoia.
++    + exec.c: Unbreak parameter assignment when calling bourne style
++      functions.
++    + exec.c: For the >& and <& operators, add a check for "dup from" ==
++      "dup to" and just return success if they are the same.  Fixes the
++      "ls 2>&2" problem.
++    + eval.c, exec.c, io.c, jobs.c: If "from fd" == "to fd" don't call
++      dup2() or close "from fd".
++
++ -- Robert Luberda <robert@debian.org>  Mon, 19 Jan 2004 21:35:40 +0100
++
++pdksh (5.2.14-9) unstable; urgency=low
++
++  * More patches from OpenBSD:
++    + c_test.c: The special case code for "test -x" over NFS was
++      incorrect.  The right thing to do is to try access(2) first
++      (since that occurs on the NFS server side) and only check for the
++      absence of an execute bit when access(2) succeeds.
++    + edit.c: in word location, fix forward scanning so it correctly
++      account for any escaped char and not only spaces.  for "foo
++      (bar.a)" and "foo (bar a)", cd foo\ \(bar.<tab> will correctly
++      expand to foo\ \(bar.a\).
++    + alloc.c: Don't allow alloc() and aresize() to fail.  Their return 
++      value was only checked in two place (both in conjunction with 
++      str_save).  Upon malloc/realloc failure we call internal_errorf()
++      which pops throws and error and pops back to the last good state.	
++  * Standards-Version: 3.6.1 (no changes).
++
++ -- Robert Luberda <robert@debian.org>  Tue, 14 Oct 2003 21:10:23 +0200
++
++pdksh (5.2.14-8) unstable; urgency=low
++
++  * Don't do tilde expansion after `=' sign in non-assignments.
++    Patch stolen from the posh package (closes: #187839).
++  * Fix typo in man page (closes: #188335).
++  * Handle DEB_BUILD_OPTIONS=noopt instead of debug.
++  * Standards-Version: 3.5.9.
++  * Refer to common-licenses/GPL in the copyright file (lintian).
++  * Fix typo in package description.
++
++ -- Robert Luberda <robert@debian.org>  Wed, 23 Apr 2003 22:20:52 +0200
++
++pdksh (5.2.14-7) unstable; urgency=low
++
++  * Merge many patches from OpenBSD:
++    + Introduce FSH flag, which is set when the shell is called as `sh'.
++    + alloc.c: Kill hand-made memory allocation code, that is definitely
++      buggy. Replace with simple wrapper around malloc, at least this works,
++      and it's easier to debug anyways.
++    + tree.c: Fix three off-by-one errors.
++    + c_sh.c: don't set close-on-exec flag on file descriptors in FSH mode
++      (closes: #154540). Documented the change in ksh(1).
++    + history.c: Compare the return from mmap with MAP_FAILED, do not cast it
++      to int and compare with -1.
++    + main.c: set edit mode to emacs by default, may be overridden by the
++      environment or the user.  Also, we want tab completion in vi by default.
++    + misc.c: use strtol() in getn().
++    + emacs.c:
++       - bind TAB (^I) to complete-list by default
++       - complete-list first completes; if that does not work, it lists
++       - fix a memleak in do_complete()
++    + edit.c:
++       - completion now works after '=' (dd), and ':' (ssh) and ` (backtick)
++       - add '#' to the list of escaped characters during vi/emacs filename
++         completion
++
++  * exec.c: Found and fixed yet another problem with `set -e' scripts
++    (see a changelog entry for 5.2.14-3), which caused `dpkg-buildpackage -B'
++    to fail on systems where /bin/sh is ksh.
++
++  * c_sh.c: Make `set' command return 0 always, not only in the POSIX mode.
++    According to Jeff Sheinberg <jeffsh@localnet.com>, this new behaviour
++    is more compatible with SUSv2 standard and other shells (esp. ksh93)
++    (closes: #118476). Documented the change in ksh(1) man page.
++
++  * Fixed -Wall warnings.
++  * ksh.Man: fixed some typos in the manpage, patch based on NetBSD.
++  * tests/th: corrected path to perl.
++  * debian/copyright: include copyright for alloc.c.
++  * debian/rules: Switch to debhelper v4.
++  * Removed emacs settings from the bottom of this file.
++
++ -- Robert Luberda <robert@debian.org>  Wed, 28 Aug 2002 23:40:00 +0200
++
++pdksh (5.2.14-6) unstable; urgency=low
++
++  * Corrected spelling in package description (closes: #125223).
++
++ -- Robert Luberda <robert@debian.org>  Sat, 22 Dec 2001 21:53:51 +0100
++
++pdksh (5.2.14-5) unstable; urgency=low
++
++  * Apply three patches from PLD distribution (pdksh-5.2.14-23.src.rpm)
++     + pdksh-awful-free-bug.patch, fixes segfault bug (closes: #95229)
++     + pdksh-eval-segv.patch, fixes one more segfault bug
++     + pdksh-rlimit_locks.patch, adds flocks support to ulimit.
++
++  * Standards-Version: 3.5.6 (no changes).
++  * Change pdksh package priority to "optional".
++  * Minor fixes in ksh(1) manpage.
++
++ -- Robert Luberda <robert@debian.org>  Wed,  3 Oct 2001 23:10:46 +0200
++
++pdksh (5.2.14-4) unstable; urgency=low
++
++  * Do not install /usr/bin/ksh -> /bin/ksh symlink on Hurd.
++  * debian/rules: update to the newset debhelper.
++  * Compiled with -Wall, fixed some gcc warnings.
++  * Standards-Version: 3.5.5.
++
++ -- Robert Luberda <robert@debian.org>  Thu, 14 Jun 2001 22:49:51 +0200
++
++pdksh (5.2.14-3) unstable; urgency=low
++
++  * Applied patch from upstream author which fixed problem with 'set -e'
++    (closes: #71256).
++  * Applied some patches from OpenBSD:
++     - use mkstemp to create temporary files	
++     - kill -s now works
++     - escapes special characters in tab completitions
++  * Standards-Version: 3.5.0 (no changes).
++  * Included BUG-REPORTS and PROJECTS files in binary package.
++
++ -- Robert Luberda <robert@debian.org>  Mon, 12 Feb 2001 07:06:08 +0100
++
++pdksh (5.2.14-2) unstable; urgency=low
++
++  * New maintainer (closes: #82488).
++  * Applied patch from upstream ftp site to fix problem with readonly
++    variables (closes: #57727).
++  * Repackaged with debhelper v3.
++  * Updated standards version to 3.2.1 (FHS, Build-Depends).
++  * Corrected & updated the copyright file (closes: #64195).
++  * Moved ksh to /bin and made symlink from /usr/bin (closes: #70531, #74600).
++  * Added examples directory with ksh.kshrc and profile.
++
++ -- Robert Luberda <robert@debian.org>  Wed, 17 Jan 2001 22:38:04 +0100
++
++pdksh (5.2.14-1) unstable; urgency=low
++
++  * New upstream version (#44790)
++
++ -- Mark Baker <mbaker@iee.org>  Fri, 24 Sep 1999 22:25:17 +0100
++
++pdksh (5.2.13-5) unstable; urgency=low
++
++  * trap.c: Applied patch from ashcroft@mround.bt.co.uk to fix SEGV when 
++    starting on sparc, alpha and powerpc (#30536,#33988,#35473,#40740)
++
++ -- Mark Baker <mbaker@iee.org>  Sun,  4 Jul 1999 23:14:19 +0100
++
++pdksh (5.2.13-4) unstable; urgency=low
++
++  * Use simple history instead of complex history. One person requested this 
++  change, and no-one spoke out against it, so I'm doing it. Basically, complex
++  history is newer and will be better, but is not fully implemented yet.
++  (#23929)
++
++ -- Mark Baker <mbaker@iee.org>  Thu,  3 Dec 1998 21:45:03 +0000
++
++pdksh (5.2.13-3) unstable; urgency=low
++
++  * Rewritten copyright file
++
++ -- Mark Baker <mbaker@iee.org>  Sat, 07 Mar 1997 22:25:37 +0000
++
++pdksh (5.2.13-2) unstable; urgency=low
++
++  * Updated standards-version to 2.4.0.0 (no changes)
++
++ -- Mark Baker <mbaker@iee.org>  Sun, 16 Nov 1997 17:37:57 +0000
++
++pdksh (5.2.13-1) unstable; urgency=low
++
++  * New upstream version (fixes #5510)
++
++ -- Mark Baker <mbaker@iee.org>  Sun, 16 Nov 1997 17:37:57 +0000
++
++pdksh (5.2.12-4) unstable; urgency=low
++
++  * Er, this time it should really be a new maintainer. I forgot to change 
++  the control file last time :)
++
++ -- Mark Baker <mbaker@iee.org>  Sun, 13 Jul 1997 20:21:41 +0100
++
++pdksh (5.2.12-3) unstable; urgency=low
++
++  * New maintainer
++  * Compiled for libc6
++
++ -- Mark Baker <mbaker@iee.org>  Wed, 18 Jun 1997 13:22:34 +0100
++
++pdksh (5.2.12-2) unstable; urgency=low
++
++  * Rebuilt package to fix shlibs problem (no changes to source package)
++    (Fixes Bugs #5240, #5241, #5242)
++ -- Larry Daffner <vizzie@airmail.net>  Sun, 3 Nov 1996 19:26:14 -0600
++
++pdksh (5.2.12-1) unstable; urgency=low
++
++  * New upstream version
++  * Fixes bug#4881
++
++ -- Larry Daffner <vizzie@airmail.net>  Tue, 29 Oct 1996 23:44:02 -0600
++
++pdksh (5.2.11-1) unstable; urgency=low
++
++  * New upstream version (5.2.10 was not packaged for Debian)
++
++ -- Larry Daffner <vizzie@airmail.net>  Sun, 20 Oct 1996 23:31:13 -0500
++
++pdksh (5.2.9-1) unstable; urgency=low
++
++  * New maintainer
++  * New upstream version
++  * Changed to new source format
++
++ -- Larry Daffner <vizzie@airmail.net>  Wed, 2 Oct 1996 23:52:34 -0500
+--- pdksh-5.2.14.orig/debian/compat
++++ pdksh-5.2.14/debian/compat
+@@ -0,0 +1 @@
++4
+--- pdksh-5.2.14.orig/debian/control
++++ pdksh-5.2.14/debian/control
+@@ -0,0 +1,20 @@
++Source: pdksh
++Section: shells
++Priority: optional
++Maintainer: Robert Luberda <robert@debian.org>
++Build-Depends: debhelper (>= 4.1.70)
++Standards-Version: 3.6.2
++
++Package: pdksh
++Architecture: any
++Depends: ${shlibs:Depends}, debianutils (>= 2.15)
++Description: A public domain version of the Korn shell
++ PD-ksh is a mostly complete AT&T ksh look-alike (see NOTES file for a list
++ of things not supported).  Work is currently underway to make it fully
++ compatible with both POSIX and AT&T ksh (when the two don't conflict).
++ .
++ Since pdksh is free and compiles and runs on most common Unix systems,
++ it is very useful in creating a consistent user interface across multiple
++ machines.  For example, in the CS department of MUN, pdksh is installed
++ on a variety of machines including Suns, HPs, DecStations, PCs running
++ Linux, etc., and is the login shell of ~4500 users.
+--- pdksh-5.2.14.orig/debian/copyright
++++ pdksh-5.2.14/debian/copyright
+@@ -0,0 +1,82 @@
++This is the GNU/Linux prepackaged version of pdksh, a public domain clone
++of the AT&T Korn shell..
++
++This Debian package is currently maintained by Robert Luberda <robert@debian.org>
++It was put together from sources obtained from:
++
++        ftp://ftp.cs.mun.ca/pub/pdksh/pdksh-5.2.14.tar.gz
++
++Former maintainers were Mark Baker, Larry Daffner, Martin Schulze 
++and Ian Murdock.
++
++PDksh itself is currently being maintained by Michael Rendell
++(michael@cs.mun.ca), who took over from Simon J. Gerraty
++(sjg@zen.void.oz.au) at the later's suggestion.
++
++
++pdksh is provided AS IS, with NO WARRANTY, either expressed or implied.
++
++The vast majority of the code that makes pdksh is in the public domain.
++The exceptions are:
++
++        sigact.c and sigact.h
++                These are covered with copyright by Simon J. Gerraty;
++                the copyright notice for these files is as follows:
++                    This is free software.  It comes with NO WARRANTY.
++                    Permission to use, modify and distribute this source code
++                    is granted subject to the following conditions.
++                    1/ that that the above copyright notice and this notice 
++                    are preserved in all copies and that due credit be given 
++                    to the author.  
++                    2/ that any changes to this code are clearly commented 
++                    as such so that the author does get blamed for bugs 
++                    other than his own.
++
++        aclocal.m4
++                This is covered by the GNU General Public Licence (GPL)
++                as it contains modified versions of macros that come with
++                GNU autoconf.  As this is used solely for configuration,
++                the pdksh code itself is not covered by the GPL.
++                The following is taken from autoconf 2.x documentation
++                (info autoconf questions distributing) concerning use
++                of autoconf in programs:
++
++                   There are no restrictions on how the configuration
++                   scripts that Autoconf produces may be distributed
++                   or used.  In Autoconf version 1, they were covered by
++                   the GNU General Public License.  We still encourage
++                   software authors to distribute their work under terms
++                   like those of the GPL, but doing so is not required
++                   to use Autoconf.
++                
++                On Debian systems the full text of the GPL license can
++                be found in the /usr/share/common-licenses file.
++
++
++
++File alloc.c, which was taken from the OpenBSD project, is copyrighted
++as follows:
++
++        Copyright (c) 2002 Marc Espie.
++       
++        Redistribution and use in source and binary forms, with or without
++        modification, are permitted provided that the following conditions
++        are met:
++        1. Redistributions of source code must retain the above copyright
++           notice, this list of conditions and the following disclaimer.
++        2. Redistributions in binary form must reproduce the above copyright
++           notice, this list of conditions and the following disclaimer in the
++           documentation and/or other materials provided with the distribution.
++       
++        THIS SOFTWARE IS PROVIDED BY THE OPENBSD PROJECT AND CONTRIBUTORS
++        ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++        LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
++        A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OPENBSD
++        PROJECT OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
++        SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
++        LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
++        DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
++        THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++        (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
++        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++
+--- pdksh-5.2.14.orig/debian/docs
++++ pdksh-5.2.14/debian/docs
+@@ -0,0 +1,5 @@
++NEWS
++NOTES
++BUG-REPORTS
++PROJECTS
++debian/_tmp_/changelog.0
+--- pdksh-5.2.14.orig/debian/examples
++++ pdksh-5.2.14/debian/examples
+@@ -0,0 +1,2 @@
++etc/profile
++etc/ksh.kshrc
+--- pdksh-5.2.14.orig/debian/menu
++++ pdksh-5.2.14/debian/menu
+@@ -0,0 +1,2 @@
++?package(pdksh):needs="text" section="Apps/Shells" \
++		title="PD ksh" command="/bin/pdksh -l"
+--- pdksh-5.2.14.orig/debian/postinst
++++ pdksh-5.2.14/debian/postinst
+@@ -0,0 +1,27 @@
++#!/bin/sh
++# vim:ts=4:et
++# $Id$
++
++set -e
++
++if [ "$1" = "configure" ] ; then
++    # Second part of updating /bin/sh link if it pointed to /bin/ksh
++    if dpkg --compare-versions "$2" lt-nl "5.2.14-18"  && \
++       [ -f /bin/ksh.saved.by.pdksh.preinst ] ; then
++        ln -svf pdksh  /bin/sh
++        rm -f /bin/ksh.saved.by.pdksh.preinst
++    fi
++    
++    if ! update-alternatives --display ksh | grep -q '^/bin/pdksh'; then
++        update-alternatives --install /bin/ksh ksh /bin/pdksh 10 \
++                            --slave /usr/bin/ksh usr.bin.ksh /bin/pdksh \
++                            --slave /usr/share/man/man1/ksh.1.gz ksh.1.gz \
++                                    /usr/share/man/man1/pdksh.1.gz
++    fi
++
++    add-shell /bin/pdksh
++fi
++
++#DEBHELPER#
++
++exit 0
+--- pdksh-5.2.14.orig/debian/preinst
++++ pdksh-5.2.14/debian/preinst
+@@ -0,0 +1,16 @@
++#!/bin/sh
++# vim:ts=4:et
++# $Id$
++
++# Be nice to users and update /bin/sh link in case it pointed to /bin/ksh
++# Note, I use cmp, because I'm not sure if woody's readlink accepts
++# the -f option and I'm too lazy to check it.
++if [ "$1" = "upgrade" ] && dpkg --compare-versions "$2" lt-nl "5.2.14-18" && \
++    [ -L /bin/sh ] && cmp -s "/bin/sh"  "/bin/ksh"  ; then
++    ln /bin/ksh /bin/ksh.saved.by.pdksh.preinst
++    ln -sf ksh.saved.by.pdksh.preinst  /bin/sh
++fi
++
++#DEBHELPER#
++
++exit 0
+--- pdksh-5.2.14.orig/debian/prerm
++++ pdksh-5.2.14/debian/prerm
+@@ -0,0 +1,16 @@
++#!/bin/sh
++# vim:ts=4:et
++# $Id$
++
++set -e
++
++if [ "$1" != "upgrade" ] ; then
++    update-alternatives --remove ksh /bin/pdksh
++    remove-shell /bin/pdksh
++fi    
++
++
++#DEBHELPER#
++
++exit 0
++
+--- pdksh-5.2.14.orig/debian/rules
++++ pdksh-5.2.14/debian/rules
+@@ -0,0 +1,106 @@
++#!/usr/bin/make -f
++# Sample debian/rules that uses debhelper.
++# This file is public domain software, originally written by Joey Hess. 
++
++# Uncomment this to turn on verbose mode.
++#export DH_VERBOSE=1
++
++ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
++                     CFLAGS_ADD = -O0
++else
++                     CFLAGS_ADD = -O2
++endif
++ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
++                     INSTALL_ADD = -s
++endif
++
++CFLAGS="-Wall -g -DDEBIAN -D_FILE_OFFSET_BITS=64 $(CFLAGS_ADD)"
++
++ifeq (,$(DEB_BUILD_ARCH))
++	DEB_BUILD_ARCH=$(shell dpkg-architecture -qDEB_BUILD_ARCH)
++endif
++
++build: build-stamp
++build-stamp:
++	dh_testdir
++
++	./configure --prefix=/ \
++		    --enable-history=simple \
++		    --program-prefix="pd"
++
++
++	$(MAKE) CFLAGS=$(CFLAGS)
++	touch build-stamp
++
++clean:
++	dh_testdir
++	dh_testroot
++	rm -f build-stamp
++
++	# Add here commands to clean up after the build process.
++	if [ -f Makefile ]; then \
++	  make realclean; \
++	else \
++	  make -f Makefile.in realclean; \
++	fi
++
++	rm -rf debian/_tmp_
++
++	dh_clean
++
++install: build
++	dh_testdir
++	dh_testroot
++	dh_clean -k
++	dh_installdirs
++
++	# Add here commands to install the package into debian/<packagename>
++	$(MAKE) CFLAGS=$(CFLAGS) \
++	        LDFLAGS="" INSTALL_PROGRAM='install -c $(INSTALL_ADD)' \
++		prefix=$(CURDIR)/debian/$(shell dh_listpackages)/ \
++		mandir='$$(prefix)/usr/share/man/man1' install
++
++	mkdir -p -m755 debian/_tmp_
++	cp -a ChangeLog.0 debian/_tmp_/changelog.0
++
++# Build architecture-independent files here.
++binary-indep: build install
++# We have nothing to do by default.
++
++# Build architecture-dependent files here.
++binary-arch: build install
++	dh_testdir
++	dh_testroot
++	dh_installchangelogs ChangeLog
++	dh_installdocs
++	dh_installexamples
++#	dh_install
++	dh_installmenu
++#	dh_installdebconf	
++#	dh_installlogrotate
++#	dh_installemacsen
++#	dh_installpam
++#	dh_installmime
++#	dh_installinit
++#	dh_installcron
++#	dh_installinfo
++#	dh_undocumented
++#	dh_installman
++
++# ifneq (hurd,$(patsubst hurd-%,hurd,$(DEB_BUILD_ARCH)))
++#	dh_link  bin/ksh usr/bin/ksh
++#endif
++
++	dh_strip
++	dh_compress
++	dh_fixperms
++#	dh_makeshlibs
++	dh_installdeb
++#	dh_perl
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary: binary-indep binary-arch
++.PHONY: build clean binary-indep binary-arch binary install
+--- pdksh-5.2.14.orig/debian/watch
++++ pdksh-5.2.14/debian/watch
+@@ -0,0 +1,5 @@
++version=2 
++ftp://ftp.cs.mun.ca/pub/pdksh/pdksh-?_?([\w+\d+\.]+|\d+)(\.tar|\.tgz)(\.gz|\.bz2|) debian uupdate
++
++
++ 
+--- pdksh-5.2.14.orig/tests/th
++++ pdksh-5.2.14/tests/th
+@@ -1,4 +1,4 @@
+-#!/usr/local/bin/perl
++#!/usr/bin/perl
+ 
+ #
+ # Test harness for pdksh tests.
+@@ -131,7 +131,7 @@
+ $os = defined $^O ? $^O : 'unknown';
+ 
+ require 'signal.ph' unless $os eq 'os2';
+-require 'errno.ph' unless $os eq 'os2';
++# require 'errno.ph' unless $os eq 'os2';
+ require 'getopts.pl';
+ 
+ ($prog = $0) =~ s#.*/##;
