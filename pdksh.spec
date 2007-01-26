@@ -121,6 +121,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 
 %build
 CFLAGS="%{rpmcflags} -D_FILE_OFFSET_BITS=64 -DDEBIAN=1"
+LDFLAGS="%{rpmcflags} %{rpmldflags}"
 %configure2_13 \
 	--enable-emacs \
 	--enable-vi
