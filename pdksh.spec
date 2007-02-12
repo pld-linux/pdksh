@@ -3,14 +3,14 @@
 %bcond_without	static	# don't build static version of (pd)ksh
 #
 Summary:	Public Domain Korn Shell
-Summary(de):	Korn-Shell aus dem Public Domain
-Summary(es):	Shell Korn de dominio pЗblico
-Summary(fr):	Korn Shell du domaine public
-Summary(pl):	PowЁoka Korna z Public Domain
-Summary(pt_BR):	Shell Korn de domМnio pЗblico
-Summary(ru):	Свободная реализация командного процессора Korn shell (ksh)
-Summary(tr):	Serbest Korn kabuПu
-Summary(uk):	В╕лбна реал╕зац╕я командного процесора Korn shell (ksh)
+Summary(de.UTF-8):   Korn-Shell aus dem Public Domain
+Summary(es.UTF-8):   Shell Korn de dominio pц╨blico
+Summary(fr.UTF-8):   Korn Shell du domaine public
+Summary(pl.UTF-8):   Powе┌oka Korna z Public Domain
+Summary(pt_BR.UTF-8):   Shell Korn de domц╜nio pц╨blico
+Summary(ru.UTF-8):   п║п╡п╬п╠п╬п╢п╫п╟я▐ я─п╣п╟п╩п╦п╥п╟я├п╦я▐ п╨п╬п╪п╟п╫п╢п╫п╬пЁп╬ п©я─п╬я├п╣я│я│п╬я─п╟ Korn shell (ksh)
+Summary(tr.UTF-8):   Serbest Korn kabuд÷u
+Summary(uk.UTF-8):   п▓я√п╩п╠п╫п╟ я─п╣п╟п╩я√п╥п╟я├я√я▐ п╨п╬п╪п╟п╫п╢п╫п╬пЁп╬ п©я─п╬я├п╣я│п╬я─п╟ Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
 Release:	33
@@ -47,50 +47,50 @@ pdksh, a remimplementation of ksh, is a command interpreter that is
 intended for both interactive and shell script use. Its command
 language is a superset of the sh(1) shell language.
 
-%description -l de
-pdksh, eine Neuimplementierung von ksh, ist ein Befehlsinterpreter fЭr
+%description -l de.UTF-8
+pdksh, eine Neuimplementierung von ksh, ist ein Befehlsinterpreter fц╪r
 interaktiven und Shell-Script-Betrieb. Die Befehlssprache ist eine
-эbermenge der Shell-Sprache sh(1).
+ц°bermenge der Shell-Sprache sh(1).
 
-%description -l es
-Pdksh, una ampliaciСn mАs de ksh, es un interpretador de comandos
+%description -l es.UTF-8
+Pdksh, una ampliaciцЁn mц║s de ksh, es un interpretador de comandos
 destinado tanto al uso interactivo como en shell scripts. Su lenguaje
 de comandos es un superconjunto del lenguaje sh(1) shell.
 
-%description -l fr
-pdksh, un remplacement de ksh, est un interprИteur de commande qui est
-Ю destinИ Ю la fois Ю l'utilisation interactive et a l'utilisation de
+%description -l fr.UTF-8
+pdksh, un remplacement de ksh, est un interprц╘teur de commande qui est
+ц═ destinц╘ ц═ la fois ц═ l'utilisation interactive et a l'utilisation de
 scripts. Son langage de commande est un ensemble de commande du
 langage shell de sh(1).
 
-%description -l pl
-Pdksh jest implementacj╠ powЁoki ksh. Komendy pdksh s╠ zgodne z
-komendami powЁoki sh(1).
+%description -l pl.UTF-8
+Pdksh jest implementacjд┘ powе┌oki ksh. Komendy pdksh sд┘ zgodne z
+komendami powе┌oki sh(1).
 
-%description -l pt_BR
-Pdksh, uma reimplementaГЦo de ksh, И um interpretador de comandos
+%description -l pt_BR.UTF-8
+Pdksh, uma reimplementaц╖цёo de ksh, ц╘ um interpretador de comandos
 destinado tanto para uso interativo como em shell scripts. Sua
-linguagem de comandos И um superconjunto da linguagem sh(1) shell.
+linguagem de comandos ц╘ um superconjunto da linguagem sh(1) shell.
 
-%description -l ru
-pdksh, повторная реализация ksh, - это командный процессор,
-рассчитанный как на интерактивный режим, так и на использование в
-командных скриптах. Его командный язык представляет собой расширение
-языка sh(1).
+%description -l ru.UTF-8
+pdksh, п©п╬п╡я┌п╬я─п╫п╟я▐ я─п╣п╟п╩п╦п╥п╟я├п╦я▐ ksh, - я█я┌п╬ п╨п╬п╪п╟п╫п╢п╫я▀п╧ п©я─п╬я├п╣я│я│п╬я─,
+я─п╟я│я│я┤п╦я┌п╟п╫п╫я▀п╧ п╨п╟п╨ п╫п╟ п╦п╫я┌п╣я─п╟п╨я┌п╦п╡п╫я▀п╧ я─п╣п╤п╦п╪, я┌п╟п╨ п╦ п╫п╟ п╦я│п©п╬п╩я▄п╥п╬п╡п╟п╫п╦п╣ п╡
+п╨п╬п╪п╟п╫п╢п╫я▀я┘ я│п╨я─п╦п©я┌п╟я┘. п∙пЁп╬ п╨п╬п╪п╟п╫п╢п╫я▀п╧ я▐п╥я▀п╨ п©я─п╣п╢я│я┌п╟п╡п╩я▐п╣я┌ я│п╬п╠п╬п╧ я─п╟я│я┬п╦я─п╣п╫п╦п╣
+я▐п╥я▀п╨п╟ sh(1).
 
-%description -l tr
-pdksh, hem etkileЧimli hem de kabuk programcЩklarЩnЩn kullanЩmЩ iГin
-tasarlanmЩЧ bir komut yorumlayЩcЩsЩdЩr. pdksh'Щn komut dili sh(1)
-kabuk dilinin bir kЭmesidir.
+%description -l tr.UTF-8
+pdksh, hem etkileе÷imli hem de kabuk programcд╠klarд╠nд╠n kullanд╠mд╠ iц╖in
+tasarlanmд╠е÷ bir komut yorumlayд╠cд╠sд╠dд╠r. pdksh'д╠n komut dili sh(1)
+kabuk dilinin bir kц╪mesidir.
 
-%description -l uk
-pdksh, в╕льна реал╕зац╕я ksh, - це командний процесор, розрахований як
-на ╕нтерактивний режим, так ╕ на використання в командних скриптах.
-Його мова команд ╓ розширенням мови sh(1).
+%description -l uk.UTF-8
+pdksh, п╡я√п╩я▄п╫п╟ я─п╣п╟п╩я√п╥п╟я├я√я▐ ksh, - я├п╣ п╨п╬п╪п╟п╫п╢п╫п╦п╧ п©я─п╬я├п╣я│п╬я─, я─п╬п╥я─п╟я┘п╬п╡п╟п╫п╦п╧ я▐п╨
+п╫п╟ я√п╫я┌п╣я─п╟п╨я┌п╦п╡п╫п╦п╧ я─п╣п╤п╦п╪, я┌п╟п╨ я√ п╫п╟ п╡п╦п╨п╬я─п╦я│я┌п╟п╫п╫я▐ п╡ п╨п╬п╪п╟п╫п╢п╫п╦я┘ я│п╨я─п╦п©я┌п╟я┘.
+п≥п╬пЁп╬ п╪п╬п╡п╟ п╨п╬п╪п╟п╫п╢ я■ я─п╬п╥я┬п╦я─п╣п╫п╫я▐п╪ п╪п╬п╡п╦ sh(1).
 
 %package static
 Summary:	Statically linked Public Domain Korn Shell
-Summary(pl):	Skonsolidowana statycznie powЁoka Korna
+Summary(pl.UTF-8):   Skonsolidowana statycznie powе┌oka Korna
 Group:		Applications/Shells
 Requires(preun):	fileutils
 Requires:	%{name}
@@ -102,9 +102,9 @@ language is a superset of the sh(1) shell language.
 
 This packege contains statically linked version of pdksh.
 
-%description -l pl static
-Pdksh jest implementacj╠ powЁoki ksh. Komendy pdksh s╠ zgodne z
-komendami powЁoki sh(1).
+%description -l pl.UTF-8 static
+Pdksh jest implementacjд┘ powе┌oki ksh. Komendy pdksh sд┘ zgodne z
+komendami powе┌oki sh(1).
 
 W tym pakiecie jest pdksh skonsolidowany statycznie.
 
