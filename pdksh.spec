@@ -3,14 +3,14 @@
 %bcond_without	static	# don't build static version of (pd)ksh
 #
 Summary:	Public Domain Korn Shell
-Summary(de.UTF-8):   Korn-Shell aus dem Public Domain
-Summary(es.UTF-8):   Shell Korn de dominio público
-Summary(fr.UTF-8):   Korn Shell du domaine public
-Summary(pl.UTF-8):   Powłoka Korna z Public Domain
-Summary(pt_BR.UTF-8):   Shell Korn de domínio público
-Summary(ru.UTF-8):   Свободная реализация командного процессора Korn shell (ksh)
-Summary(tr.UTF-8):   Serbest Korn kabuğu
-Summary(uk.UTF-8):   Вілбна реалізація командного процесора Korn shell (ksh)
+Summary(de.UTF-8):	Korn-Shell aus dem Public Domain
+Summary(es.UTF-8):	Shell Korn de dominio público
+Summary(fr.UTF-8):	Korn Shell du domaine public
+Summary(pl.UTF-8):	Powłoka Korna z Public Domain
+Summary(pt_BR.UTF-8):	Shell Korn de domínio público
+Summary(ru.UTF-8):	Свободная реализация командного процессора Korn shell (ksh)
+Summary(tr.UTF-8):	Serbest Korn kabuğu
+Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
 Release:	44
@@ -88,7 +88,7 @@ pdksh, вільна реалізація ksh, - це командний проц
 
 %package static
 Summary:	Statically linked Public Domain Korn Shell
-Summary(pl.UTF-8):   Skonsolidowana statycznie powłoka Korna
+Summary(pl.UTF-8):	Skonsolidowana statycznie powłoka Korna
 Group:		Applications/Shells
 Requires(preun):	sed >= 4.1.5-1.2
 # requires base for /etc/kshrc?
