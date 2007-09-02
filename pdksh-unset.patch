@@ -1,0 +1,23 @@
+--- c_sh.c~	2007-09-02 14:36:13.000000000 +0200
++++ c_sh.c	2007-09-02 14:44:13.237043334 +0200
+@@ -688,8 +688,6 @@
+ 		if (unset_var) {	/* unset variable */
+ 			struct tbl *vp = global(id);
+ 
+-			if (!(vp->flag & ISSET))
+-			    ret = 1;
+ 			if ((vp->flag&RDONLY)) {
+ 				bi_errorf("%s is read only", vp->name);
+ 				return 1;
+--- c_sh.c~	2007-09-02 14:45:15.000000000 +0200
++++ c_sh.c	2007-09-02 14:49:50.317014862 +0200
+@@ -694,8 +694,7 @@
+ 			}
+ 			unset(vp, strchr(id, '[') ? 1 : 0);
+ 		} else {		/* unset function */
+-			if (define(id, (struct op *) NULL))
+-				ret = 1;
++			define(id, (struct op *) NULL);
+ 		}
+ 	return ret;
+ }
