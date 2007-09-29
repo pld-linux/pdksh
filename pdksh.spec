@@ -13,7 +13,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	46
+Release:	47
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -154,22 +154,18 @@ install	%{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-if [ ! -f /etc/shells ]; then
-	umask 022
-	echo "/bin/ksh" > /etc/shells
-	echo "/bin/sh" >> /etc/shells
-else
-	while read SHNAME; do
-		if [ "$SHNAME" = "/bin/ksh" ]; then
-			HAS_KSH=1
-		elif [ "$SHNAME" = "/bin/sh" ]; then
-			HAS_SH=1
-		fi
-	done < /etc/shells
-	[ -n "$HAS_KSH" ] || echo "/bin/ksh" >> /etc/shells
-	[ -n "$HAS_SH" ] || echo "/bin/sh" >> /etc/shells
-fi
+%post -p <lua>
+t = {}
+f = io.open("/etc/shells", "r")
+if f then
+   for l in f:lines() do t[l]=l; end
+   f:close()
+end
+for _, s in ipairs({"/bin/ksh", "/bin/sh"}) do
+   if not t[s] then
+      f = io.open("/etc/shells", "a"); f:write(s.."\n"); f:close()
+   end
+end
 
 %preun
 if [ "$1" = "0" ]; then
@@ -179,18 +175,16 @@ if [ "$1" = "0" ]; then
 	' /etc/shells
 fi
 
-%post static
-if [ ! -f /etc/shells ]; then
-	umask 022
-	echo "/bin/ksh.static" > /etc/shells
-else
-	while read SHNAME; do
-	if [ "$SHNAME" = "/bin/ksh.static" ]; then
-		HAS_KSH_STATIC=1
-	fi
-	done < /etc/shells
-	[ -n "$HAS_KSH_STATIC" ] || echo "/bin/ksh.static" >> /etc/shells
-fi
+%post static -p <lua>
+t = {}
+f = io.open("/etc/shells", "r")
+if f then
+   for l in f:lines() do t[l]=l; end
+   f:close()
+end
+if not t["/bin/ksh.static"] then
+   f = io.open("/etc/shells", "a"); f:write("/bin/ksh.static\n"); f:close()
+end
 
 %preun static
 if [ "$1" = "0" ]; then
