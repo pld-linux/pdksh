@@ -13,7 +13,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	47
+Release:	48
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -36,7 +36,6 @@ URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 # is needed for /etc directory existence
 Requires(pre):	FHS
-Requires(preun):	sed >= 4.1.5-1.2
 Requires:	setup >= 2.4.6-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -93,7 +92,6 @@ pdksh, вільна реалізація ksh, - це командний проц
 Summary:	Statically linked Public Domain Korn Shell
 Summary(pl.UTF-8):	Skonsolidowana statycznie powłoka Korna
 Group:		Applications/Shells
-Requires(preun):	sed >= 4.1.5-1.2
 # requires base for /etc/kshrc?
 Requires:	%{name} = %{version}-%{release}
 
@@ -167,13 +165,20 @@ for _, s in ipairs({"/bin/ksh", "/bin/sh"}) do
    end
 end
 
-%preun
-if [ "$1" = "0" ]; then
-	%{__sed} -i -e '
-		/^\/bin\/ksh$/d
-		/^\/bin\/sh$/d
-	' /etc/shells
-fi
+%preun -p <lua>
+if arg[2] == "0" then
+   f = io.open("/etc/shells", "r")
+   if f then
+      s=""
+      for l in f:lines() do
+        if not string.match(l,"^/bin/k?sh$") then
+           s=s..l.."\n"
+        end
+      end
+      f:close()
+      io.open("/etc/shells", "w"):write(s)
+   end
+end
 
 %post static -p <lua>
 t = {}
@@ -186,12 +191,20 @@ if not t["/bin/ksh.static"] then
    f = io.open("/etc/shells", "a"); f:write("/bin/ksh.static\n"); f:close()
 end
 
-%preun static
-if [ "$1" = "0" ]; then
-	%{__sed} -i -e '
-		/^\/bin\/ksh\.static$/d
-	' /etc/shells
-fi
+%preun static -p <lua>
+if arg[1] == "2" then
+   f = io.open("/etc/shells", "r")
+   if f then
+      s=""
+      for l in f:lines() do
+        if not string.match(l,"^/bin/ksh\.static$") then
+           s=s..l.."\n"
+        end
+      end
+      f:close()
+      io.open("/etc/shells", "w"):write(s)
+   end
+end
 
 %files
 %defattr(644,root,root,755)
