@@ -156,54 +156,54 @@ rm -rf $RPM_BUILD_ROOT
 t = {}
 f = io.open("/etc/shells", "r")
 if f then
-   for l in f:lines() do t[l]=l; end
-   f:close()
+	for l in f:lines() do t[l]=l; end
+	f:close()
 end
 for _, s in ipairs({"/bin/ksh", "/bin/sh"}) do
-   if not t[s] then
-      f = io.open("/etc/shells", "a"); f:write(s.."\n"); f:close()
-   end
+	if not t[s] then
+		f = io.open("/etc/shells", "a"); f:write(s.."\n"); f:close()
+	end
 end
 
 %preun -p <lua>
 if arg[2] == "0" then
-   f = io.open("/etc/shells", "r")
-   if f then
-      s=""
-      for l in f:lines() do
-        if not string.match(l,"^/bin/k?sh$") then
-           s=s..l.."\n"
-        end
-      end
-      f:close()
-      io.open("/etc/shells", "w"):write(s)
-   end
+	f = io.open("/etc/shells", "r")
+	if f then
+		s=""
+		for l in f:lines() do
+			if not string.match(l,"^/bin/k?sh$") then
+				s=s..l.."\n"
+			end
+		end
+		f:close()
+		io.open("/etc/shells", "w"):write(s)
+	end
 end
 
 %post static -p <lua>
 t = {}
 f = io.open("/etc/shells", "r")
 if f then
-   for l in f:lines() do t[l]=l; end
-   f:close()
+	for l in f:lines() do t[l]=l; end
+	f:close()
 end
 if not t["/bin/ksh.static"] then
-   f = io.open("/etc/shells", "a"); f:write("/bin/ksh.static\n"); f:close()
+	f = io.open("/etc/shells", "a"); f:write("/bin/ksh.static\n"); f:close()
 end
 
 %preun static -p <lua>
 if arg[1] == "2" then
-   f = io.open("/etc/shells", "r")
-   if f then
-      s=""
-      for l in f:lines() do
-        if not string.match(l,"^/bin/ksh\.static$") then
-           s=s..l.."\n"
-        end
-      end
-      f:close()
-      io.open("/etc/shells", "w"):write(s)
-   end
+	f = io.open("/etc/shells", "r")
+	if f then
+		s=""
+		for l in f:lines() do
+			if not string.match(l,"^/bin/ksh\.static$") then
+				s=s..l.."\n"
+			end
+		end
+		f:close()
+		io.open("/etc/shells", "w"):write(s)
+	end
 end
 
 %files
