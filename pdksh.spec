@@ -13,7 +13,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	48
+Release:	49
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -34,6 +34,7 @@ Patch15:	%{name}-ulimit-vmem.patch
 Patch16:	%{name}-unset.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
+BuildRequires:	rpmbuild(macros) >= 1.429
 # is needed for /etc directory existence
 Requires(pre):	FHS
 Requires:	setup >= 2.4.6-2
@@ -147,64 +148,16 @@ echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 
 ln -sf ksh $RPM_BUILD_ROOT/bin/sh
 
-install	%{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post -p <lua>
-t = {}
-f = io.open("/etc/shells", "r")
-if f then
-	for l in f:lines() do t[l]=l; end
-	f:close()
-end
-for _, s in ipairs({"/bin/ksh", "/bin/sh"}) do
-	if not t[s] then
-		f = io.open("/etc/shells", "a"); f:write(s.."\n"); f:close()
-	end
-end
+%post	-p %add_etc_shells -p /bin/sh /bin/ksh
+%preun	-p %remove_etc_shells -p /bin/sh /bin/ksh
 
-%preun -p <lua>
-if arg[2] == "0" then
-	f = io.open("/etc/shells", "r")
-	if f then
-		s=""
-		for l in f:lines() do
-			if not string.match(l,"^/bin/k?sh$") then
-				s=s..l.."\n"
-			end
-		end
-		f:close()
-		io.open("/etc/shells", "w"):write(s)
-	end
-end
-
-%post static -p <lua>
-t = {}
-f = io.open("/etc/shells", "r")
-if f then
-	for l in f:lines() do t[l]=l; end
-	f:close()
-end
-if not t["/bin/ksh.static"] then
-	f = io.open("/etc/shells", "a"); f:write("/bin/ksh.static\n"); f:close()
-end
-
-%preun static -p <lua>
-if arg[1] == "2" then
-	f = io.open("/etc/shells", "r")
-	if f then
-		s=""
-		for l in f:lines() do
-			if not string.match(l,"^/bin/ksh\.static$") then
-				s=s..l.."\n"
-			end
-		end
-		f:close()
-		io.open("/etc/shells", "w"):write(s)
-	end
-end
+%post static -p %add_etc_shells -p /bin/ksh.static
+%preun static -p %remove_etc_shells -p /bin/ksh.static
 
 %files
 %defattr(644,root,root,755)
