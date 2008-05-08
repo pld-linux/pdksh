@@ -13,7 +13,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	49
+Release:	50
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -23,15 +23,12 @@ Source2:	%{name}-kshrc
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-debian.patch
 Patch4:		%{name}-history.patch
-Patch5:		%{name}-EDITMODE.patch
 Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
 Patch12:	%{name}-siglist-sort.patch
 Patch13:	%{name}-hex.patch
 Patch14:	%{name}-kshrc_support.patch
-Patch15:	%{name}-ulimit-vmem.patch
-Patch16:	%{name}-unset.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 BuildRequires:	rpmbuild(macros) >= 1.429
@@ -114,13 +111,10 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %{?with_static:%patch0 -p0}
 %patch1 -p1
 %patch4 -p1
-%patch5 -p1
 %patch9 -p1
 %patch11 -p1
 %patch13 -p1
 %patch14 -p1
-%patch15 -p1
-%patch16 -p0
 
 %build
 CFLAGS="%{rpmcflags} -D_FILE_OFFSET_BITS=64 -DDEBIAN=1"
