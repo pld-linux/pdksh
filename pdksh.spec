@@ -13,7 +13,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	50
+Release:	51
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -22,6 +22,7 @@ Source1:	ksh.1.pl
 Source2:	%{name}-kshrc
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-debian.patch
+Patch2:		%{name}-child_max.patch
 Patch4:		%{name}-history.patch
 Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
@@ -110,6 +111,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %setup  -q
 %{?with_static:%patch0 -p0}
 %patch1 -p1
+%patch2 -p1
 %patch4 -p1
 %patch9 -p1
 %patch11 -p1
