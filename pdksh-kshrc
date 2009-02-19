@@ -28,11 +28,11 @@ bind '^I'=complete >/dev/null 2>&1
 bind '^I'=complete-list >/dev/null 2>&1
 
 case $TERM in
-	nxterm|xterm|xterm-color)
+	nxterm|xterm*|konsole*)
 		bind '^[[H'=beginning-of-line >/dev/null 2>&1
 		bind '^[[F'=end-of-line >/dev/null 2>&1
 		;;
-	linux|rxvt)
+	linux|rxvt*)
 		bind '^[[1~'=beginning-of-line >/dev/null 2>&1
 		bind '^[[4~'=end-of-line >/dev/null 2>&1
 		;;
