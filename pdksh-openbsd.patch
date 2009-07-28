@@ -95,28 +95,6 @@ index 9e03fb0..33b2cf6 100644
  	}
  	opnd1 = (*te->getopnd)(te, TO_NONOP, do_eval);
  	if (!opnd1) {
-commit fc91346d6b6686009dd129e3c6bb7ccef8c2a838
-Author: jaredy <jaredy>
-Date:   Mon Aug 11 21:50:35 2008 +0000
-
-    plug a memleak when freeing io redirection in commands.
-    the leaked memory is actually reclaimed when the command
-    finishes but may grow until that happens, e.g. during
-    command execution.
-    
-    ok phessler@.
-    testing sobrado@ jmc@ oga@.
-
-diff --git a/tree.c b/tree.c
-index a9c725b..b46434e 100644
---- a/tree.c
-+++ b/tree.c
-@@ -706,4 +706,5 @@ iofree(struct ioword **iow, Area *ap)
- 			afree((void*)p->heredoc, ap);
- 		afree((void*)p, ap);
- 	}
-+	afree(iow, ap);
- }
 commit d83036326d467dd2d78a5bba6889c569abea491b
 Author: fgsch <fgsch>
 Date:   Tue May 20 00:30:30 2008 +0000
