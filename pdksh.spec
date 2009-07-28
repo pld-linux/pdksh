@@ -1,3 +1,4 @@
+# Note: pdksh is maintained in OpenBSD at http://www.openbsd.org/cgi-bin/cvsweb/src/bin/ksh/
 #
 # Conditional build:
 %bcond_without	static	# don't build static version of (pd)ksh
