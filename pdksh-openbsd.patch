@@ -1,0 +1,141 @@
+commit 6b58b0f9106b18334f8d3a97345a76a324f800cf
+Author: martynas <martynas>
+Date:   Thu Jul 2 16:29:15 2009 +0000
+
+    avoid infinite recursion if unlink fails.  reported by Stefan Pettersson
+    ok theo, millert@
+
+diff --git a/history.c b/history.c
+index 68475be..72ce075 100644
+--- a/history.c
++++ b/history.c
+@@ -674,7 +674,8 @@ hist_init(Source *s)
+ 			if (base != MAP_FAILED)
+ 				munmap((caddr_t)base, hsize);
+ 			hist_finish();
+-			unlink(hname);
++			if (unlink(hname) != 0)
++				return;
+ 			goto retry;
+ 		}
+ 		if (hsize > 2) {
+@@ -682,7 +683,8 @@ hist_init(Source *s)
+ 			if (lines > histsize) {
+ 				/* we need to make the file smaller */
+ 				if (hist_shrink(base, hsize))
+-					unlink(hname);
++					if (unlink(hname) != 0)
++						return;
+ 				munmap((caddr_t)base, hsize);
+ 				hist_finish();
+ 				goto retry;
+commit 347350de448f5a8896ba50374d6ff68291e49e2e
+Author: deraadt <deraadt>
+Date:   Mon Jun 1 18:20:33 2009 +0000
+
+    "let --" was crashing ksh; found by phy0@rambler.ru.  Various other expressions
+    involving ++ and -- also ran into this. Insufficient checks for end of parse in
+    the tokenizer made it assume that an lvalue had been found
+    ok millert otto
+
+diff --git a/expr.c b/expr.c
+index 4ee8731..13474fd 100644
+--- a/expr.c
++++ b/expr.c
+@@ -541,7 +541,7 @@ do_ppmm(Expr_state *es, enum token op, struct tbl *vasn, bool is_prefix)
+ static void
+ assign_check(Expr_state *es, enum token op, struct tbl *vasn)
+ {
+-	if (vasn->name[0] == '\0' && !(vasn->flag & EXPRLVALUE))
++	if (es->tok == END || (vasn->name[0] == '\0' && !(vasn->flag & EXPRLVALUE)))
+ 		evalerr(es, ET_LVALUE, opinfo[(int) op].name);
+ 	else if (vasn->flag & RDONLY)
+ 		evalerr(es, ET_RDONLY, opinfo[(int) op].name);
+commit d64becd334b42c2ad5555c30c09d97e722bfad79
+Author: otto <otto>
+Date:   Sun Mar 1 20:11:06 2009 +0000
+
+    Fix PR #723: test(1) operator precedence inconsistent with POSIX
+    Make sure ksh builtin test and test(1) do not differ.
+    From Christiano Farina Haesbaert. ok miod@
+
+diff --git a/c_test.c b/c_test.c
+index 9e03fb0..33b2cf6 100644
+--- a/c_test.c
++++ b/c_test.c
+@@ -457,15 +457,23 @@ test_primary(Test_env *te, int do_eval)
+ 		}
+ 		return res;
+ 	}
+-	if ((op = (Test_op) (*te->isa)(te, TM_UNOP))) {
+-		/* unary expression */
+-		opnd1 = (*te->getopnd)(te, op, do_eval);
+-		if (!opnd1) {
+-			(*te->error)(te, -1, "missing argument");
+-			return 0;
+-		}
++	/*
++	 * Binary should have precedence over unary in this case
++	 * so that something like test \( -f = -f \) is accepted
++	 */
++	if ((te->flags & TEF_DBRACKET) || (&te->pos.wp[1] < te->wp_end &&
++	    !test_isop(te, TM_BINOP, te->pos.wp[1]))) {
++		if ((op = (Test_op) (*te->isa)(te, TM_UNOP))) {
++			/* unary expression */
++			opnd1 = (*te->getopnd)(te, op, do_eval);
++			if (!opnd1) {
++				(*te->error)(te, -1, "missing argument");
++				return 0;
++			}
+ 
+-		return (*te->eval)(te, op, opnd1, (const char *) 0, do_eval);
++			return (*te->eval)(te, op, opnd1, (const char *) 0,
++			    do_eval);
++		}
+ 	}
+ 	opnd1 = (*te->getopnd)(te, TO_NONOP, do_eval);
+ 	if (!opnd1) {
+commit fc91346d6b6686009dd129e3c6bb7ccef8c2a838
+Author: jaredy <jaredy>
+Date:   Mon Aug 11 21:50:35 2008 +0000
+
+    plug a memleak when freeing io redirection in commands.
+    the leaked memory is actually reclaimed when the command
+    finishes but may grow until that happens, e.g. during
+    command execution.
+    
+    ok phessler@.
+    testing sobrado@ jmc@ oga@.
+
+diff --git a/tree.c b/tree.c
+index a9c725b..b46434e 100644
+--- a/tree.c
++++ b/tree.c
+@@ -706,4 +706,5 @@ iofree(struct ioword **iow, Area *ap)
+ 			afree((void*)p->heredoc, ap);
+ 		afree((void*)p, ap);
+ 	}
++	afree(iow, ap);
+ }
+commit d83036326d467dd2d78a5bba6889c569abea491b
+Author: fgsch <fgsch>
+Date:   Tue May 20 00:30:30 2008 +0000
+
+    cast pointer arithmetic to unsigned so we can behave correctly on
+    underflows. fixes fc -l 1 in my box where line is 1667511151.
+    krw@ ok.
+
+diff --git a/history.c b/history.c
+index d7f38e1..68475be 100644
+--- a/history.c
++++ b/history.c
+@@ -352,7 +352,7 @@ hist_get(const char *str, int approx, int allow_cur)
+ 
+ 	if (getn(str, &n)) {
+ 		hp = histptr + (n < 0 ? n : (n - hist_source->line));
+-		if (hp < history) {
++		if ((long)hp < (long)history) {
+ 			if (approx)
+ 				hp = hist_get_oldest();
+ 			else {
+
