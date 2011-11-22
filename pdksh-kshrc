@@ -20,11 +20,9 @@ else
 		echo ${PWD##*/};
 	fi`]$ '
 fi
-export PS1
 
 # EDITING FUNCTIONS
 set -o emacs
-bind '^I'=complete >/dev/null 2>&1
 bind '^I'=complete-list >/dev/null 2>&1
 
 case $TERM in
