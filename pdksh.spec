@@ -1,3 +1,4 @@
+# Note: pdksh is maintained in OpenBSD at http://www.openbsd.org/cgi-bin/cvsweb/src/bin/ksh/
 #
 # Conditional build:
 %bcond_without	static	# don't build static version of (pd)ksh
@@ -13,7 +14,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	45
+Release:	56
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -23,19 +24,18 @@ Source2:	%{name}-kshrc
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-debian.patch
 Patch4:		%{name}-history.patch
-Patch5:		%{name}-EDITMODE.patch
 Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
 Patch12:	%{name}-siglist-sort.patch
 Patch13:	%{name}-hex.patch
 Patch14:	%{name}-kshrc_support.patch
-Patch15:	%{name}-ulimit-vmem.patch
+Patch15:	%{name}-openbsd.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
+BuildRequires:	rpmbuild(macros) >= 1.429
 # is needed for /etc directory existence
 Requires(pre):	FHS
-Requires(preun):	sed >= 4.1.5-1.2
 Requires:	setup >= 2.4.6-2
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -92,7 +92,6 @@ pdksh, вільна реалізація ksh, - це командний проц
 Summary:	Statically linked Public Domain Korn Shell
 Summary(pl.UTF-8):	Skonsolidowana statycznie powłoka Korna
 Group:		Applications/Shells
-Requires(preun):	sed >= 4.1.5-1.2
 # requires base for /etc/kshrc?
 Requires:	%{name} = %{version}-%{release}
 
@@ -114,7 +113,6 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %{?with_static:%patch0 -p0}
 %patch1 -p1
 %patch4 -p1
-%patch5 -p1
 %patch9 -p1
 %patch11 -p1
 %patch13 -p1
@@ -147,55 +145,16 @@ echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 
 ln -sf ksh $RPM_BUILD_ROOT/bin/sh
 
-install	%{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
+install %{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-if [ ! -f /etc/shells ]; then
-	umask 022
-	echo "/bin/ksh" > /etc/shells
-	echo "/bin/sh" >> /etc/shells
-else
-	while read SHNAME; do
-		if [ "$SHNAME" = "/bin/ksh" ]; then
-			HAS_KSH=1
-		elif [ "$SHNAME" = "/bin/sh" ]; then
-			HAS_SH=1
-		fi
-	done < /etc/shells
-	[ -n "$HAS_KSH" ] || echo "/bin/ksh" >> /etc/shells
-	[ -n "$HAS_SH" ] || echo "/bin/sh" >> /etc/shells
-fi
+%post	-p %add_etc_shells -p /bin/sh /bin/ksh
+%preun	-p %remove_etc_shells -p /bin/sh /bin/ksh
 
-%preun
-if [ "$1" = "0" ]; then
-	%{__sed} -i -e '
-		/^\/bin\/ksh$/d
-		/^\/bin\/sh$/d
-	' /etc/shells
-fi
-
-%post static
-if [ ! -f /etc/shells ]; then
-	umask 022
-	echo "/bin/ksh.static" > /etc/shells
-else
-	while read SHNAME; do
-	if [ "$SHNAME" = "/bin/ksh.static" ]; then
-		HAS_KSH_STATIC=1
-	fi
-	done < /etc/shells
-	[ -n "$HAS_KSH_STATIC" ] || echo "/bin/ksh.static" >> /etc/shells
-fi
-
-%preun static
-if [ "$1" = "0" ]; then
-	%{__sed} -i -e '
-		/^\/bin\/ksh\.static$/d
-	' /etc/shells
-fi
+%post static -p %add_etc_shells -p /bin/ksh.static
+%preun static -p %remove_etc_shells -p /bin/ksh.static
 
 %files
 %defattr(644,root,root,755)
