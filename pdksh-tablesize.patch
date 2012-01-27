@@ -1,0 +1,22 @@
+--- pdksh-5.2.14/table.h.orig	2012-01-27 19:39:52.948812260 +0100
++++ pdksh-5.2.14/table.h	2012-01-27 20:29:02.388911018 +0100
+@@ -6,7 +6,7 @@
+ 
+ struct table {
+ 	Area   *areap;		/* area to allocate entries */
+-	short	size, nfree;	/* hash size (always 2^^n), free entries */
++	int	size, nfree;	/* hash size (always 2^^n), free entries */
+ 	struct	tbl **tbls;	/* hashed table items */
+ };
+ 
+--- pdksh-5.2.14/table.c.orig	2012-01-27 19:39:52.938812259 +0100
++++ pdksh-5.2.14/table.c	2012-01-27 20:32:18.718917592 +0100
+@@ -44,6 +44,8 @@
+ 	register struct tbl **ntblp, **otblp = tp->tbls;
+ 	int osize = tp->size;
+ 
++	if(nsize >= (1<<29))
++		internal_errorf(1, "hash table too big");
+ 	ntblp = (struct tbl**) alloc(sizeofN(struct tbl *, nsize), tp->areap);
+ 	for (i = 0; i < nsize; i++)
+ 		ntblp[i] = NULL;
