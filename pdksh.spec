@@ -2,7 +2,7 @@
 #
 # Conditional build:
 %bcond_without	static	# don't build static version of (pd)ksh
-#
+
 Summary:	Public Domain Korn Shell
 Summary(de.UTF-8):	Korn-Shell aus dem Public Domain
 Summary(es.UTF-8):	Shell Korn de dominio público
@@ -141,13 +141,12 @@ install -d $RPM_BUILD_ROOT{%{_mandir}/pl/man1,/etc}
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/man1/sh.1
 
-install	%{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
+cp -p %{SOURCE1} $RPM_BUILD_ROOT%{_mandir}/pl/man1/ksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/pdksh.1
 echo ".so ksh.1" > $RPM_BUILD_ROOT%{_mandir}/pl/man1/sh.1
 
-ln -sf ksh $RPM_BUILD_ROOT/bin/sh
-
-install %{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
+ln -s ksh $RPM_BUILD_ROOT/bin/sh
+cp -p %{SOURCE2} $RPM_BUILD_ROOT/etc/kshrc
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -164,8 +163,12 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace,missingok) %verify(not md5 mtime size) /etc/kshrc
 %attr(755,root,root) %{_bindir}/ksh
 %attr(755,root,root) %{_bindir}/sh
-%{_mandir}/man1/*
-%lang(pl) %{_mandir}/pl/man1/*
+%{_mandir}/man1/ksh.1*
+%{_mandir}/man1/pdksh.1
+%{_mandir}/man1/sh.1
+%lang(pl) %{_mandir}/pl/man1/ksh.1*
+%lang(pl) %{_mandir}/pl/man1/pdksh.1
+%lang(pl) %{_mandir}/pl/man1/sh.1
 
 %if %{with static}
 %files static
