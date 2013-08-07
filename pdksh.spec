@@ -14,7 +14,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	57
+Release:	57.18
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -34,10 +34,11 @@ Patch14:	%{name}-kshrc_support.patch
 Patch15:	%{name}-openbsd.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
-BuildRequires:	rpmbuild(macros) >= 1.429
+BuildRequires:	rpmbuild(macros) >= 1.462
 # is needed for /etc directory existence
 Requires(pre):	FHS
 Requires:	setup >= 2.4.6-2
+Obsoletes:	mksh
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_exec_prefix		/
@@ -154,8 +155,13 @@ rm -rf $RPM_BUILD_ROOT
 %post	-p %add_etc_shells -p /bin/sh /bin/ksh
 %preun	-p %remove_etc_shells -p /bin/sh /bin/ksh
 
-%post static -p %add_etc_shells -p /bin/ksh.static
-%preun static -p %remove_etc_shells -p /bin/ksh.static
+%post	static -p %add_etc_shells -p /bin/ksh.static
+%preun	static -p %remove_etc_shells -p /bin/ksh.static
+
+%triggerpostun -p <lua> -- mksh
+if arg[2] ~= 0 then
+%lua_add_etc_shells /bin/sh /bin/ksh
+end
 
 %files
 %defattr(644,root,root,755)
