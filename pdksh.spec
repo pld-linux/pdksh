@@ -1,4 +1,6 @@
-# Note: pdksh is maintained in OpenBSD at http://www.openbsd.org/cgi-bin/cvsweb/src/bin/ksh/
+# Note:
+# - pdksh is maintained in OpenBSD at http://www.openbsd.org/cgi-bin/cvsweb/src/bin/ksh/
+# - PLD Th uses mksh instead
 #
 # Conditional build:
 %bcond_without	static	# don't build static version of (pd)ksh
@@ -14,7 +16,7 @@ Summary(tr.UTF-8):	Serbest Korn kabuğu
 Summary(uk.UTF-8):	Вілбна реалізація командного процесора Korn shell (ksh)
 Name:		pdksh
 Version:	5.2.14
-Release:	57.18
+Release:	58
 License:	Mostly Public Domain with Free & GPL additions
 Group:		Applications/Shells
 Source0:	ftp://ftp.cs.mun.ca/pub/pdksh/%{name}-%{version}.tar.gz
@@ -32,6 +34,8 @@ Patch12:	%{name}-siglist-sort.patch
 Patch13:	%{name}-hex.patch
 Patch14:	%{name}-kshrc_support.patch
 Patch15:	%{name}-openbsd.patch
+Patch16:	%{name}-empty-for-loop.patch
+Patch17:	%{name}-format.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 BuildRequires:	rpmbuild(macros) >= 1.462
@@ -121,6 +125,8 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch13 -p1
 %patch14 -p1
 %patch15 -p1
+%patch16 -p1
+%patch17 -p1
 
 %build
 CFLAGS="%{rpmcflags} -D_FILE_OFFSET_BITS=64 -DDEBIAN=1"

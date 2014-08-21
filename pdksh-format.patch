@@ -1,0 +1,182 @@
+--- pdksh-5.2.14/c_ksh.c.orig	2014-08-21 16:25:18.056288998 +0200
++++ pdksh-5.2.14/c_ksh.c	2014-08-21 16:27:15.009617427 +0200
+@@ -558,7 +558,7 @@
+ 			break;
+ 		}
+ 		if (vflag || !ret)
+-			shprintf(newline);
++			shprintf("%s", newline);
+ 	}
+ 	return ret;
+ }
+@@ -858,7 +858,7 @@
+ 				else
+ 				    print_value_quoted(s);
+ 			    }
+-			    shprintf(newline);
++			    shprintf("%s", newline);
+ 			}
+ 			/* Only report first `element' of an array with
+ 			 * no set elements.
+@@ -949,7 +949,7 @@
+ 					shf_putc('=', shl_stdout);
+ 					print_value_quoted(ap->val.s);
+ 				}
+-				shprintf(newline);
++				shprintf("%s", newline);
+ 			}
+ 	}
+ 
+@@ -973,7 +973,7 @@
+ 					shf_putc('=', shl_stdout);
+ 					print_value_quoted(ap->val.s);
+ 				}
+-				shprintf(newline);
++				shprintf("%s", newline);
+ 			} else {
+ 				shprintf("%s alias not found\n", alias);
+ 				rv = 1;
+@@ -1220,7 +1220,7 @@
+ "Usage: kill [ -s signame | -signum | -signame ] {pid|job}...\n\
+        kill -l [exit_status]\n"
+ 			);
+-		bi_errorf(null);
++		bi_errorf("%s", null);
+ 		return 1;
+ 	}
+ 
+@@ -1241,7 +1241,7 @@
+ 			for (i = 1; i < SIGNALS; i++, p = space)
+ 				if (sigtraps[i].name)
+ 					shprintf("%s%s", p, sigtraps[i].name);
+-			shprintf(newline);
++			shprintf("%s", newline);
+ 		} else {
+ 			int w, i;
+ 			int mess_width;
+--- pdksh-5.2.14/exec.c.orig	2014-08-21 16:25:18.092955665 +0200
++++ pdksh-5.2.14/exec.c	2014-08-21 16:27:51.662949220 +0200
+@@ -145,7 +145,7 @@
+ 				 */
+ 				if (tp && tp->type == CSHELL
+ 				    && (tp->flag & SPEC_BI))
+-					errorf(null);
++					errorf("%s", null);
+ 				/* Deal with FERREXIT, quitenv(), etc. */
+ 				goto Break;
+ 			}
+--- pdksh-5.2.14/expr.c.orig	2014-08-21 16:25:18.182955663 +0200
++++ pdksh-5.2.14/expr.c	2014-08-21 16:28:14.576281592 +0200
+@@ -185,7 +185,7 @@
+ 		if (i == LAEXPR) {
+ 			if (error_ok == KSH_RETURN_ERROR)
+ 				return 0;
+-			errorf(null);
++			errorf("%s", null);
+ 		}
+ 		unwind(i);
+ 		/*NOTREACHED*/
+--- pdksh-5.2.14/jobs.c.orig	2014-08-21 16:25:18.099622334 +0200
++++ pdksh-5.2.14/jobs.c	2014-08-21 16:28:38.036280605 +0200
+@@ -906,7 +906,7 @@
+ 		}
+ 		shprintf("%s%s", p->command, p->next ? "| " : null);
+ 	}
+-	shprintf(newline);
++	shprintf("%s", newline);
+ 	shf_flush(shl_stdout);
+ 	if (running)
+ 		j->state = PRUNNING;
+--- pdksh-5.2.14/lex.c.orig	2014-08-21 16:25:18.096289000 +0200
++++ pdksh-5.2.14/lex.c	2014-08-21 16:29:01.956279604 +0200
+@@ -878,7 +878,7 @@
+ 	SH_VA_START(va, fmt);
+ 	shf_vfprintf(shl_out, fmt, va);
+ 	va_end(va);
+-	errorf(null);
++	errorf("%s", null);
+ }
+ 
+ /*
+--- pdksh-5.2.14/main.c.orig	2014-08-21 16:25:18.176288992 +0200
++++ pdksh-5.2.14/main.c	2014-08-21 16:29:41.746277936 +0200
+@@ -569,7 +569,7 @@
+ 		  case LSHELL:
+ 			if (interactive) {
+ 				if (i == LINTR)
+-					shellf(newline);
++					shellf("%s", newline);
+ 				/* Reset any eof that was read as part of a
+ 				 * multiline command.
+ 				 */
+@@ -863,6 +863,6 @@
+ 	const char *msg;
+ {
+ 	internal_errorf(1, "alloc: %s", msg);
+-	errorf(null); /* this is never executed - keeps gcc quiet */
++	errorf("%s", null); /* this is never executed - keeps gcc quiet */
+ 	/*NOTREACHED*/
+ }
+--- pdksh-5.2.14/misc.c.orig	2014-08-21 16:25:18.152955664 +0200
++++ pdksh-5.2.14/misc.c	2014-08-21 16:34:19.439599616 +0200
+@@ -250,7 +250,7 @@
+ 		for (i = 0; i < NELEM(options); i++)
+ 			if (Flag(i) && options[i].name)
+ 				shprintf(" -o %s", options[i].name);
+-		shprintf(newline);
++		shprintf("%s", newline);
+ 	}
+ }
+ 
+@@ -1016,7 +1016,7 @@
+ 				(go->flags & GF_NONAME) ? "" : argv[0],
+ 				(go->flags & GF_NONAME) ? "" : ": ", c);
+ 			if (go->flags & GF_ERROR)
+-				bi_errorf(null);
++				bi_errorf("%s", null);
+ 		}
+ 		return '?';
+ 	}
+@@ -1042,7 +1042,7 @@
+ 				(go->flags & GF_NONAME) ? "" : argv[0],
+ 				(go->flags & GF_NONAME) ? "" : ": ", c);
+ 			if (go->flags & GF_ERROR)
+-				bi_errorf(null);
++				bi_errorf("%s", null);
+ 			return '?';
+ 		}
+ 		go->p = 0;
+@@ -1093,8 +1093,11 @@
+ 	}
+ 	for (p = s; *p; p++) {
+ 		if (*p == '\'') {
+-			shprintf("'\\'" + 1 - inquote);
+-			inquote = 0;
++			if (inquote) {
++				shprintf("'\\'");
++				inquote = 0;
++			} else
++				shprintf("\\'");
+ 		} else {
+ 			if (!inquote) {
+ 				shprintf("'");
+--- pdksh-5.2.14/var.c.orig	2014-08-21 16:25:18.169622326 +0200
++++ pdksh-5.2.14/var.c	2014-08-21 16:34:57.299598027 +0200
+@@ -361,7 +361,7 @@
+ 	if ((vq->flag & RDONLY) && !no_ro_check) {
+ 		warningf(TRUE, "%s: is read only", vq->name);
+ 		if (!error_ok)
+-			errorf(null);
++			errorf("%s", null);
+ 		return 0;
+ 	}
+ 	if (!(vq->flag&INTEGER)) { /* string dest */
+@@ -723,7 +723,7 @@
+ 			}
+ 		}
+ 		if (!ok)
+-		    errorf(null);
++		    errorf("%s", null);
+ 	}
+ 
+ 	if (val != NULL) {
