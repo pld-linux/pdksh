@@ -134,7 +134,8 @@ LDFLAGS="%{rpmcflags} %{rpmldflags}"
 %configure2_13 \
 	--enable-emacs \
 	--enable-vi
-%{__make}
+%{__make} \
+	CPP="%{__cc} -E -P"
 
 %install
 rm -rf $RPM_BUILD_ROOT
