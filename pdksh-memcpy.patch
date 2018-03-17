@@ -1,0 +1,11 @@
+--- pdksh-5.2.14/eval.c.orig	2018-03-17 10:13:44.723945475 +0100
++++ pdksh-5.2.14/eval.c	2018-03-17 20:43:38.363513942 +0100
+@@ -1189,7 +1189,7 @@
+ 	char *d, *s;
+ 
+ 	if ((s = strchr(sp, MAGIC))) {
+-		memcpy(dp, sp, s - sp);
++		memmove(dp, sp, s - sp);
+ 		for (d = dp + (s - sp); *s; s++)
+ 			if (!ISMAGIC(*s) || !(*++s & 0x80)
+ 			    || !strchr("*+?@! ", *s & 0x7f))

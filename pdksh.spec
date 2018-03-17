@@ -26,6 +26,7 @@ Source2:	%{name}-kshrc
 Patch0:		%{name}-static.patch
 Patch1:		%{name}-debian.patch
 Patch2:		%{name}-tablesize.patch
+Patch3:		%{name}-memcpy.patch
 Patch4:		%{name}-history.patch
 Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
@@ -119,6 +120,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %{?with_static:%patch0 -p0}
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 %patch4 -p1
 %patch9 -p1
 %patch11 -p1
