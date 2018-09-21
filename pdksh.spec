@@ -28,6 +28,7 @@ Patch1:		%{name}-debian.patch
 Patch2:		%{name}-tablesize.patch
 Patch3:		%{name}-memcpy.patch
 Patch4:		%{name}-history.patch
+Patch5:		%{name}-defer-unalias.patch
 Patch9:		%{name}-no_stop_alias.patch
 Patch10:	%{name}-man_no_plusminus.patch
 Patch11:	%{name}-circumflex.patch
@@ -116,12 +117,13 @@ komendami powłoki sh(1).
 W tym pakiecie jest pdksh skonsolidowany statycznie.
 
 %prep
-%setup  -q
+%setup -q
 %{?with_static:%patch0 -p0}
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
 %patch4 -p1
+%patch5 -p1
 %patch9 -p1
 %patch11 -p1
 %patch13 -p1

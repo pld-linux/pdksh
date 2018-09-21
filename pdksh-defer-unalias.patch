@@ -1,0 +1,39 @@
+--- pdksh-5.2.14/exec.c.orig	2018-09-21 21:09:25.763470692 +0200
++++ pdksh-5.2.14/exec.c	2018-09-21 21:49:09.843443470 +0200
+@@ -932,11 +932,20 @@
+ 	const char *name;
+ 	struct op *t;
+ {
++	int nhash;
+ 	struct tbl *tp;
+ 	int was_set = 0;
+ 
++	nhash = hash(name);
++
++	if (t != NULL && !(t->u.ksh_func)) {
++		/* drop same-name aliases for POSIX functions */
++		if ((tp = tsearch(&aliases, name, nhash)))
++			tdelete(tp);
++	}
++
+ 	while (1) {
+-		tp = findfunc(name, hash(name), TRUE);
++		tp = findfunc(name, nhash, TRUE);
+ 
+ 		if (tp->flag & ISSET)
+ 			was_set = 1;
+--- pdksh-5.2.14/lex.c.orig	2018-09-21 21:09:25.766804025 +0200
++++ pdksh-5.2.14/lex.c	2018-09-21 21:48:05.983444200 +0200
+@@ -759,11 +759,7 @@
+ 			
+ 		   if (last_terminal_was_bracket) { 
+ 		   /* The token is probably part of function's definition,
+-		    * and is should not be aliased. Moreover we remove the alias
+-		    * so it won't clash with the function name
+-		    * robert@debian.org, Feb 26th, 2005
+-		    */
+-			tdelete(p);
++		    * and is should not be aliased. */
+ 		   } else {		
+ 			register Source *s;
+ 
