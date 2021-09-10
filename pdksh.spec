@@ -38,6 +38,7 @@ Patch14:	%{name}-kshrc_support.patch
 Patch15:	%{name}-openbsd.patch
 Patch16:	%{name}-empty-for-loop.patch
 Patch17:	%{name}-format.patch
+Patch18:	%{name}-eval-var-expansion.patch
 URL:		http://www.cs.mun.ca/~michael/pdksh/
 %{?with_static:BuildRequires:	glibc-static}
 BuildRequires:	rpmbuild(macros) >= 1.462
@@ -131,6 +132,7 @@ W tym pakiecie jest pdksh skonsolidowany statycznie.
 %patch15 -p1
 %patch16 -p1
 %patch17 -p1
+%patch18 -p3
 
 %build
 CFLAGS="%{rpmcflags} -D_FILE_OFFSET_BITS=64 -DDEBIAN=1"

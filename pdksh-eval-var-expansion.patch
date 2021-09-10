@@ -1,0 +1,26 @@
+ fix the cases where ${name#pat} and ${name%pat} will generate an empty word
+ when they shouldn't. originally from mksh but modified to handle the case
+ when the expr is quoted as noticed by halex@.
+ input from guenther@ and halex@, millert@ ok
+
+===================================================================
+RCS file: /cvs/src/bin/ksh/eval.c,v
+retrieving revision 1.34
+retrieving revision 1.35
+#-/*	$OpenBSD: eval.c,v 1.34 2009/01/29 23:27:26 jaredy Exp $	*/
+#+/*	$OpenBSD: eval.c,v 1.35 2010/03/24 08:27:26 fgsch Exp $	*/
+diff -u -r1.34 -r1.35
+--- src/bin/ksh/eval.c	2009/01/29 23:27:26	1.34
++++ src/bin/ksh/eval.c	2010/03/24 08:27:26	1.35
+@@ -375,7 +375,10 @@
+ 					 */
+ 					x.str = trimsub(str_val(st->var),
+ 						dp, st->stype);
+-					type = XSUB;
++					if (x.str[0] != '\0' || st->quote)
++						type = XSUB;
++					else
++						type = XNULLSUB;
+ 					if (f&DOBLANK)
+ 						doblank++;
+ 					st = st->prev;
